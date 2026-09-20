@@ -370,6 +370,16 @@ body.fixed main{min-height:0;overflow:hidden}
 .summ dt{color:var(--dim);font-size:clamp(10px,calc(.7*var(--u)),calc(13px*var(--k)));letter-spacing:.24em;text-transform:uppercase;font-weight:600;align-self:center}
 .summ dd{margin:0;font-weight:700;text-align:right}
 .paybox{margin-top:18px;display:flex;flex-direction:column;gap:12px}
+.paychoice{margin-top:clamp(18px,calc(1.5*var(--u)),calc(28px*var(--k)))}
+.payopt{border:1px solid var(--line2);border-radius:20px;padding:clamp(16px,calc(1.3*var(--u)),calc(24px*var(--k)))}
+.payopt + .paysep{display:flex;align-items:center;gap:14px;margin:14px 0;color:var(--dim);font-size:clamp(10px,calc(.7*var(--u)),calc(12px*var(--k)));letter-spacing:.24em;font-weight:700}
+.paysep::before,.paysep::after{content:"";flex:1;height:1px;background:var(--line)}
+.payhead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:12px}
+.payhead b{font-size:clamp(14px,calc(1*var(--u)),calc(19px*var(--k)));font-weight:700}
+.paytag{font-size:clamp(10px,calc(.7*var(--u)),calc(12px*var(--k)));letter-spacing:.12em;text-transform:uppercase;font-weight:700;padding:4px 10px;border-radius:999px;white-space:nowrap}
+.paytag.fast{color:var(--good);border:1px solid rgba(94,211,160,.45)}
+.paytag.slow{color:var(--muted);border:1px solid var(--line2)}
+.payopt .qrwrap{border:0;padding:0;margin:0}
 .qrwrap{display:grid;grid-template-columns:auto 1fr;gap:clamp(16px,calc(1.6*var(--u)),calc(30px*var(--k)));align-items:center;padding:clamp(14px,calc(1.2*var(--u)),calc(24px*var(--k)));border:1px solid var(--line2);border-radius:20px}
 .qrwrap .qr{background:#fff;border-radius:14px;padding:10px;line-height:0}
 .qrwrap .qr img{width:clamp(140px,calc(10*var(--u)),calc(190px*var(--k)));height:auto;image-rendering:pixelated}
@@ -1328,14 +1338,22 @@ function paymentHTML() {
       <dt>Částka</dt><dd>${fmt(h.amount || CFG.price)} Kč</dd>
     </dl>
     <div class="hold"><span class="dot"></span><span>Termín Vám držíme 2 hodiny. Jakmile platba dorazí, pošleme Vám potvrzení a pozvánku do kalendáře.</span></div>
-    <div class="paybox">
-      ${h.checkoutUrl ? `<a class="btn pri" href="${esc(h.checkoutUrl)}">Zaplatit kartou / Apple Pay</a>
-      <p class="fine" style="text-align:center">Potvrzení máte hned, platbu zpracovává Stripe.</p>` : ''}
-      <div class="qrwrap"><div class="qr" id="payQr" aria-label="QR platba"></div>
-        <dl><dt>Částka</dt><dd>${fmt(h.amount || CFG.price)} Kč</dd>
-          <dt>Účet</dt><dd>${esc(h.account || '2801448429/2010')}</dd>
-          <dt>Var. symbol</dt><dd>${esc(h.vs)}</dd></dl></div>
-      <p class="fine">QR platbu spárujeme automaticky, obvykle do 15–30 minut.</p>
+    <div class="paychoice">
+      <p class="small-caps" style="margin-bottom:12px">Vyberte způsob platby</p>
+      ${h.checkoutUrl ? `<div class="payopt">
+        <div class="payhead"><b>Kartou, Apple Pay nebo Google Pay</b><span class="paytag fast">Potvrzení hned</span></div>
+        <a class="btn pri" href="${esc(h.checkoutUrl)}">Zaplatit kartou</a>
+        <p class="fine" style="margin-top:10px">Přesměrujeme Vás na zabezpečenou platební bránu Stripe. Po zaplacení je termín okamžitě potvrzený.</p>
+      </div>
+      <div class="paysep">nebo</div>` : ''}
+      <div class="payopt">
+        <div class="payhead"><b>Převodem přes QR kód</b><span class="paytag slow">Do 30 minut</span></div>
+        <div class="qrwrap"><div class="qr" id="payQr" aria-label="QR platba"></div>
+          <dl><dt>Částka</dt><dd>${fmt(h.amount || CFG.price)} Kč</dd>
+            <dt>Účet</dt><dd>${esc(h.account || '2801448429/2010')}</dd>
+            <dt>Var. symbol</dt><dd>${esc(h.vs)}</dd></dl></div>
+        <p class="fine" style="margin-top:12px">Naskenujte QR kód v bankovní aplikaci. Platbu spárujeme automaticky, obvykle do 15–30 minut.</p>
+      </div>
     </div>
     <div class="waiting"><span class="dot"></span><span id="payWait">Čekám na platbu…</span></div>`;
 }
