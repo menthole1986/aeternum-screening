@@ -153,12 +153,12 @@ body.fixed .app{height:100dvh;min-height:0}
 body.fixed .top,body.fixed .foot{flex:none}
 body.fixed main{min-height:0;overflow:hidden}
 .legal{margin-top:-6px}
-.legal summary{font-size:clamp(11px,calc(.75*var(--u)),calc(13px*var(--k)));letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:var(--dim);cursor:pointer;list-style:none}
+.legal summary{font-size:clamp(10px,calc(.68*var(--u)),calc(12px*var(--k)));letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:var(--dim);cursor:pointer;list-style:none}
 .legal summary::-webkit-details-marker{display:none}
 .legal summary::after{content:" ›"}
 .legal[open] summary::after{content:" ˅"}
 .legal summary:hover{color:var(--ink)}
-.legal p{font-size:clamp(11px,calc(.72*var(--u)),calc(13px*var(--k)));color:var(--dim);line-height:1.6;margin-top:8px;max-width:46em}
+.legal p{font-size:clamp(10px,calc(.66*var(--u)),calc(12px*var(--k)));color:var(--dim);line-height:1.6;margin-top:8px;max-width:46em}
 #main > .screen{transform-origin:top left;display:flow-root}
 .split{display:grid;grid-template-columns:minmax(0,.86fr) minmax(0,1fr);gap:clamp(36px,calc(6.5*var(--u)),calc(130px*var(--k)));align-items:start}
 .split > *{min-width:0}
@@ -166,21 +166,21 @@ body.fixed main{min-height:0;overflow:hidden}
 
 /* ---------- Marcel ---------- */
 .mcol{display:flex;flex-direction:column;gap:clamp(18px,calc(1.6*var(--u)),calc(30px*var(--k)))}
-.mline{font-size:clamp(15px,calc(1.15*var(--u)),calc(22px*var(--k)));line-height:1.6;color:var(--ink);max-width:24em;position:relative;padding-left:clamp(14px,calc(1.05*var(--u)),calc(20px*var(--k)));border-left:2px solid transparent;border-image:var(--grad-135) 1}
+.mline{font-size:clamp(14px,calc(1.02*var(--u)),calc(19px*var(--k)));line-height:1.6;color:var(--ink);max-width:24em;position:relative;padding-left:clamp(14px,calc(1.05*var(--u)),calc(20px*var(--k)));border-left:2px solid transparent;border-image:var(--grad-135) 1}
 .mini{display:flex;align-items:center;gap:clamp(12px,calc(.95*var(--u)),calc(18px*var(--k)))}
 .mini .av{position:relative;width:clamp(52px,calc(3.6*var(--u)),calc(68px*var(--k)));height:clamp(52px,calc(3.6*var(--u)),calc(68px*var(--k)));border-radius:50%;overflow:hidden;flex:none;border:1.5px solid rgba(122,62,158,.8);display:block}
 .mini .av img{width:100%;height:100%;object-fit:cover;display:block}
 .mini .av i{position:absolute;right:2px;bottom:2px;width:11px;height:11px;border-radius:50%;background:#4ADE80;border:2px solid var(--ground)}
 .mini .nm{display:flex;flex-direction:column;gap:4px}
-.mini .nm b{font-size:clamp(15px,calc(1.05*var(--u)),calc(20px*var(--k)));font-weight:700;line-height:1}
+.mini .nm b{font-size:clamp(14px,calc(.95*var(--u)),calc(18px*var(--k)));font-weight:700;line-height:1}
 .mini .nm span{font-size:clamp(9px,calc(.66*var(--u)),calc(12px*var(--k)));letter-spacing:.24em;text-transform:uppercase;color:var(--dim);font-weight:600}
 .mhead{display:none;align-items:flex-start;gap:12px}
-.mhead .av{position:relative;width:46px;height:46px;border-radius:50%;overflow:hidden;flex:none;border:1.5px solid rgba(122,62,158,.75)}
+.mhead .av{position:relative;width:40px;height:40px;border-radius:50%;overflow:hidden;flex:none;border:1.5px solid rgba(122,62,158,.75)}
 .mhead .av img{width:100%;height:100%;object-fit:cover;display:block}
 .mhead .av i{position:absolute;right:1px;bottom:1px;width:10px;height:10px;border-radius:50%;background:#4ADE80;border:2px solid var(--ground)}
 .mhead .tx{flex:1;min-width:0}
-.mhead .tx b{display:block;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);font-weight:700;margin-bottom:4px}
-.mhead .tx p{font-size:15px;line-height:1.5;color:var(--ink)}
+.mhead .tx b{display:block;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);font-weight:700;margin-bottom:4px}
+.mhead .tx p{font-size:13.5px;line-height:1.5;color:var(--ink)}
 @media (max-width:1000px){
   .mcol{display:none}
   .mcol.intro-portrait{display:flex;gap:14px}
@@ -246,9 +246,9 @@ input:autofill{background:transparent;color:var(--ink)}
 .sends{display:flex;justify-content:space-between;font-size:11px;color:var(--dim);margin-top:8px;letter-spacing:.1em}
 
 /* checkbox */
-.cbox{position:relative;display:flex;gap:clamp(14px,calc(1*var(--u)),calc(20px*var(--k)));align-items:flex-start;cursor:pointer;font-size:clamp(13px,calc(.8*var(--u)),calc(15px*var(--k)));line-height:1.6;color:var(--muted)}
+.cbox{position:relative;display:flex;gap:clamp(12px,calc(.9*var(--u)),calc(18px*var(--k)));align-items:flex-start;cursor:pointer;font-size:clamp(11.5px,calc(.72*var(--u)),calc(14px*var(--k)));line-height:1.55;color:var(--muted)}
 .cbox input{position:absolute;opacity:0;width:1px;height:1px}
-.cbox .box{width:calc(26px*var(--k));height:calc(26px*var(--k));border-radius:8px;border:1.5px solid rgba(255,255,255,.35);flex:none;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:background .15s,border-color .15s}
+.cbox .box{width:calc(23px*var(--k));height:calc(23px*var(--k));border-radius:8px;border:1.5px solid rgba(255,255,255,.35);flex:none;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:background .15s,border-color .15s}
 .cbox .box svg{width:calc(16px*var(--k));height:calc(16px*var(--k));stroke:#fff;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;opacity:0}
 .cbox input:checked + .box{background:var(--grad);border-color:transparent}
 .cbox input:checked + .box svg{opacity:1}
@@ -481,6 +481,28 @@ input:autofill{background:transparent;color:var(--ink)}
   .vals{gap:18px}
   .drug{padding:20px 18px}
 }
+
+/* ── mobilní ergonomie ── */
+@media (max-width:760px){
+  /* pod spodní lištou iPhonu nesmí nic mizet */
+  .foot{padding-bottom:calc(20px + env(safe-area-inset-bottom))}
+  .disclaimer{padding-bottom:calc(30px + env(safe-area-inset-bottom))}
+  /* prsty potřebují víc plochy */
+  .time{height:52px}
+  .day{padding:12px 14px}
+  .rowopt{min-height:56px}
+  .opt{height:58px}
+  .cbox{padding:4px 0}
+  .legal summary{padding:10px 0}
+  .more{padding:10px 0}
+  /* vzdušnější odstup mezi Marcelem a otázkou */
+  .mhead{margin-bottom:6px}
+  .qcount.mob{margin-top:20px}
+  .qcount.mob + .qtext{margin-top:16px}
+}
+/* náznak, že se dny dají posouvat do strany */
+.days{-webkit-mask-image:linear-gradient(90deg,#000 92%,rgba(0,0,0,.25));mask-image:linear-gradient(90deg,#000 92%,rgba(0,0,0,.25))}
+.days::after{content:"";flex:none;width:2px}
 </style>
 </head>
 <body>
@@ -716,12 +738,12 @@ function marcelText(id) {
 function marcelCol(text, extra = '') {
   return `<div class="mcol">
     <div class="mini"><span class="av"><img src="${MARCEL_AVATAR}" alt="Marcel, konzultant Aeternum Clinic"><i></i></span>
-      <span class="nm"><b>Marcel</b><span>Digitální dvojče konzultanta</span></span></div>
+      <span class="nm"><b>Marcel</b><span>Konzultant</span></span></div>
     <p class="mline">${text}</p>${extra}</div>`;
 }
 function marcelHead(text) {
   return `<div class="mhead"><div class="av"><img src="${MARCEL_AVATAR}" alt="Marcel"><i></i></div>
-    <div class="tx"><b>Marcel · digitální dvojče</b><p>${text}</p></div></div>`;
+    <div class="tx"><b>Konzultant Marcel</b><p>${text}</p></div></div>`;
 }
 
 /* ---------- výpočty ---------- */
@@ -960,9 +982,14 @@ function fitScreen() {
   });
   const needed = Math.ceil(bottom - top) + 2;
   if (needed > avail && avail > 0) {
+    // obsah se nevejde: zmenšíme ho a necháme od horního okraje
     const scale = Math.max(0.45, avail / needed);
     sc.style.setProperty('width', (100 / scale) + '%', 'important');
     sc.style.setProperty('transform', `scale(${scale})`, 'important');
+    main.style.alignItems = 'flex-start';
+  } else {
+    // vejde se: vycentrujeme na výšku, ať text nevisí u horního okraje
+    main.style.alignItems = 'center';
   }
 }
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => fitScreen());
