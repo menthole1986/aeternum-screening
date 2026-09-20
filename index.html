@@ -389,6 +389,21 @@ body.fixed main{min-height:0;overflow:hidden}
 @media (max-width:560px){.qrwrap{grid-template-columns:1fr;justify-items:center}.qrwrap dl{width:100%}}
 .decline{margin-top:clamp(20px,calc(1.8*var(--u)),calc(32px*var(--k)));padding-top:clamp(16px,calc(1.4*var(--u)),calc(24px*var(--k)));border-top:1px solid var(--line);text-align:center}
 .decline .fine{margin-top:8px}
+.verify{display:flex;flex-direction:column;align-items:center;text-align:center;padding:clamp(18px,calc(1.6*var(--u)),calc(30px*var(--k))) 0}
+.verify .ring{position:relative;width:clamp(72px,calc(5.2*var(--u)),calc(96px*var(--k)));height:clamp(72px,calc(5.2*var(--u)),calc(96px*var(--k)));margin-bottom:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))}
+.verify .ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.verify .ring circle{fill:none;stroke-width:6;stroke-linecap:round}
+.verify .ring .bg2{stroke:rgba(255,255,255,.14)}
+.verify .ring .arc{stroke:#4FA3E0;stroke-dasharray:160;stroke-dashoffset:120;animation:spin 1.1s linear infinite;transform-origin:50% 50%}
+@keyframes spin{to{transform:rotate(360deg)}}
+.verify h3{margin:0}
+.verify .steps{display:flex;flex-direction:column;gap:10px;margin-top:clamp(18px,calc(1.5*var(--u)),calc(28px*var(--k)));width:100%;max-width:26em;text-align:left}
+.verify .steps div{display:flex;align-items:center;gap:12px;font-size:clamp(13px,calc(.9*var(--u)),calc(16px*var(--k)));color:var(--muted)}
+.verify .steps .dot{width:9px;height:9px;border-radius:50%;background:var(--line2);flex:none}
+.verify .steps .on{color:var(--ink)}
+.verify .steps .on .dot{background:#4FA3E0;box-shadow:0 0 0 5px rgba(79,163,224,.18);animation:breathe 1.4s ease-in-out infinite}
+.verify .steps .done{color:var(--good)}
+.verify .steps .done .dot{background:var(--good)}
 .waiting{display:flex;align-items:center;gap:12px;margin-top:16px;font-size:clamp(13px,calc(.88*var(--u)),calc(16px*var(--k)));color:var(--muted)}
 .waiting .dot{width:8px;height:8px;border-radius:50%;background:#4FA3E0;flex:none;animation:breathe 1.2s ease-in-out infinite}
 .success .tick{width:clamp(56px,calc(3.6*var(--u)),calc(68px*var(--k)));height:clamp(56px,calc(3.6*var(--u)),calc(68px*var(--k)));border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;margin-bottom:18px}
@@ -857,6 +872,7 @@ function render() {
     main.style.display = 'none';
     foot.insertAdjacentHTML('beforebegin', renderResult());
     ensureSubmitted().catch(() => {});
+    if (S.verifying && S.booking.hold) { showQr(); startPolling(); }
   } else {
     main.style.display = '';
     main.innerHTML = `<div class="screen">${M}</div>`;
@@ -1268,6 +1284,27 @@ const DOW_SHORT = ['ne', 'po', 'út', 'st', 'čt', 'pá', 'so'];
 const MON = ['ledna', 'února', 'března', 'dubna', 'května', 'června', 'července', 'srpna', 'září', 'října', 'listopadu', 'prosince'];
 let slotCache = null, pollTimer = null;
 
+function verifyHTML() {
+  const steps = [
+    ['Platba přijata', 0],
+    ['Potvrzujeme termín v kalendáři', 1],
+    ['Posíláme potvrzení na e-mail', 2]
+  ];
+  const cur = S.verifyStep || 0;
+  return `<div class="verify">
+    <div class="ring"><svg viewBox="0 0 64 64" aria-hidden="true">
+      <circle class="bg2" cx="32" cy="32" r="27"></circle>
+      <circle class="arc" cx="32" cy="32" r="27"></circle></svg></div>
+    <span class="eyebrow">Zpracováváme platbu</span>
+    <h3>Ještě chviličku</h3>
+    <p class="lead" style="margin-top:12px">Ověřujeme platbu a potvrzujeme Váš termín. Nezavírejte prosím tuto stránku.</p>
+    <div class="steps">${steps.map(([t, i]) => {
+      const cls = i < cur ? 'done' : i === cur ? 'on' : '';
+      return `<div class="${cls}"><span class="dot"></span><span>${esc(t)}</span></div>`;
+    }).join('')}</div>
+  </div>`;
+}
+
 function bookingHTML() {
   const B = S.booking;
   if (B.paid) {
@@ -1278,6 +1315,7 @@ function bookingHTML() {
       <p class="lead" style="margin-top:12px">Potvrzení a pozvánku do kalendáře jsme poslali na <b style="color:var(--ink)">${esc(S.a.email)}</b>. Den před konzultací Vám přijde SMS připomínka.</p>
       <p class="fine" style="margin-top:16px">Potřebujete termín změnit? Zavolejte nám na ${esc(CFG.phone)}.</p></div>`;
   }
+  if (S.verifying && B.hold) return verifyHTML();
   if (B.hold) return paymentHTML();
   if (B.declined) {
     return `<span class="eyebrow">Rozumíme</span><h3>Žádný spěch</h3>
@@ -1342,12 +1380,12 @@ function paymentHTML() {
       <p class="small-caps" style="margin-bottom:12px">Vyberte způsob platby</p>
       ${h.checkoutUrl ? `<div class="payopt">
         <div class="payhead"><b>Kartou, Apple Pay nebo Google Pay</b><span class="paytag fast">Potvrzení hned</span></div>
-        <a class="btn pri" href="${esc(h.checkoutUrl)}">Zaplatit kartou</a>
+        <a class="btn pri" href="${esc(h.checkoutUrl)}" onclick="this.textContent='Přesměrováváme…';this.style.pointerEvents='none'">Zaplatit kartou</a>
         <p class="fine" style="margin-top:10px">Přesměrujeme Vás na zabezpečenou platební bránu Stripe. Po zaplacení je termín okamžitě potvrzený.</p>
       </div>
       <div class="paysep">nebo</div>` : ''}
       <div class="payopt">
-        <div class="payhead"><b>Převodem přes QR kód</b><span class="paytag slow">Do 30 minut</span></div>
+        <div class="payhead"><b>Převodem přes QR kód</b><span class="paytag slow">Do 10 minut</span></div>
         <div class="qrwrap"><div class="qr" id="payQr" aria-label="QR platba"></div>
           <dl><dt>Částka</dt><dd>${fmt(h.amount || CFG.price)} Kč</dd>
             <dt>Účet</dt><dd>${esc(h.account || '2801448429/2010')}</dd>
@@ -1485,13 +1523,35 @@ async function showQr() {
 function startPolling() {
   clearInterval(pollTimer);
   if (!CFG.apiUrl || !S.booking.hold) return;
+  // Po návratu z platební brány se ptáme často, ať člověk nečeká u prázdné obrazovky.
+  const fast = !!S.verifying;
+  let ticks = 0;
   pollTimer = setInterval(async () => {
+    ticks++;
+    if (S.verifying) { S.verifyStep = Math.min(2, Math.floor(ticks / 3)); rerenderPanel(); }
     try {
       const j = await api('payStatus', { vs: S.booking.hold.vs }, 15000);
-      if (j.paid) { clearInterval(pollTimer); S.booking.paid = true; rerenderPanel(); }
-      else if (j.expired) { clearInterval(pollTimer); S.booking.hold = null; S.booking.slot = null; slotCache = null; rerenderPanel(); loadSlots(); }
+      if (j.paid) {
+        clearInterval(pollTimer);
+        S.verifying = false;
+        S.booking.paid = true;
+        if (j.slot) S.booking.slot = j.slot;
+        if (j.type) S.booking.type = j.type;
+        if (j.meet) S.booking.meet = j.meet;
+        if (j.email && !S.a.email) S.a.email = j.email;
+        rerenderPanel();
+      } else if (j.expired) {
+        clearInterval(pollTimer);
+        S.verifying = false;
+        S.booking.hold = null; S.booking.slot = null; slotCache = null;
+        rerenderPanel(); loadSlots();
+      } else if (fast && ticks > 40) {
+        // po dvou minutách přepneme zpět na platební panel, ať člověk vidí QR i kartu
+        clearInterval(pollTimer);
+        S.verifying = false; rerenderPanel(); startPolling();
+      }
     } catch (e) {}
-  }, CFG.pollMs);
+  }, fast ? 3000 : CFG.pollMs);
 }
 
 /* ---------- odeslání na backend ---------- */
@@ -1574,6 +1634,13 @@ function fillDemo() {
 /* ---------- start ---------- */
 if (CFG.demo) { fillDemo(); const t = document.createElement('div'); t.className = 'demo-tag'; t.textContent = 'Ukázková data'; document.body.appendChild(t); }
 else load();
+// Návrat z platební brány zpět na výsledky: rovnou ukážeme ověřování platby.
+const paidVs = URLP.get('paid');
+if (paidVs && S.booking && !S.booking.paid) {
+  if (!S.booking.hold || S.booking.hold.vs !== paidVs) S.booking.hold = { vs: paidVs, amount: CFG.price };
+  S.verifying = true; S.verifyStep = 0;
+  S.cur = 'result';
+}
 if (S.cur === 'generating') S.cur = 'contact';
 render();
 </script>
