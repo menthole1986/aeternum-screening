@@ -398,6 +398,17 @@ input:autofill{background:transparent;color:var(--ink)}
 @media (max-width:560px){.qrwrap{grid-template-columns:1fr;justify-items:center}.qrwrap dl{width:100%}}
 .decline{margin-top:clamp(20px,calc(1.8*var(--u)),calc(32px*var(--k)));padding-top:clamp(16px,calc(1.4*var(--u)),calc(24px*var(--k)));border-top:1px solid var(--line);text-align:center}
 .decline .fine{margin-top:8px}
+/* načítání: kostra termínů a spinner v tlačítku */
+@keyframes shimmer{0%{background-position:-420px 0}100%{background-position:420px 0}}
+.skel{border-radius:12px;background:linear-gradient(90deg,rgba(255,255,255,.05) 25%,rgba(255,255,255,.12) 50%,rgba(255,255,255,.05) 75%);background-size:420px 100%;animation:shimmer 1.3s linear infinite}
+.skel-days{display:flex;gap:8px;margin-top:18px}
+.skel-days .skel{height:58px;min-width:74px;flex:none;border-radius:14px}
+.skel-times{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px;margin-top:16px}
+.skel-times .skel{height:48px}
+.skel-note{display:flex;align-items:center;gap:10px;margin-top:16px;font-size:clamp(13px,calc(.88*var(--u)),calc(16px*var(--k)));color:var(--muted)}
+.sp{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;animation:spin .8s linear infinite;flex:none}
+.sp.dark{border-color:rgba(79,163,224,.25);border-top-color:#4FA3E0}
+.btn .sp{margin-right:10px}
 .verify{display:flex;flex-direction:column;align-items:center;text-align:center;padding:clamp(18px,calc(1.6*var(--u)),calc(30px*var(--k))) 0}
 .verify .ring{position:relative;width:clamp(72px,calc(5.2*var(--u)),calc(96px*var(--k)));height:clamp(72px,calc(5.2*var(--u)),calc(96px*var(--k)));margin-bottom:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))}
 .verify .ring svg{width:100%;height:100%;transform:rotate(-90deg)}
@@ -1346,7 +1357,12 @@ function bookingHTML() {
 }
 
 function slotsHTML() {
-  if (!slotCache) { loadSlots(); return `<p class="emptyslots">Načítám volné termíny…</p>`; }
+  if (!slotCache) {
+    loadSlots();
+    return `<div class="skel-days">${[0,1,2,3,4,5,6].map(() => '<div class="skel"></div>').join('')}</div>
+      <div class="skel-times">${[0,1,2,3,4,5].map(() => '<div class="skel"></div>').join('')}</div>
+      <p class="skel-note"><span class="sp dark"></span><span>Hledám volné termíny v kalendáři…</span></p>`;
+  }
   if (!slotCache.length) return `<p class="emptyslots">V nejbližších ${CFG.leadDays} dnech už nemám volno. Zavolejte nám prosím na ${esc(CFG.phone)}, termín najdeme.</p>`;
   const days = [...new Set(slotCache.map(s => s.slice(0, 10)))];
   const sel = S.booking.day && days.includes(S.booking.day) ? S.booking.day : days[0];
@@ -1482,7 +1498,14 @@ async function submitBooking(btn) {
   if (!S.booking.slot) return err('Vyberte prosím čas konzultace.');
   if (!/^\+?[\d\s]{9,16}$/.test((S.a.phone || '').trim())) return err('Telefon zadejte ve tvaru +420 777 123 456.');
   if (!S.a.bookConsent) return err('Pro rezervaci je potřeba souhlas.');
-  btn.disabled = true; btn.textContent = 'Rezervuji…';
+  btn.disabled = true;
+  btn.innerHTML = '<span class="sp"></span>Blokuji termín…';
+  const wait = document.createElement('p');
+  wait.className = 'fine';
+  wait.style.textAlign = 'center';
+  wait.textContent = 'Držíme pro Vás termín a připravujeme platbu, chvilku strpení.';
+  btn.insertAdjacentElement('afterend', wait);
+  const cleanup = () => { wait.remove(); btn.innerHTML = 'Rezervovat termín'; };
   try {
     const id = await ensureSubmitted();
     let hold;
@@ -1499,7 +1522,7 @@ async function submitBooking(btn) {
     S.booking.hold = hold;
     rerenderPanel();
   } catch (x) {
-    btn.disabled = false; btn.textContent = 'Rezervovat termín';
+    btn.disabled = false; cleanup();
     err(bookError(x));
     if (x && x.code === 'slot_taken') { slotCache = null; S.booking.slot = null; loadSlots(); }
   }
