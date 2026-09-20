@@ -51,14 +51,14 @@ main > .screen{width:100%}
 
 /* logo */
 .logo{display:flex;align-items:center;gap:clamp(12px,calc(1.15*var(--u)),calc(22px*var(--k)));text-decoration:none;color:inherit}
-.logo svg{width:clamp(46px,calc(3.45*var(--u)),calc(66px*var(--k)));height:clamp(46px,calc(3.45*var(--u)),calc(66px*var(--k)));fill:none;stroke:#6B3A96;stroke-width:6.5;flex:none}
+.logo svg{width:clamp(40px,calc(2.95*var(--u)),calc(56px*var(--k)));height:clamp(40px,calc(2.95*var(--u)),calc(56px*var(--k)));fill:none;stroke:#6B3A96;stroke-width:6.5;flex:none}
 .logo .wm{display:flex;flex-direction:column;gap:4px}
-.logo .wm b{font-size:clamp(21px,calc(1.62*var(--u)),calc(31px*var(--k)));font-weight:600;letter-spacing:.035em;line-height:1;background:linear-gradient(90deg,#6E3D9C,#2F7FC4);-webkit-background-clip:text;background-clip:text;color:transparent}
-.logo .wm span{font-size:clamp(9px,calc(.68*var(--u)),calc(13px*var(--k)));letter-spacing:.44em;color:#6B4A9A;font-weight:500;line-height:1}
-.logo.big svg{width:clamp(62px,calc(6.15*var(--u)),calc(118px*var(--k)));height:clamp(62px,calc(6.15*var(--u)),calc(118px*var(--k)))}
+.logo .wm b{font-size:clamp(18px,calc(1.38*var(--u)),calc(26px*var(--k)));font-weight:600;letter-spacing:.035em;line-height:1;background:linear-gradient(90deg,#6E3D9C,#2F7FC4);-webkit-background-clip:text;background-clip:text;color:transparent}
+.logo .wm span{font-size:clamp(8px,calc(.58*var(--u)),calc(11px*var(--k)));letter-spacing:.44em;color:#6B4A9A;font-weight:500;line-height:1}
+.logo.big svg{width:clamp(54px,calc(5.25*var(--u)),calc(100px*var(--k)));height:clamp(54px,calc(5.25*var(--u)),calc(100px*var(--k)))}
 .logo.big .wm{gap:6px}
-.logo.big .wm b{font-size:clamp(28px,calc(2.8*var(--u)),calc(54px*var(--k)))}
-.logo.big .wm span{font-size:clamp(12px,calc(1.25*var(--u)),calc(24px*var(--k)))}
+.logo.big .wm b{font-size:clamp(24px,calc(2.4*var(--u)),calc(46px*var(--k)))}
+.logo.big .wm span{font-size:clamp(10px,calc(1.05*var(--u)),calc(20px*var(--k)))}
 
 .contacts{display:flex;gap:clamp(18px,calc(2.3*var(--u)),calc(44px*var(--k)))}
 .contacts a{display:block;width:clamp(30px,calc(2.2*var(--u)),calc(42px*var(--k)));height:clamp(30px,calc(2.2*var(--u)),calc(42px*var(--k)))}
@@ -361,6 +361,9 @@ body.fixed main{min-height:0;overflow:hidden}
 .emptyslots{margin-top:16px;font-size:14px;color:var(--muted);line-height:1.6}
 .bform{display:flex;flex-direction:column;gap:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)));margin-top:clamp(20px,calc(1.6*var(--u)),calc(30px*var(--k)))}
 .bform .ufrow{margin-top:0}
+.picked{display:flex;gap:10px;align-items:center;font-size:clamp(13px,calc(.92*var(--u)),calc(17px*var(--k)));color:var(--ink)}
+.picked svg{width:calc(18px*var(--k));height:calc(18px*var(--k));flex:none;stroke:var(--good);fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.picked b{font-weight:700}
 .hold{display:flex;gap:12px;align-items:flex-start;margin-top:18px;padding:14px 16px;border-radius:16px;border:1px solid rgba(242,180,90,.35);background:rgba(242,180,90,.07);font-size:clamp(13px,calc(.9*var(--u)),calc(16px*var(--k)));line-height:1.55;color:var(--ink)}
 .hold .dot{width:8px;height:8px;border-radius:50%;background:var(--warn);flex:none;margin-top:.5em;animation:breathe 1.6s ease-in-out infinite}
 .summ{display:grid;grid-template-columns:auto 1fr;gap:8px 18px;margin:18px 0 0;font-size:clamp(14px,calc(.95*var(--u)),calc(18px*var(--k)))}
@@ -453,7 +456,7 @@ body.fixed main{min-height:0;overflow:hidden}
 
 const URLP = new URLSearchParams(location.search);
 const CFG = {
-  apiUrl: '',                                   // webová aplikace z aeternum_screening_apps_script.gs
+  apiUrl: 'https://script.google.com/macros/s/AKfycby5mSooRjSpT8CUoaQzhJLW60VzvJwva3e7nLnlLqDBG5FsKBdp70ykk9wO9fE5130p/exec',                                   // webová aplikace z aeternum_screening_apps_script.gs
   src: (URLP.get('src') || 'web').toLowerCase(),
   demo: URLP.get('demo') === '1',
   price: 490,                                   // vstupní konzultace
@@ -1299,15 +1302,20 @@ function slotsHTML() {
       const dt = new Date(t);
       return `<button type="button" class="time" data-slot="${t}" aria-pressed="${S.booking.slot === t}">${pad2(dt.getHours())}:${pad2(dt.getMinutes())}</button>`;
     }).join('')}</div>
-    ${S.booking.slot ? bookFormHTML() : ''}`;
+    ${bookFormHTML()}`;
 }
 
 function bookFormHTML() {
+  const slot = S.booking.slot ? new Date(S.booking.slot) : null;
+  const pick = slot
+    ? `<p class="picked">${icon('i-check')}<span>Vybráno: <b>${DOW[slot.getDay()]} ${slot.getDate()}. ${slot.getMonth() + 1}.</b> v <b>${pad2(slot.getHours())}:${pad2(slot.getMinutes())}</b></span></p>`
+    : `<p class="fine">Vyberte si čas výše a pak rezervaci potvrďte.</p>`;
   return `<div class="bform">
+    ${pick}
     <div class="ufrow one">${ufHTML('phone', 'Telefon', { type: 'tel', inputmode: 'tel', autocomplete: 'tel', placeholder: '+420 777 123 456' })}</div>
     <p class="fine">Telefon potřebujeme na SMS připomínku 24 hodin před konzultací.</p>
     ${cboxHTML('c-book', S.a.bookConsent, 'Souhlasím, aby mě Aeternum Clinic kontaktovala ohledně rezervované konzultace.', 'bookConsent')}
-    <button type="button" class="btn pri" id="bookBtn">Rezervovat termín</button>
+    <button type="button" class="btn pri" id="bookBtn"${slot ? '' : ' disabled'}>Rezervovat termín</button>
     <span class="err" id="bookErr" role="alert"></span></div>`;
 }
 
@@ -1386,6 +1394,7 @@ const localIso = d => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.get
 async function submitBooking(btn) {
   const err = m => { const el = $('#bookErr'); if (el) el.textContent = m; };
   err('');
+  if (!S.booking.slot) return err('Vyberte prosím čas konzultace.');
   if (!/^\+?[\d\s]{9,16}$/.test((S.a.phone || '').trim())) return err('Telefon zadejte ve tvaru +420 777 123 456.');
   if (!S.a.bookConsent) return err('Pro rezervaci je potřeba souhlas.');
   btn.disabled = true; btn.textContent = 'Rezervuji…';
