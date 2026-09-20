@@ -326,9 +326,10 @@ input:autofill{background:transparent;color:var(--ink)}
 .ben.hl svg{stroke:var(--good)}
 
 /* varianty programu */
-.vars{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(12px,calc(1.1*var(--u)),calc(20px*var(--k)));margin-top:clamp(22px,calc(2*var(--u)),calc(38px*var(--k)))}
-@media (max-width:760px){.vars{grid-template-columns:1fr}}
-.var{position:relative;border:1px solid var(--line);border-radius:clamp(18px,calc(1.5*var(--u)),calc(28px*var(--k)));padding:clamp(20px,calc(1.8*var(--u)),calc(32px*var(--k))) clamp(14px,calc(1.2*var(--u)),calc(22px*var(--k)));text-align:center;background:rgba(255,255,255,.025)}
+.vars{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(22px,calc(1.6*var(--u)),calc(30px*var(--k)));margin-top:clamp(30px,calc(2.4*var(--u)),calc(44px*var(--k)))}
+@media (max-width:760px){.vars{grid-template-columns:1fr;row-gap:34px}}
+.var{position:relative;border:1px solid var(--line);border-radius:clamp(18px,calc(1.5*var(--u)),calc(28px*var(--k)));padding:clamp(26px,calc(2.2*var(--u)),calc(38px*var(--k))) clamp(18px,calc(1.5*var(--u)),calc(26px*var(--k)));text-align:center;background:rgba(255,255,255,.025)}
+.var.rec{padding-top:clamp(32px,calc(2.6*var(--u)),calc(44px*var(--k)))}
 .var.rec{border-color:rgba(122,62,158,.75);background:linear-gradient(180deg,rgba(122,62,158,.16),rgba(47,134,204,.06))}
 .var .badge{position:absolute;top:0;left:50%;transform:translate(-50%,-50%);background:var(--grad);color:#fff;font-size:clamp(10px,calc(.68*var(--u)),calc(12px*var(--k)));font-weight:700;letter-spacing:.12em;padding:5px 12px;border-radius:999px;white-space:nowrap}
 .var .emoji{font-size:clamp(20px,calc(1.5*var(--u)),calc(26px*var(--k)));line-height:1}
@@ -383,7 +384,8 @@ input:autofill{background:transparent;color:var(--ink)}
 .payopt{border:1px solid var(--line2);border-radius:20px;padding:clamp(16px,calc(1.3*var(--u)),calc(24px*var(--k)))}
 .payopt + .paysep{display:flex;align-items:center;gap:14px;margin:14px 0;color:var(--dim);font-size:clamp(10px,calc(.7*var(--u)),calc(12px*var(--k)));letter-spacing:.24em;font-weight:700}
 .paysep::before,.paysep::after{content:"";flex:1;height:1px;background:var(--line)}
-.payhead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:12px}
+.payhead{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;margin-bottom:14px}
+.payhead .fine{max-width:34em}
 .payhead b{font-size:clamp(14px,calc(1*var(--u)),calc(19px*var(--k)));font-weight:700}
 .paytag{font-size:clamp(10px,calc(.7*var(--u)),calc(12px*var(--k)));letter-spacing:.12em;text-transform:uppercase;font-weight:700;padding:4px 10px;border-radius:999px;white-space:nowrap}
 .paytag.fast{color:var(--good);border:1px solid rgba(94,211,160,.45)}
@@ -397,6 +399,10 @@ input:autofill{background:transparent;color:var(--ink)}
 .qrwrap dd{margin:0;font-weight:700;font-variant-numeric:tabular-nums;text-align:right}
 @media (max-width:560px){.qrwrap{grid-template-columns:1fr;justify-items:center}.qrwrap dl{width:100%}}
 .decline{margin-top:clamp(20px,calc(1.8*var(--u)),calc(32px*var(--k)));padding-top:clamp(16px,calc(1.4*var(--u)),calc(24px*var(--k)));border-top:1px solid var(--line);text-align:center}
+.linklike{background:none;border:0;padding:6px 4px;color:var(--dim);font-size:clamp(13px,calc(.85*var(--u)),calc(16px*var(--k)));font-weight:500;text-decoration:underline;text-underline-offset:4px;cursor:pointer}
+.linklike:hover{color:var(--ink)}
+.callback{margin-top:clamp(26px,calc(2.2*var(--u)),calc(40px*var(--k)));padding-top:clamp(20px,calc(1.8*var(--u)),calc(30px*var(--k)));border-top:1px solid var(--line)}
+.decline .btn{padding-left:clamp(26px,calc(2.2*var(--u)),calc(40px*var(--k)));padding-right:clamp(26px,calc(2.2*var(--u)),calc(40px*var(--k)))}
 .decline .fine{margin-top:8px}
 /* načítání: kostra termínů a spinner v tlačítku */
 @keyframes shimmer{0%{background-position:-420px 0}100%{background-position:420px 0}}
@@ -433,7 +439,7 @@ input:autofill{background:transparent;color:var(--ink)}
 .send-status.sending .dot{background:#4FA3E0;animation:breathe 1.2s ease-in-out infinite}
 .send-status.sent .dot{background:var(--good)}
 .send-status.failed .dot{background:var(--crit)}
-.disclaimer{padding:clamp(22px,calc(2.3*var(--u)),calc(44px*var(--k))) var(--gut) clamp(30px,calc(3*var(--u)),calc(60px*var(--k)));font-size:clamp(10px,calc(.62*var(--u)),calc(12px*var(--k)));color:var(--dim);line-height:1.6;border-top:1px solid rgba(255,255,255,.08);position:relative;z-index:1}
+.disclaimer{padding:clamp(22px,calc(2.3*var(--u)),calc(44px*var(--k))) var(--gut) clamp(30px,calc(3*var(--u)),calc(60px*var(--k)));font-size:clamp(10px,calc(.62*var(--u)),calc(12px*var(--k)));color:var(--dim);line-height:1.7;border-top:1px solid rgba(255,255,255,.08);position:relative;z-index:1;text-align:center;max-width:76em;margin:0 auto}
 .demo-tag{position:fixed;right:12px;bottom:12px;z-index:60;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;background:var(--warn);color:#1a1300;padding:5px 9px;border-radius:6px}
 
 @media (max-width:760px){
@@ -507,14 +513,14 @@ input:autofill{background:transparent;color:var(--ink)}
 /* ── úpravy po kontrole na telefonu ── */
 .price-note{font-size:clamp(13px,calc(.95*var(--u)),calc(17px*var(--k)));color:var(--ink);font-weight:500;margin-top:10px;line-height:1.5}
 /* nadpis platby na jeden řádek, štítek pod něj */
-.payhead{flex-direction:column;align-items:flex-start;gap:8px}
+.payhead{flex-direction:column;align-items:center;gap:8px}
 .payhead b{font-size:clamp(13.5px,calc(.98*var(--u)),calc(19px*var(--k)));white-space:nowrap}
 @media (max-width:400px){.payhead b{font-size:13px}}
 @media (max-width:760px){
   /* „Termín držíme pro Vás“ na jeden řádek */
   .panel h3{font-size:21px}
   /* odmítnutí konzultace i s emoji na jeden řádek */
-  .decline .btn{font-size:11px;letter-spacing:.06em;white-space:nowrap;padding:14px 12px}
+  .decline .btn{font-size:11px;letter-spacing:.06em;white-space:nowrap;padding:14px 20px}
 }
 @media (max-width:380px){.decline .btn{font-size:10px}}
 </style>
@@ -903,10 +909,10 @@ function render() {
   } else if (st.key === 'contact') {
     setBg('g2');
     T = LOGO() + progressHTML('lifestyle');
-    const mt = 'Hotovo! Tahle stránka po zavření zmizí — v e-mailu Vám výsledky zůstanou.';
+    const mt = 'Výsledky Vašeho screeningu jsou připraveny. Po skončení Vám je pošleme taky na e-mail, ať je máte kdykoli po ruce.';
     M = `<div class="split">${marcelCol(esc(mt))}
       <div>${marcelHead(esc(mt))}
-        <p class="qtext">Kam Vám pošleme výsledky?</p>
+        <p class="qtext">Kam je můžeme zaslat?</p>
         <div class="ufrow">
           ${ufHTML('firstName', 'Jméno a příjmení', { type: 'text', placeholder: 'Jana Nováková', autocomplete: 'name' })}
           ${ufHTML('email', 'E-mail', { type: 'email', placeholder: 'jana@email.cz', autocomplete: 'email' })}
@@ -1290,7 +1296,7 @@ function renderResult() {
 
   <section class="rsec" id="cta"><div class="split">
     <div><span class="eyebrow">Další krok</span><h2 class="h-l">Vstupní<br><span class="light">konzultace</span></h2>
-      <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(28px*var(--k)))">S koordinátorem péče společně proberete:</p>
+      <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(28px*var(--k)))">S koordinátorem péče, se kterým společně proberete:</p>
       <div class="bul"><div>Individuální nastavení Vašeho programu</div><div>Podmínky smlouvy o programu péče</div><div>Možnosti financování programu</div></div>
       <p class="notice"><span>⚠️</span><span>Pro posouzení vhodnosti terapie je nutné podstoupit vstupní screening a lékařské vyšetření (5 570 Kč).</span></p></div>
     <div class="panel" id="panel">${bookingHTML()}</div>
@@ -1324,7 +1330,7 @@ function variantsHTML(R) {
       <div class="ds">${esc(v.desc)}</div></div>`).join('')}</div>`;
 }
 
-const DISCLAIMER = `<div class="disclaimer">Aeternum GLP-1 Screening je orientační vyhodnocení na základě Vašich odpovědí, není lékařským vyšetřením ani diagnózou a nenahrazuje konzultaci s lékařem, který jediný rozhoduje o vhodnosti léků Wegovy® a Mounjaro® vázaných na lékařský předpis · Aeternum Clinic · My Design Creatives s.r.o. · IČO 07162235 · Chlumčanského 497/5, 180 00 Praha 8 · info@aeternumclinic.cz · <a href="${CFG.gdprUrl}" target="_blank" rel="noopener" style="color:var(--dim)">Zásady zpracování osobních údajů</a></div>`;
+const DISCLAIMER = `<div class="disclaimer">Aeternum GLP-1 Screening je orientační vyhodnocení na základě Vašich odpovědí, není lékařským vyšetřením ani diagnózou a nenahrazuje konzultaci s lékařem, který jediný rozhoduje o vhodnosti léků Wegovy® a Mounjaro® vázaných na lékařský předpis.<br>Aeternum Clinic, My Design Creatives s.r.o., IČO 07162235, Chlumčanského 497/5, 180 00 Praha 8<br>info@aeternumclinic.cz<br><a href="${CFG.gdprUrl}" target="_blank" rel="noopener" style="color:var(--dim)">Zásady zpracování osobních údajů</a></div>`;
 
 function chartSVG(startW, endW, months) {
   const W = 620, H = 200, pad = { t: 22, r: 64, b: 26, l: 56 };
@@ -1397,9 +1403,23 @@ function bookingHTML() {
   if (S.verifying && B.hold) return verifyHTML();
   if (B.hold) return paymentHTML();
   if (B.declined) {
+    if (B.callbackDone) {
+      return `<div class="success"><div class="tick">${icon('i-check')}</div><span class="eyebrow">Máme to</span>
+        <h3>Ozveme se Vám</h3>
+        <p class="lead" style="margin-top:14px">Zavoláme Vám nejpozději následující pracovní den na <b style="color:var(--ink)">${esc(S.a.phone)}</b>. Rádi zodpovíme cokoli k programu i k ceně.</p>
+        <p class="fine" style="margin-top:16px">Nechcete čekat? Zavolejte nám rovnou na ${esc(CFG.phone)}.</p>
+        <button type="button" class="btn pri" style="margin-top:clamp(20px,calc(1.8*var(--u)),calc(32px*var(--k)))" data-act="rebook">Přece jen chci termín</button></div>`;
+    }
     return `<span class="eyebrow">Rozumíme</span><h3>Žádný spěch</h3>
       <p class="lead" style="margin-top:14px">Výsledky Vašeho screeningu jsme Vám poslali na e-mail, takže se k nim můžete kdykoli vrátit a termín vstupní konzultace si zarezervujete jedním kliknutím.</p>
-      <button type="button" class="btn pri" style="margin-top:clamp(20px,calc(1.8*var(--u)),calc(32px*var(--k)))" data-act="rebook">Přece jen chci termín</button>`;
+      <button type="button" class="btn pri" style="margin-top:clamp(20px,calc(1.8*var(--u)),calc(32px*var(--k)))" data-act="rebook">Přece jen chci termín</button>
+      <div class="callback"><p class="small-caps">Máte otázku?</p>
+        <p class="lead" style="margin-top:10px">Nechte nám telefon a ozveme se Vám. Probereme program, cenu i to, jestli je pro Vás vhodný.</p>
+        <div class="ufrow one" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))">${ufHTML('phone', 'Telefon', { type: 'tel', inputmode: 'tel', autocomplete: 'tel', placeholder: '+420 777 123 456' })}</div>
+        ${cboxHTML('c-call', S.a.callConsent, 'Souhlasím, aby mě Aeternum Clinic telefonicky kontaktovala ohledně programu péče.', 'callConsent')}
+        <button type="button" class="btn ghost" id="callBtn" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))">Ozvěte se mi</button>
+        <span class="err" id="callErr" role="alert"></span>
+        <p class="fine" style="margin-top:12px">Nebo rovnou zavolejte na ${esc(CFG.phone)}.</p></div>`;
   }
 
   const type = B.type;
@@ -1411,8 +1431,7 @@ function bookingHTML() {
       <button type="button" data-btype="osobne" aria-pressed="${type === 'osobne'}">Osobně v Praze</button>
     </div>
     ${type ? slotsHTML() : `<p class="fine" style="margin-top:16px">Vyberte formu konzultace pro zobrazení volných termínů.</p>`}
-    <div class="decline"><button type="button" class="btn soft-crit" data-act="decline">Nechci vstupní konzultaci 😔</button>
-      <p class="fine">Ještě si to musím rozmyslet</p></div>`;
+    <div class="decline"><button type="button" class="linklike" data-act="decline">Teď termín nechci</button></div>`;
 }
 
 function slotsHTML() {
@@ -1470,12 +1489,11 @@ function paymentHTML() {
       </div>
       <div class="paysep">nebo</div>` : ''}
       <div class="payopt">
-        <div class="payhead"><b>Převodem přes QR kód</b><span class="paytag slow">Do 5 minut</span></div>
+        <div class="payhead"><b>Převodem přes QR kód</b><p class="fine">Naskenujte QR kód v bankovní aplikaci. Zvolte možnost okamžité platby. Platbu obdržíme obvykle ihned.</p></div>
         <div class="qrwrap"><div class="qr" id="payQr" aria-label="QR platba"></div>
           <dl><dt>Částka</dt><dd>${fmt(h.amount || CFG.price)} Kč</dd>
             <dt>Účet</dt><dd>${esc(h.account || '2801448429/2010')}</dd>
             <dt>Var. symbol</dt><dd>${esc(h.vs)}</dd></dl></div>
-        <p class="fine" style="margin-top:12px">Naskenujte QR kód v bankovní aplikaci. Zvolte možnost okamžité platby. Platbu obdržíme obvykle ihned.</p>
       </div>
     </div>
     <div class="waiting"><span class="dot"></span><span id="payWait">Čekám na platbu…</span></div>`;
@@ -1496,6 +1514,7 @@ document.addEventListener('click', async e => {
   if (b.dataset.day) { S.booking.day = b.dataset.day; S.booking.slot = null; rerenderPanel(); return; }
   if (b.dataset.slot) { S.booking.slot = b.dataset.slot; rerenderPanel(); return; }
   if (b.id === 'bookBtn') { await submitBooking(b); return; }
+  if (b.id === 'callBtn') { await submitCallback(b); return; }
 });
 
 async function loadSlots() {
@@ -1647,6 +1666,29 @@ function startPolling() {
 }
 
 /* ---------- odeslání na backend ---------- */
+// Žádost o zpětné volání z obrazovky po odmítnutí termínu.
+async function submitCallback(btn) {
+  const err = m => { const el = $('#callErr'); if (el) el.textContent = m; };
+  err('');
+  const phone = String(S.a.phone || '').trim();
+  if (!/^\+?[\d\s]{9,16}$/.test(phone)) return err('Telefon zadejte ve tvaru +420 777 123 456.');
+  if (!S.a.callConsent) return err('Bez souhlasu Vám bohužel nemůžeme zavolat.');
+  const label = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Odesíláme…';
+  try {
+    if (CFG.apiUrl && !CFG.demo) {
+      const id = await ensureSubmitted();
+      await api('callback', { id: id, phone: phone, consent: true }, 20000);
+    }
+    S.booking.intent = 'Zpětné volání';
+    S.booking.callbackDone = true;
+    save(); rerenderPanel();
+  } catch (e) {
+    btn.disabled = false; btn.textContent = label;
+    err('Odeslání se nepodařilo. Zkuste to prosím znovu, nebo zavolejte na ' + CFG.phone + '.');
+  }
+}
+
 async function api(action, data, timeoutMs = 30000) {
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), timeoutMs);
