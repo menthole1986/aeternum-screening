@@ -493,7 +493,7 @@ const CFG = {
   apiUrl: 'https://script.google.com/macros/s/AKfycby5mSooRjSpT8CUoaQzhJLW60VzvJwva3e7nLnlLqDBG5FsKBdp70ykk9wO9fE5130p/exec',                                   // webová aplikace z aeternum_screening_apps_script.gs
   src: (URLP.get('src') || 'web').toLowerCase(),
   demo: URLP.get('demo') === '1',
-  price: 490,                                   // vstupní konzultace
+  price: 570,                                   // vstupní konzultace
   duration: 30,                                 // minut
   site: 'https://www.aeternumclinic.cz',
   holdMinutes: 120,                             // jak dlouho držíme termín bez platby
@@ -1335,6 +1335,7 @@ function bookingHTML() {
   const type = B.type;
   return `<span class="eyebrow">Vstupní konzultace</span><h3>Rezervace termínu</h3>
     <div class="price"><b>${fmt(CFG.price)} Kč</b><span class="small-caps">${CFG.duration} minut</span></div>
+    <p class="fine" style="margin-top:10px">Částku ${fmt(CFG.price)} Kč Vám odečteme z ceny programu péče.</p>
     <div class="seg2" role="group" aria-label="Forma konzultace">
       <button type="button" data-btype="online" aria-pressed="${type === 'online'}">Online</button>
       <button type="button" data-btype="osobne" aria-pressed="${type === 'osobne'}">Osobně v Praze</button>
