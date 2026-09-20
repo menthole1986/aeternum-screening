@@ -364,7 +364,7 @@ body.fixed main{min-height:0;overflow:hidden}
 .picked{display:flex;gap:10px;align-items:center;font-size:clamp(13px,calc(.92*var(--u)),calc(17px*var(--k)));color:var(--ink)}
 .picked svg{width:calc(18px*var(--k));height:calc(18px*var(--k));flex:none;stroke:var(--good);fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
 .picked b{font-weight:700}
-.hold{display:flex;gap:12px;align-items:flex-start;margin-top:18px;padding:14px 16px;border-radius:16px;border:1px solid rgba(242,180,90,.35);background:rgba(242,180,90,.07);font-size:clamp(13px,calc(.9*var(--u)),calc(16px*var(--k)));line-height:1.55;color:var(--ink)}
+.hold{display:flex;gap:12px;align-items:flex-start;margin-top:18px;padding:14px 16px;border-radius:16px;border:1px solid rgba(242,180,90,.35);background:rgba(242,180,90,.07);font-size:clamp(13px,calc(.9*var(--u)),calc(16px*var(--k)));line-height:1.55;color:var(--warn)}
 .hold .dot{width:8px;height:8px;border-radius:50%;background:var(--warn);flex:none;margin-top:.5em;animation:breathe 1.6s ease-in-out infinite}
 .summ{display:grid;grid-template-columns:auto 1fr;gap:8px 18px;margin:18px 0 0;font-size:clamp(14px,calc(.95*var(--u)),calc(18px*var(--k)))}
 .summ dt{color:var(--dim);font-size:clamp(10px,calc(.7*var(--u)),calc(13px*var(--k)));letter-spacing:.24em;text-transform:uppercase;font-weight:600;align-self:center}
@@ -1352,7 +1352,7 @@ function paymentHTML() {
           <dl><dt>Částka</dt><dd>${fmt(h.amount || CFG.price)} Kč</dd>
             <dt>Účet</dt><dd>${esc(h.account || '2801448429/2010')}</dd>
             <dt>Var. symbol</dt><dd>${esc(h.vs)}</dd></dl></div>
-        <p class="fine" style="margin-top:12px">Naskenujte QR kód v bankovní aplikaci. Platbu spárujeme automaticky, obvykle do 15–30 minut.</p>
+        <p class="fine" style="margin-top:12px">Naskenujte QR kód v bankovní aplikaci. Zvolte možnost okamžité platby. Platbu obdržíme obvykle ihned.</p>
       </div>
     </div>
     <div class="waiting"><span class="dot"></span><span id="payWait">Čekám na platbu…</span></div>`;
