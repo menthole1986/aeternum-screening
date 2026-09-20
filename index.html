@@ -1,0 +1,1534 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Aeternum Screening</title>
+<meta name="theme-color" content="#19191B">
+<meta name="description" content="Online screening GLP-1 programu Aeternum Clinic. Zjistěte, zda je pro vás terapie vhodná a jaký preparát odpovídá vašemu cíli.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  --ground:#19191B; --ink:#F4F4F6; --muted:rgba(244,244,246,.62); --dim:rgba(244,244,246,.40);
+  --line:rgba(255,255,255,.14); --line2:rgba(255,255,255,.24);
+  --grad:linear-gradient(90deg,#7A3E9E,#2F86CC);
+  --grad-135:linear-gradient(135deg,#7A3E9E,#2F86CC);
+  --grad-text:linear-gradient(90deg,#A27AD2,#4FA3E0);
+  --good:#5ED3A0; --ok:#B5D333; --warn:#F2B45A; --crit:#EE7A6D;
+  --gut:clamp(20px,calc(7.3*var(--u)),calc(140px*var(--k)));
+  --u:min(1vw,1.7778vh); --k:1;
+  --font:'Montserrat',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (min-width:2200px) and (min-height:1200px){:root{--k:1.35}}
+@media (min-width:3000px) and (min-height:1650px){:root{--k:2}}
+@media (max-width:760px){:root{--u:1vw}}
+html{-webkit-text-size-adjust:100%}
+html,body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--font)}
+body{min-height:100dvh;line-height:1.5}
+button,input,select{font:inherit;color:inherit}
+p{margin:0}
+:focus-visible{outline:2px solid #4FA3E0;outline-offset:3px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ---------- pozadí ---------- */
+.bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;background:var(--ground)}
+.bg svg.wave{position:absolute;inset:0;width:100%;height:100%}
+.glow{position:absolute;border-radius:50%;filter:blur(40px)}
+@media (max-width:760px){.bg .veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(25,25,27,.92) 0%,rgba(25,25,27,.7) 55%,rgba(25,25,27,.15) 100%)}}
+
+/* ---------- kostra ---------- */
+.app{position:relative;z-index:1;min-height:100dvh;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:clamp(18px,calc(3.1*var(--u)),calc(58px*var(--k))) var(--gut) 0}
+main{flex:1;display:flex;align-items:center;padding:clamp(28px,calc(3.2*var(--u)),calc(60px*var(--k))) var(--gut)}
+main > .screen{width:100%}
+.foot{padding:0 var(--gut) clamp(20px,calc(3.6*var(--u)),calc(70px*var(--k)));display:flex;flex-direction:column;gap:clamp(20px,calc(2.4*var(--u)),calc(44px*var(--k)))}
+.foot:empty{display:none}
+.screen{animation:rise .4s ease both}
+@keyframes rise{from{opacity:.001;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* logo */
+.logo{display:flex;align-items:center;gap:clamp(12px,calc(1.15*var(--u)),calc(22px*var(--k)));text-decoration:none;color:inherit}
+.logo svg{width:clamp(46px,calc(3.45*var(--u)),calc(66px*var(--k)));height:clamp(46px,calc(3.45*var(--u)),calc(66px*var(--k)));fill:none;stroke:#6B3A96;stroke-width:6.5;flex:none}
+.logo .wm{display:flex;flex-direction:column;gap:4px}
+.logo .wm b{font-size:clamp(21px,calc(1.62*var(--u)),calc(31px*var(--k)));font-weight:600;letter-spacing:.035em;line-height:1;background:linear-gradient(90deg,#6E3D9C,#2F7FC4);-webkit-background-clip:text;background-clip:text;color:transparent}
+.logo .wm span{font-size:clamp(9px,calc(.68*var(--u)),calc(13px*var(--k)));letter-spacing:.44em;color:#6B4A9A;font-weight:500;line-height:1}
+.logo.big svg{width:clamp(62px,calc(6.15*var(--u)),calc(118px*var(--k)));height:clamp(62px,calc(6.15*var(--u)),calc(118px*var(--k)))}
+.logo.big .wm{gap:6px}
+.logo.big .wm b{font-size:clamp(28px,calc(2.8*var(--u)),calc(54px*var(--k)))}
+.logo.big .wm span{font-size:clamp(12px,calc(1.25*var(--u)),calc(24px*var(--k)))}
+
+.contacts{display:flex;gap:clamp(18px,calc(2.3*var(--u)),calc(44px*var(--k)))}
+.contacts a{display:block;width:clamp(30px,calc(2.2*var(--u)),calc(42px*var(--k)));height:clamp(30px,calc(2.2*var(--u)),calc(42px*var(--k)))}
+.contacts svg{width:100%;height:100%}
+
+.prog{display:flex;flex-direction:column;align-items:flex-end;gap:14px}
+.prog .lbl{font-size:clamp(11px,calc(.8*var(--u)),calc(15px*var(--k)));letter-spacing:.32em;font-weight:600;color:var(--dim);white-space:nowrap}
+.prog .lbl b{color:var(--ink);font-weight:600}
+.segs{display:flex;gap:7px}
+.segs i{width:clamp(16px,calc(2*var(--u)),calc(38px*var(--k)));height:3px;border-radius:2px;background:rgba(255,255,255,.16)}
+.top-actions{display:flex;align-items:center;gap:14px}
+.linkbtn{background:none;border:0;padding:6px 0;color:var(--dim);font-size:clamp(11px,calc(.75*var(--u)),calc(13px*var(--k)));letter-spacing:.26em;font-weight:600;cursor:pointer;text-transform:uppercase}
+.linkbtn:hover{color:var(--ink)}
+@media (max-width:760px){.prog .lbl{display:none}}
+
+/* typografie */
+.eyebrow{display:inline-block;font-size:clamp(11px,calc(.85*var(--u)),calc(16px*var(--k)));font-weight:600;letter-spacing:.34em;text-transform:uppercase;background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
+.bar{display:block;width:clamp(64px,calc(5.2*var(--u)),calc(100px*var(--k)));height:4px;background:var(--grad)}
+.h-hero{margin:0;font-size:clamp(38px,calc(5*var(--u)),calc(96px*var(--k)));font-weight:700;line-height:1.02;letter-spacing:-.012em;text-wrap:balance}
+.light{font-weight:400;background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
+.h-xl{margin:clamp(10px,calc(1*var(--u)),calc(18px*var(--k))) 0 0;font-size:clamp(34px,calc(5.2*var(--u)),calc(104px*var(--k)));font-weight:700;line-height:1;letter-spacing:-.02em}
+.h-l{margin:clamp(10px,calc(1*var(--u)),calc(18px*var(--k))) 0 0;font-size:clamp(30px,calc(3.75*var(--u)),calc(72px*var(--k)));font-weight:700;line-height:1.06;letter-spacing:-.012em}
+.body-wide{font-size:clamp(15px,calc(1.35*var(--u)),calc(26px*var(--k)));font-weight:500;letter-spacing:.14em;line-height:1.62;color:rgba(244,244,246,.92);max-width:31em}
+.lead{font-size:clamp(15px,calc(1.15*var(--u)),calc(22px*var(--k)));font-weight:500;letter-spacing:.04em;line-height:1.62;color:var(--muted);max-width:30em}
+.small-caps{font-size:clamp(11px,calc(.8*var(--u)),calc(15px*var(--k)));letter-spacing:.3em;font-weight:600;color:var(--dim);text-transform:uppercase}
+@media (max-width:760px){.body-wide{letter-spacing:.05em}}
+
+/* tlačítka */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:12px;height:clamp(54px,calc(3.45*var(--u)),calc(66px*var(--k)));padding:0 clamp(26px,calc(2.4*var(--u)),calc(46px*var(--k)));border-radius:999px;border:0;font-size:clamp(13px,calc(.9*var(--u)),calc(17px*var(--k)));font-weight:700;letter-spacing:.22em;text-transform:uppercase;white-space:nowrap;cursor:pointer;transition:filter .15s,transform .1s,opacity .15s;text-decoration:none}
+.btn:active{transform:scale(.98)}
+.btn.pri{background:var(--grad);color:#fff}
+.btn.pri:hover{filter:brightness(1.12)}
+.btn.lime{background:#B0D43B;color:#0F1208}
+.btn.soft-crit{background:rgba(238,122,109,.12);border:1.5px solid rgba(238,122,109,.45);color:#F0A49B}
+.btn.soft-crit:hover{background:rgba(238,122,109,.2);border-color:rgba(238,122,109,.7);color:#F5BDB6}
+.btn.lime:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;border:1.5px solid rgba(255,255,255,.28);color:var(--ink)}
+.btn.ghost:hover{border-color:rgba(255,255,255,.55)}
+.btn.sm{height:clamp(44px,calc(2.7*var(--u)),calc(52px*var(--k)));padding:0 clamp(18px,calc(1.6*var(--u)),calc(30px*var(--k)));font-size:clamp(11px,calc(.73*var(--u)),calc(14px*var(--k)))}
+.btn[disabled]{opacity:.38;cursor:default}
+.round{width:clamp(54px,calc(3.45*var(--u)),calc(66px*var(--k)));height:clamp(54px,calc(3.45*var(--u)),calc(66px*var(--k)));border-radius:50%;border:1.5px solid rgba(255,255,255,.28);background:transparent;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex:none}
+.round:hover{border-color:rgba(255,255,255,.55)}
+.round svg{width:calc(24px*var(--k));height:calc(24px*var(--k));stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.navrow{display:flex;flex-wrap:wrap;align-items:center;gap:clamp(12px,calc(1*var(--u)),calc(20px*var(--k)))}
+.nav-right{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:clamp(12px,calc(1*var(--u)),calc(20px*var(--k)));margin-left:auto}
+.navrow .err{flex:1;text-align:right}
+.err{font-size:clamp(13px,calc(.85*var(--u)),calc(16px*var(--k)));color:var(--crit);font-weight:600;letter-spacing:.02em}
+.err:empty{display:none}
+@media (max-width:760px){
+  .foot.sticky{position:sticky;bottom:0;padding-top:22px;background:linear-gradient(to top,var(--ground) 72%,rgba(25,25,27,0))}
+  .navrow{align-items:flex-start}
+  .nav-right{flex:1 1 0;min-width:0;gap:10px}
+  .nav-right .btn{flex:1 1 100%}
+  .nav-right .btn.pri{order:-1}
+  .navrow .err{flex-basis:100%;order:-1;text-align:left}
+}
+
+/* pruh sekcí */
+.strip{display:flex;flex-wrap:wrap;gap:clamp(12px,calc(1.15*var(--u)),calc(22px*var(--k)));font-size:clamp(12px,calc(1*var(--u)),calc(19px*var(--k)));font-weight:500;letter-spacing:.34em;color:rgba(244,244,246,.34);white-space:nowrap}
+.strip b{font-weight:600;color:var(--ink)}
+.strip.all{color:var(--ink)}
+@media (max-width:1100px){.strip.qs{display:none}}
+@media (max-width:760px){.strip{font-size:11px;letter-spacing:.22em;gap:8px 10px}}
+
+.intro{max-width:calc(1100px*var(--k))}
+.fitline{display:block;white-space:nowrap}
+.intro-lead{font-size:clamp(13px,calc(1.12*var(--u)),calc(21px*var(--k)))}
+body.fixed{overflow:hidden;height:100dvh}
+/* nízké obrazovky (telefon na šířku): kompaktnější rozestupy, ať se vejde vše */
+@media (max-height:560px){
+  body.fixed .top{padding-top:10px}
+  body.fixed main{padding-top:10px;padding-bottom:8px}
+  body.fixed .foot{padding-bottom:10px;gap:10px}
+  body.fixed .foot .strip{display:none}
+  body.fixed .mini .av{width:40px;height:40px}
+  body.fixed .mline{font-size:13px;line-height:1.5}
+  body.fixed .qtext{font-size:20px}
+  body.fixed .qtext.long{font-size:18px}
+  body.fixed .qcount{margin-top:10px}
+  body.fixed .opts{margin-top:14px}
+  body.fixed .opt{height:46px;font-size:16px}
+  body.fixed .rows{margin-top:10px}
+  body.fixed .rowopt{min-height:42px;font-size:15px}
+  body.fixed .uf.big input{font-size:26px}
+  body.fixed .ufrow{margin-top:14px;gap:16px}
+  body.fixed .sliders{margin-top:14px;gap:14px}
+  body.fixed .consents{margin-top:14px;gap:10px}
+  body.fixed .btn,body.fixed .round{height:44px}
+  body.fixed .round{width:44px}
+}
+body.fixed .app{height:100dvh;min-height:0}
+body.fixed .top,body.fixed .foot{flex:none}
+body.fixed main{min-height:0;overflow:hidden}
+.legal{margin-top:-6px}
+.legal summary{font-size:clamp(11px,calc(.75*var(--u)),calc(13px*var(--k)));letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:var(--dim);cursor:pointer;list-style:none}
+.legal summary::-webkit-details-marker{display:none}
+.legal summary::after{content:" ›"}
+.legal[open] summary::after{content:" ˅"}
+.legal summary:hover{color:var(--ink)}
+.legal p{font-size:clamp(11px,calc(.72*var(--u)),calc(13px*var(--k)));color:var(--dim);line-height:1.6;margin-top:8px;max-width:46em}
+#main > .screen{transform-origin:top left;display:flow-root}
+.split{display:grid;grid-template-columns:minmax(0,.86fr) minmax(0,1fr);gap:clamp(36px,calc(6.5*var(--u)),calc(130px*var(--k)));align-items:start}
+.split > *{min-width:0}
+@media (max-width:1000px){.split{grid-template-columns:minmax(0,1fr)}}
+
+/* ---------- Marcel ---------- */
+.mcol{display:flex;flex-direction:column;gap:clamp(18px,calc(1.6*var(--u)),calc(30px*var(--k)))}
+.mline{font-size:clamp(15px,calc(1.15*var(--u)),calc(22px*var(--k)));line-height:1.6;color:var(--ink);max-width:24em;position:relative;padding-left:clamp(14px,calc(1.05*var(--u)),calc(20px*var(--k)));border-left:2px solid transparent;border-image:var(--grad-135) 1}
+.mini{display:flex;align-items:center;gap:clamp(12px,calc(.95*var(--u)),calc(18px*var(--k)))}
+.mini .av{position:relative;width:clamp(52px,calc(3.6*var(--u)),calc(68px*var(--k)));height:clamp(52px,calc(3.6*var(--u)),calc(68px*var(--k)));border-radius:50%;overflow:hidden;flex:none;border:1.5px solid rgba(122,62,158,.8);display:block}
+.mini .av img{width:100%;height:100%;object-fit:cover;display:block}
+.mini .av i{position:absolute;right:2px;bottom:2px;width:11px;height:11px;border-radius:50%;background:#4ADE80;border:2px solid var(--ground)}
+.mini .nm{display:flex;flex-direction:column;gap:4px}
+.mini .nm b{font-size:clamp(15px,calc(1.05*var(--u)),calc(20px*var(--k)));font-weight:700;line-height:1}
+.mini .nm span{font-size:clamp(9px,calc(.66*var(--u)),calc(12px*var(--k)));letter-spacing:.24em;text-transform:uppercase;color:var(--dim);font-weight:600}
+.mhead{display:none;align-items:flex-start;gap:12px}
+.mhead .av{position:relative;width:46px;height:46px;border-radius:50%;overflow:hidden;flex:none;border:1.5px solid rgba(122,62,158,.75)}
+.mhead .av img{width:100%;height:100%;object-fit:cover;display:block}
+.mhead .av i{position:absolute;right:1px;bottom:1px;width:10px;height:10px;border-radius:50%;background:#4ADE80;border:2px solid var(--ground)}
+.mhead .tx{flex:1;min-width:0}
+.mhead .tx b{display:block;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);font-weight:700;margin-bottom:4px}
+.mhead .tx p{font-size:15px;line-height:1.5;color:var(--ink)}
+@media (max-width:1000px){
+  .mcol{display:none}
+  .mcol.intro-portrait{display:flex;gap:14px}
+  .mcol.intro-portrait   .mcol.intro-portrait .mline{font-size:14px}
+  .mhead{display:flex}
+  main{align-items:flex-start}
+}
+.qcount.mob{display:none}
+@media (max-width:1000px){.qcount.desk{display:none}.qcount.mob{display:flex;margin-top:16px}.qcount.mob + .qtext{margin-top:14px}}
+
+/* ---------- otázky ---------- */
+.qcount{display:flex;align-items:center;gap:18px;margin-top:clamp(20px,calc(2.9*var(--u)),calc(56px*var(--k)))}
+.qcount .segs i{width:clamp(22px,calc(2.3*var(--u)),calc(44px*var(--k)))}
+.qtext{font-size:clamp(23px,calc(2.6*var(--u)),calc(50px*var(--k)));font-weight:600;line-height:1.2;letter-spacing:-.005em;text-wrap:balance;margin:0}
+.qtext.long{font-size:clamp(21px,calc(2.1*var(--u)),calc(40px*var(--k)))}
+.qhint{margin-top:14px;font-size:clamp(14px,calc(.95*var(--u)),calc(18px*var(--k)));color:var(--muted);line-height:1.55}
+.opts{display:flex;flex-wrap:wrap;gap:clamp(10px,calc(.95*var(--u)),calc(18px*var(--k)));margin-top:clamp(26px,calc(3.3*var(--u)),calc(64px*var(--k)))}
+.opt{height:clamp(58px,calc(5.8*var(--u)),calc(112px*var(--k)));min-width:clamp(84px,calc(9.9*var(--u)),calc(190px*var(--k)));padding:0 clamp(22px,calc(1.9*var(--u)),calc(36px*var(--k)));border-radius:999px;border:1.5px solid rgba(255,255,255,.22);background:transparent;display:flex;align-items:center;justify-content:center;font-size:clamp(18px,calc(2*var(--u)),calc(38px*var(--k)));font-weight:600;color:rgba(244,244,246,.84);cursor:pointer;transition:border-color .15s,background .15s,transform .1s}
+.opt:hover{border-color:rgba(255,255,255,.5)}
+.opt:active{transform:scale(.98)}
+.opt[aria-pressed="true"]{background:var(--grad);border-color:transparent;color:#fff;box-shadow:0 18px 50px rgba(47,134,204,.28)}
+.rows{margin-top:clamp(22px,calc(2.3*var(--u)),calc(44px*var(--k)));border-bottom:1px solid rgba(255,255,255,.12)}
+.rowopt{width:100%;display:flex;align-items:center;gap:clamp(16px,calc(1.45*var(--u)),calc(28px*var(--k)));min-height:clamp(56px,calc(3.9*var(--u)),calc(76px*var(--k)));padding:10px 0;border:0;border-top:1px solid rgba(255,255,255,.12);background:transparent;text-align:left;font-size:clamp(16px,calc(1.35*var(--u)),calc(26px*var(--k)));font-weight:500;color:var(--muted);cursor:pointer;transition:color .15s}
+.rowopt:hover{color:var(--ink)}
+.rowopt .mark{width:clamp(24px,calc(1.56*var(--u)),calc(30px*var(--k)));height:clamp(24px,calc(1.56*var(--u)),calc(30px*var(--k)));border-radius:50%;border:2px solid rgba(255,255,255,.35);flex:none;display:flex;align-items:center;justify-content:center}
+.rowopt[aria-pressed="true"]{color:#fff;font-weight:600}
+.rowopt[aria-pressed="true"] .mark{border-color:transparent;background:var(--grad)}
+.rowopt[aria-pressed="true"] .mark::after{content:"";width:34%;height:34%;border-radius:50%;background:#fff}
+
+/* číselná pole (desktop) */
+.ufrow{display:grid;gap:clamp(22px,calc(2.5*var(--u)),calc(48px*var(--k)));grid-template-columns:repeat(var(--cols,2),minmax(0,1fr));margin-top:clamp(26px,calc(2.6*var(--u)),calc(50px*var(--k)))}
+.ufrow.one{--cols:1}
+@media (max-width:760px){.ufrow{--cols:1!important}}
+.uf{display:flex;flex-direction:column;gap:clamp(8px,calc(.75*var(--u)),calc(14px*var(--k)));min-width:0;padding-bottom:clamp(10px,calc(.95*var(--u)),calc(18px*var(--k)));border-bottom:1.5px solid var(--line2);transition:border-color .15s}
+.uf:focus-within{border-color:#4FA3E0}
+.uf.invalid{border-color:var(--crit)}
+.uf label{font-size:clamp(10px,calc(.73*var(--u)),calc(14px*var(--k)));letter-spacing:.28em;font-weight:600;color:var(--dim);text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.uf label em{font-style:normal;letter-spacing:.12em;text-transform:none;font-weight:500}
+.uf input{width:100%;min-width:0;background:transparent;border:0;outline:none;padding:0;font-size:clamp(22px,calc(1.9*var(--u)),calc(36px*var(--k)));font-weight:400;line-height:1.15}
+.uf input::placeholder{color:rgba(244,244,246,.22)}
+.uf input[type="email"],.uf input[type="tel"]{font-size:clamp(17px,calc(1.35*var(--u)),calc(26px*var(--k)))}
+.uf.big input{font-size:clamp(34px,calc(4.4*var(--u)),calc(84px*var(--k)));font-weight:300;letter-spacing:-.02em;line-height:1;font-variant-numeric:tabular-nums}
+.uf input::-webkit-outer-spin-button,.uf input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.uf input[type="number"]{-moz-appearance:textfield}
+
+/* posuvníky (mobil) */
+.sliders{display:flex;flex-direction:column;gap:26px;margin-top:26px}
+.srow .slab{font-size:11px;letter-spacing:.26em;font-weight:600;color:var(--dim);text-transform:uppercase}
+.srow .sval{font-size:44px;font-weight:300;line-height:1.05;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-top:6px}
+.srow .sval em{font-style:normal;font-size:16px;font-weight:500;color:var(--dim);margin-left:8px;letter-spacing:.06em}
+.srng{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:3px;outline:none;margin-top:16px;background:rgba(255,255,255,.16);touch-action:pan-y}
+.srng::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:34px;height:34px;border-radius:50%;background:#fff;border:4px solid #4FA3E0;box-shadow:0 6px 18px rgba(0,0,0,.45);cursor:pointer}
+.srng::-moz-range-thumb{width:34px;height:34px;border-radius:50%;background:#fff;border:4px solid #4FA3E0;box-shadow:0 6px 18px rgba(0,0,0,.45);cursor:pointer}
+.sends{display:flex;justify-content:space-between;font-size:11px;color:var(--dim);margin-top:8px;letter-spacing:.1em}
+
+/* checkbox */
+.cbox{position:relative;display:flex;gap:clamp(14px,calc(1*var(--u)),calc(20px*var(--k)));align-items:flex-start;cursor:pointer;font-size:clamp(13px,calc(.8*var(--u)),calc(15px*var(--k)));line-height:1.6;color:var(--muted)}
+.cbox input{position:absolute;opacity:0;width:1px;height:1px}
+.cbox .box{width:calc(26px*var(--k));height:calc(26px*var(--k));border-radius:8px;border:1.5px solid rgba(255,255,255,.35);flex:none;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:background .15s,border-color .15s}
+.cbox .box svg{width:calc(16px*var(--k));height:calc(16px*var(--k));stroke:#fff;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;opacity:0}
+.cbox input:checked + .box{background:var(--grad);border-color:transparent}
+.cbox input:checked + .box svg{opacity:1}
+.cbox input:focus-visible + .box{outline:2px solid #4FA3E0;outline-offset:3px}
+.cbox em{font-style:normal;color:var(--dim)}
+.consents{display:flex;flex-direction:column;gap:18px;margin-top:clamp(24px,calc(2.6*var(--u)),calc(48px*var(--k)))}
+.tip{font-size:clamp(13px,calc(.85*var(--u)),calc(16px*var(--k)));color:var(--dim);line-height:1.6;margin-top:clamp(14px,calc(1.2*var(--u)),calc(22px*var(--k)));max-width:36em}
+
+/* ---------- vyhodnocování ---------- */
+.checks{display:flex;flex-direction:column;gap:clamp(10px,calc(.75*var(--u)),calc(14px*var(--k)));margin-top:clamp(26px,calc(2.7*var(--u)),calc(52px*var(--k)));font-size:clamp(12px,calc(1*var(--u)),calc(19px*var(--k)));letter-spacing:.3em;font-weight:600}
+.checks div{display:flex;align-items:center;gap:18px;color:var(--dim);transition:color .3s}
+.checks .ic{width:calc(22px*var(--k));height:calc(22px*var(--k));display:flex;align-items:center;justify-content:center;flex:none}
+.checks .ic svg{width:calc(22px*var(--k));height:calc(22px*var(--k));stroke:#fff;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;display:none}
+.checks .ic::after{content:"";width:calc(10px*var(--k));height:calc(10px*var(--k));border-radius:50%;background:rgba(255,255,255,.3)}
+.checks .done{color:var(--ink)}
+.checks .done .ic svg{display:block}
+.checks .done .ic::after{display:none}
+.checks .cur{color:var(--ink)}
+.checks .cur .ic::after{width:calc(14px*var(--k));height:calc(14px*var(--k));background:var(--grad);box-shadow:0 0 0 6px rgba(79,163,224,.2)}
+.ringwrap{position:relative;display:flex;justify-content:center;align-items:center}
+.ringwrap::before{content:"";position:absolute;width:58%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.16),rgba(255,255,255,0) 70%);animation:breathe 3.2s ease-in-out infinite}
+.ringwrap svg{position:relative;width:min(100%,520px);height:auto}
+.ringwrap .orbit{transform-origin:260px 260px;animation:orbit 2.8s linear infinite}
+#arc{transition:stroke-dashoffset .14s linear}
+.genbar i{transition:width .14s linear}
+@keyframes orbit{to{transform:rotate(360deg)}}
+@keyframes breathe{0%,100%{transform:scale(.92);opacity:.6}50%{transform:scale(1.08);opacity:1}}
+.gen-status{min-height:3.3em;transition:opacity .35s ease}
+.gen-status.fade{opacity:0}
+.genbar{display:none;height:3px;border-radius:2px;background:rgba(255,255,255,.16);overflow:hidden;margin-top:22px;max-width:calc(420px*var(--k))}
+.genbar i{display:block;height:100%;width:0;background:var(--grad)}
+@media (max-width:1000px){.ringwrap{display:none}.genbar{display:block}}
+
+/* ---------- výsledek ---------- */
+.rsec{position:relative;z-index:1;padding:clamp(36px,calc(5.8*var(--u)),calc(110px*var(--k))) var(--gut);border-top:1px solid rgba(255,255,255,.08)}
+.rsec.first{border-top:0;padding-top:clamp(20px,calc(3*var(--u)),calc(56px*var(--k)))}
+.index-row{display:flex;flex-wrap:wrap;align-items:center;gap:clamp(20px,calc(2.3*var(--u)),calc(44px*var(--k)));margin-top:clamp(20px,calc(2*var(--u)),calc(40px*var(--k)))}
+.index-num{font-size:clamp(104px,calc(15*var(--u)),calc(290px*var(--k)));font-weight:200;line-height:.86;letter-spacing:-.05em;background:linear-gradient(120deg,#B391E0,#4FA3E0);-webkit-background-clip:text;background-clip:text;color:transparent;font-variant-numeric:tabular-nums}
+.index-num small{font-size:.32em;font-weight:300;letter-spacing:0}
+.index-num.good{background-image:linear-gradient(120deg,#8BE8C0,#3FBF93)}
+.index-num.warn{background-image:linear-gradient(120deg,#F8CE8A,#E8982F)}
+.index-num.crit{background-image:linear-gradient(120deg,#F5A39A,#DA5A4E)}
+.index-side{display:flex;flex-direction:column;gap:clamp(12px,calc(1*var(--u)),calc(20px*var(--k)));align-items:flex-start}
+.pill{display:inline-flex;align-items:center;height:clamp(34px,calc(2.4*var(--u)),calc(46px*var(--k)));padding:0 clamp(14px,calc(1.15*var(--u)),calc(22px*var(--k)));border-radius:999px;font-size:clamp(11px,calc(.78*var(--u)),calc(15px*var(--k)));letter-spacing:.22em;font-weight:700;white-space:nowrap;text-transform:uppercase}
+.pill.good{color:var(--good);border:1.5px solid rgba(94,211,160,.5)}
+.pill.ok{color:var(--ok);border:1.5px solid rgba(181,211,51,.5)}
+.pill.warn{color:var(--warn);border:1.5px solid rgba(242,180,90,.55)}
+.pill.crit{color:var(--crit);border:1.5px solid rgba(238,122,109,.55)}
+.pill.sm{height:calc(32px*var(--k));font-size:11px;padding:0 12px;letter-spacing:.18em}
+.summary{margin-top:clamp(22px,calc(2.3*var(--u)),calc(44px*var(--k)))}
+.alerts{display:flex;flex-direction:column;gap:14px;margin-top:clamp(20px,calc(1.9*var(--u)),calc(36px*var(--k)));max-width:44em}
+.alert{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:baseline;font-size:clamp(14px,calc(.95*var(--u)),calc(18px*var(--k)));line-height:1.55;color:var(--ink)}
+.more{display:inline-flex;align-items:center;gap:14px;margin-top:clamp(26px,calc(3*var(--u)),calc(56px*var(--k)));text-decoration:none}
+.more svg{width:calc(20px*var(--k));height:calc(20px*var(--k));stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+.vals{display:grid;grid-template-columns:repeat(auto-fill,minmax(clamp(140px,calc(11*var(--u)),calc(210px*var(--k))),1fr));gap:clamp(20px,calc(1.7*var(--u)),calc(32px*var(--k)))}
+.val{border-top:1.5px solid rgba(255,255,255,.16);padding-top:18px;display:flex;flex-direction:column;gap:10px}
+.val small{font-size:clamp(10px,calc(.7*var(--u)),calc(13px*var(--k)));letter-spacing:.28em;font-weight:600;color:var(--dim);text-transform:uppercase}
+.val b{font-size:clamp(30px,calc(2.3*var(--u)),calc(44px*var(--k)));font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
+.val b em{font-style:normal;font-size:clamp(14px,calc(1.05*var(--u)),calc(20px*var(--k)));color:var(--dim);font-weight:500;margin-left:6px}
+.val span{font-size:clamp(12px,calc(.8*var(--u)),calc(15px*var(--k)));font-weight:600;letter-spacing:.06em}
+.chart{margin-top:clamp(26px,calc(2.3*var(--u)),calc(44px*var(--k)));border:1px solid var(--line);border-radius:clamp(20px,calc(1.6*var(--u)),calc(30px*var(--k)));padding:clamp(18px,calc(1.6*var(--u)),calc(30px*var(--k)))}
+.chart .cl{font-size:clamp(10px,calc(.7*var(--u)),calc(13px*var(--k)));letter-spacing:.26em;text-transform:uppercase;color:var(--dim);font-weight:600}
+.chart svg{width:100%;height:auto;display:block;margin-top:14px}
+.chart .cf{display:flex;justify-content:space-between;font-size:clamp(10px,calc(.72*var(--u)),calc(13px*var(--k)));color:var(--dim);margin-top:10px}
+.drug{border:1px solid var(--line2);border-radius:clamp(22px,calc(1.8*var(--u)),calc(34px*var(--k)));padding:clamp(22px,calc(2.2*var(--u)),calc(42px*var(--k)));background:rgba(255,255,255,.035)}
+.drug h3{margin:10px 0 0;font-size:clamp(30px,calc(2.6*var(--u)),calc(50px*var(--k)));font-weight:700;line-height:1.1;background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
+.drug .alt{margin-top:clamp(18px,calc(1.6*var(--u)),calc(28px*var(--k)));padding-top:clamp(16px,calc(1.4*var(--u)),calc(24px*var(--k)));border-top:1px solid var(--line)}
+.bul{display:flex;flex-direction:column;gap:12px;margin-top:clamp(18px,calc(1.45*var(--u)),calc(28px*var(--k)))}
+.bul div{display:flex;gap:16px;align-items:baseline;font-size:clamp(14px,calc(1.05*var(--u)),calc(20px*var(--k)));color:var(--muted);line-height:1.45}
+.bul div::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--grad);flex:none;transform:translateY(-3px)}
+.bens{display:grid;grid-template-columns:repeat(auto-fill,minmax(clamp(200px,calc(15*var(--u)),calc(300px*var(--k))),1fr));gap:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)));margin-top:clamp(26px,calc(2.4*var(--u)),calc(46px*var(--k)))}
+.ben{display:flex;gap:14px;align-items:flex-start;font-size:clamp(14px,calc(.95*var(--u)),calc(18px*var(--k)));line-height:1.5;color:var(--muted)}
+.ben svg{width:calc(20px*var(--k));height:calc(20px*var(--k));flex:none;margin-top:2px;stroke:#8FC1EC;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ben.hl{color:var(--ink);font-weight:600}
+.ben.hl svg{stroke:var(--good)}
+
+/* varianty programu */
+.vars{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(12px,calc(1.1*var(--u)),calc(20px*var(--k)));margin-top:clamp(22px,calc(2*var(--u)),calc(38px*var(--k)))}
+@media (max-width:760px){.vars{grid-template-columns:1fr}}
+.var{position:relative;border:1px solid var(--line);border-radius:clamp(18px,calc(1.5*var(--u)),calc(28px*var(--k)));padding:clamp(20px,calc(1.8*var(--u)),calc(32px*var(--k))) clamp(14px,calc(1.2*var(--u)),calc(22px*var(--k)));text-align:center;background:rgba(255,255,255,.025)}
+.var.rec{border-color:rgba(122,62,158,.75);background:linear-gradient(180deg,rgba(122,62,158,.16),rgba(47,134,204,.06))}
+.var .badge{position:absolute;top:0;left:50%;transform:translate(-50%,-50%);background:var(--grad);color:#fff;font-size:clamp(10px,calc(.68*var(--u)),calc(12px*var(--k)));font-weight:700;letter-spacing:.12em;padding:5px 12px;border-radius:999px;white-space:nowrap}
+.var .emoji{font-size:clamp(20px,calc(1.5*var(--u)),calc(26px*var(--k)));line-height:1}
+.var .nm{font-size:clamp(10px,calc(.72*var(--u)),calc(13px*var(--k)));letter-spacing:.24em;text-transform:uppercase;color:var(--dim);font-weight:700;margin-top:8px}
+.var .mo{font-size:clamp(26px,calc(2.1*var(--u)),calc(40px*var(--k)));font-weight:700;line-height:1.1;margin-top:8px;background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
+.var .pr{font-size:clamp(15px,calc(1.15*var(--u)),calc(22px*var(--k)));font-weight:700;margin-top:6px}
+.var .ds{font-size:clamp(12px,calc(.8*var(--u)),calc(15px*var(--k)));color:var(--muted);line-height:1.5;margin-top:10px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(clamp(180px,calc(13*var(--u)),calc(260px*var(--k))),1fr));gap:clamp(12px,calc(1.1*var(--u)),calc(20px*var(--k)));margin-top:clamp(22px,calc(2*var(--u)),calc(38px*var(--k)))}
+@media (max-width:900px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.tiles{grid-template-columns:1fr}}
+.tile{border:1px solid var(--line);border-radius:clamp(18px,calc(1.5*var(--u)),calc(28px*var(--k)));padding:clamp(18px,calc(1.6*var(--u)),calc(28px*var(--k)));background:rgba(255,255,255,.025);text-align:center}
+.tile .emoji{font-size:clamp(20px,calc(1.5*var(--u)),calc(26px*var(--k)));line-height:1}
+.tile b{display:block;font-size:clamp(14px,calc(1*var(--u)),calc(19px*var(--k)));font-weight:700;margin-top:10px}
+.tile span{display:block;font-size:clamp(12px,calc(.85*var(--u)),calc(16px*var(--k)));color:var(--muted);line-height:1.5;margin-top:8px}
+
+/* panel + rezervace */
+.panel{background:rgba(21,21,25,.9);border:1px solid rgba(255,255,255,.12);border-radius:clamp(24px,calc(1.9*var(--u)),calc(36px*var(--k)));padding:clamp(24px,calc(2.9*var(--u)),calc(56px*var(--k)))}
+.panel h3{margin:14px 0 0;font-size:clamp(26px,calc(2.3*var(--u)),calc(44px*var(--k)));font-weight:700;line-height:1.15}
+.price{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 22px;margin-top:clamp(14px,calc(1.15*var(--u)),calc(22px*var(--k)))}
+.price b{font-size:clamp(42px,calc(4.4*var(--u)),calc(84px*var(--k)));font-weight:700;letter-spacing:-.02em;line-height:1;font-variant-numeric:tabular-nums}
+.panel .btn.pri,.panel .btn.ghost{width:100%}
+.notice{display:flex;gap:12px;align-items:flex-start;margin-top:clamp(18px,calc(1.5*var(--u)),calc(28px*var(--k)));padding:clamp(14px,calc(1.1*var(--u)),calc(20px*var(--k))) clamp(14px,calc(1.2*var(--u)),calc(22px*var(--k)));border:1px solid rgba(242,180,90,.4);background:rgba(242,180,90,.08);border-radius:16px;font-size:clamp(13px,calc(.92*var(--u)),calc(17px*var(--k)));line-height:1.55;color:var(--ink);max-width:40em}
+.notice > span:first-child{flex:none;line-height:1.4}
+.fine{font-size:clamp(12px,calc(.8*var(--u)),calc(15px*var(--k)));color:var(--dim);line-height:1.55}
+.seg2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:clamp(18px,calc(1.5*var(--u)),calc(28px*var(--k)))}
+.seg2 button{height:clamp(52px,calc(3.2*var(--u)),calc(62px*var(--k)));border-radius:16px;border:1.5px solid rgba(255,255,255,.22);background:transparent;font-size:clamp(13px,calc(.92*var(--u)),calc(17px*var(--k)));font-weight:600;cursor:pointer;color:var(--muted);display:flex;align-items:center;justify-content:center;gap:8px}
+.seg2 button[aria-pressed="true"]{background:var(--grad);border-color:transparent;color:#fff}
+.days{display:flex;gap:8px;overflow-x:auto;max-width:100%;margin-top:18px;padding-bottom:6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.days::-webkit-scrollbar{display:none}
+.day{flex:none;min-width:74px;padding:10px 12px;border-radius:14px;border:1.5px solid rgba(255,255,255,.18);background:transparent;cursor:pointer;text-align:center;color:var(--muted)}
+.day b{display:block;font-size:19px;font-weight:700;color:var(--ink);line-height:1.1}
+.day span{display:block;font-size:10px;letter-spacing:.14em;text-transform:uppercase;margin-top:4px}
+.day[aria-pressed="true"]{border-color:transparent;background:var(--grad);color:#fff}
+.day[aria-pressed="true"] b{color:#fff}
+.times{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px;margin-top:16px}
+.time{height:48px;border-radius:12px;border:1.5px solid rgba(255,255,255,.2);background:transparent;font-size:16px;font-weight:600;cursor:pointer;color:var(--ink);font-variant-numeric:tabular-nums}
+.time:hover{border-color:rgba(255,255,255,.5)}
+.time[aria-pressed="true"]{background:var(--grad);border-color:transparent;color:#fff}
+.emptyslots{margin-top:16px;font-size:14px;color:var(--muted);line-height:1.6}
+.bform{display:flex;flex-direction:column;gap:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)));margin-top:clamp(20px,calc(1.6*var(--u)),calc(30px*var(--k)))}
+.bform .ufrow{margin-top:0}
+.hold{display:flex;gap:12px;align-items:flex-start;margin-top:18px;padding:14px 16px;border-radius:16px;border:1px solid rgba(242,180,90,.35);background:rgba(242,180,90,.07);font-size:clamp(13px,calc(.9*var(--u)),calc(16px*var(--k)));line-height:1.55;color:var(--ink)}
+.hold .dot{width:8px;height:8px;border-radius:50%;background:var(--warn);flex:none;margin-top:.5em;animation:breathe 1.6s ease-in-out infinite}
+.summ{display:grid;grid-template-columns:auto 1fr;gap:8px 18px;margin:18px 0 0;font-size:clamp(14px,calc(.95*var(--u)),calc(18px*var(--k)))}
+.summ dt{color:var(--dim);font-size:clamp(10px,calc(.7*var(--u)),calc(13px*var(--k)));letter-spacing:.24em;text-transform:uppercase;font-weight:600;align-self:center}
+.summ dd{margin:0;font-weight:700;text-align:right}
+.paybox{margin-top:18px;display:flex;flex-direction:column;gap:12px}
+.qrwrap{display:grid;grid-template-columns:auto 1fr;gap:clamp(16px,calc(1.6*var(--u)),calc(30px*var(--k)));align-items:center;padding:clamp(14px,calc(1.2*var(--u)),calc(24px*var(--k)));border:1px solid var(--line2);border-radius:20px}
+.qrwrap .qr{background:#fff;border-radius:14px;padding:10px;line-height:0}
+.qrwrap .qr img{width:clamp(140px,calc(10*var(--u)),calc(190px*var(--k)));height:auto;image-rendering:pixelated}
+.qrwrap dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:8px 16px;font-size:clamp(13px,calc(.9*var(--u)),calc(17px*var(--k)))}
+.qrwrap dt{color:var(--dim);font-size:clamp(10px,calc(.68*var(--u)),calc(12px*var(--k)));letter-spacing:.22em;text-transform:uppercase;font-weight:600;align-self:center}
+.qrwrap dd{margin:0;font-weight:700;font-variant-numeric:tabular-nums;text-align:right}
+@media (max-width:560px){.qrwrap{grid-template-columns:1fr;justify-items:center}.qrwrap dl{width:100%}}
+.decline{margin-top:clamp(20px,calc(1.8*var(--u)),calc(32px*var(--k)));padding-top:clamp(16px,calc(1.4*var(--u)),calc(24px*var(--k)));border-top:1px solid var(--line);text-align:center}
+.decline .fine{margin-top:8px}
+.waiting{display:flex;align-items:center;gap:12px;margin-top:16px;font-size:clamp(13px,calc(.88*var(--u)),calc(16px*var(--k)));color:var(--muted)}
+.waiting .dot{width:8px;height:8px;border-radius:50%;background:#4FA3E0;flex:none;animation:breathe 1.2s ease-in-out infinite}
+.success .tick{width:clamp(56px,calc(3.6*var(--u)),calc(68px*var(--k)));height:clamp(56px,calc(3.6*var(--u)),calc(68px*var(--k)));border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+.success .tick svg{width:44%;height:44%;stroke:#fff;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.send-status{display:flex;align-items:flex-start;gap:12px;max-width:44em;margin-top:clamp(14px,calc(1.4*var(--u)),calc(26px*var(--k)));font-size:clamp(13px,calc(.85*var(--u)),calc(16px*var(--k)));color:var(--muted);line-height:1.5}
+.send-status .dot{width:8px;height:8px;border-radius:50%;background:var(--dim);flex:none;margin-top:.55em}
+.send-status.sending .dot{background:#4FA3E0;animation:breathe 1.2s ease-in-out infinite}
+.send-status.sent .dot{background:var(--good)}
+.send-status.failed .dot{background:var(--crit)}
+.disclaimer{padding:clamp(22px,calc(2.3*var(--u)),calc(44px*var(--k))) var(--gut) clamp(30px,calc(3*var(--u)),calc(60px*var(--k)));font-size:clamp(10px,calc(.62*var(--u)),calc(12px*var(--k)));color:var(--dim);line-height:1.6;border-top:1px solid rgba(255,255,255,.08);position:relative;z-index:1}
+.demo-tag{position:fixed;right:12px;bottom:12px;z-index:60;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;background:var(--warn);color:#1a1300;padding:5px 9px;border-radius:6px}
+
+@media (max-width:760px){
+  .top{gap:12px;padding-top:16px}
+  .logo{gap:10px}
+  .logo svg{width:36px;height:36px}
+  .logo .wm{gap:3px}
+  .logo .wm b{font-size:18px}
+  .logo .wm span{font-size:8px}
+  .logo.big svg{width:42px;height:42px}
+  .logo.big .wm b{font-size:21px}
+  .logo.big .wm span{font-size:9px}
+  .segs{gap:5px}
+  .segs i,.qcount .segs i{width:14px}
+  .contacts{gap:12px}
+  .contacts a{width:26px;height:26px}
+  main{padding-top:20px;padding-bottom:18px}
+  .split{gap:22px}
+  .h-hero{font-size:34px}
+  .h-xl{font-size:30px}
+  .qcount{margin-top:14px;gap:12px}
+  .qtext{font-size:22px}
+  .qtext.long{font-size:20px}
+  .opt{height:54px;font-size:17px;min-width:72px;padding:0 18px}
+  .rows{margin-top:16px}
+  .rowopt{min-height:52px;font-size:16px;gap:14px}
+  .panel{padding:22px 18px;border-radius:22px}
+  .seg2 button{height:50px;font-size:14px}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="waveG" x1="0.1" y1="0" x2="0.45" y2="1">
+      <stop offset="0" stop-color="#17609A"/><stop offset="0.38" stop-color="#1F8AD2"/><stop offset="0.7" stop-color="#5E57B4"/><stop offset="1" stop-color="#8E3C9C"/>
+    </linearGradient>
+    <radialGradient id="waveShade" cx="0.92" cy="0.05" r="0.6">
+      <stop offset="0" stop-color="#19191B" stop-opacity="0.95"/><stop offset="0.55" stop-color="#19191B" stop-opacity="0.35"/><stop offset="1" stop-color="#19191B" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="chartG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4FA3E0" stop-opacity="0.38"/><stop offset="1" stop-color="#4FA3E0" stop-opacity="0.02"/></linearGradient>
+    <linearGradient id="chartL" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#B391E0"/><stop offset="1" stop-color="#4FA3E0"/></linearGradient>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="30"/></filter>
+    <filter id="softer" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="60"/></filter>
+    <symbol id="logoMark" viewBox="0 0 120 120"><circle cx="45" cy="70" r="37"/><circle cx="70" cy="47" r="40"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></symbol>
+  </defs>
+</svg>
+
+<div class="bg" id="bg"></div>
+<div class="app" id="app">
+  <header class="top" id="top"></header>
+  <main id="main"></main>
+  <footer class="foot" id="foot"></footer>
+</div>
+
+<script>
+/* ==========================================================================
+   Aeternum Screening — GLP-1
+   Design vychází z Aeternum Longevity Snapshot, logika z původního chatbota.
+   Parametry URL: ?demo=1 (ukázková data a skok na výsledek)
+   ========================================================================== */
+
+const URLP = new URLSearchParams(location.search);
+const CFG = {
+  apiUrl: '',                                   // webová aplikace z aeternum_screening_apps_script.gs
+  src: (URLP.get('src') || 'web').toLowerCase(),
+  demo: URLP.get('demo') === '1',
+  price: 490,                                   // vstupní konzultace
+  duration: 30,                                 // minut
+  site: 'https://www.aeternumclinic.cz',
+  holdMinutes: 120,                             // jak dlouho držíme termín bez platby
+  leadDays: 14,                                 // jak daleko dopředu lze rezervovat
+  minHours: 24,                                 // nejbližší možný termín
+  slotStepMin: 60,                              // 30 min konzultace + pauza
+  hours: {                                      // záloha, když backend neodpoví; zdrojem pravdy je kalendář „Aeternum – dostupnost“
+    1: [['11:00', '19:00']], 2: [['07:00', '10:00']], 3: [['12:00', '19:00']],
+    4: [['07:00', '10:00']], 5: [['12:00', '18:00']], 6: [['17:00', '19:00']], 0: [['11:00', '13:00']]
+  },
+  iban: 'CZ5020100000002801448429',
+  phone: '+420775481700',
+  email: 'info@aeternumclinic.cz',
+  bookingFallback: 'https://calendar.app.google/GA7v3J2WymtP1Hix9',
+  mapUrl: 'https://maps.google.com/?q=Bulovka+Medical+%26+Business+Centre+Praha+8',
+  storageKey: 'aeternum-screening-v1',
+  autoAdvanceMs: 320,
+  pollMs: 8000
+};
+
+const MARCEL_AVATAR   = "data:image/jpeg;base64,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";
+
+/* ---------- pomocné ---------- */
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const fmt = n => Math.round(n).toLocaleString('cs-CZ');
+const num = v => { if (v === '' || v == null) return null; const n = parseFloat(String(v).replace(',', '.')); return isNaN(n) ? null : n; };
+const icon = (id, cls = '') => `<svg class="${cls}" aria-hidden="true"><use href="#${id}"/></svg>`;
+const isNarrow = () => matchMedia('(max-width:1000px)').matches;
+const isMobile = () => matchMedia('(max-width:760px)').matches;
+const pad2 = n => String(n).padStart(2, '0');
+
+/* ---------- stav ---------- */
+const newSid = () => (self.crypto && crypto.randomUUID) ? crypto.randomUUID() : Array.from({ length: 32 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
+const blank = () => ({ cur: 'intro', sid: newSid(), a: {}, booking: { type: null, slot: null }, startedAt: new Date().toISOString() });
+let S = blank();
+function save() { try { sessionStorage.setItem(CFG.storageKey, JSON.stringify(S)); } catch (e) {} }
+function load() { try { const raw = sessionStorage.getItem(CFG.storageKey); if (raw) S = Object.assign(blank(), JSON.parse(raw)); } catch (e) {} }
+
+/* ---------- banka otázek ---------- */
+const Q = {
+  gender: {
+    marcel: 'Tímto screeningem Vás provede konzultant Marcel (digitální dvojče konzultanta, se kterým se potkáte na vstupní konzultaci).',
+    label: 'Jaké je Vaše pohlaví?', opts: ['Žena', 'Muž']
+  },
+  age: {
+    marcel: 'Věk potřebuji kvůli bezpečnosti terapie a odhadu, jak rychle budete hubnout.',
+    label: 'Kolik je Vám let?', type: 'num',
+    fields: [{ key: 'age', label: 'Věk', unit: 'let', min: 18, max: 80, def: 38 }]
+  },
+  hw: {
+    marcel: 'Teď potřebuji Vaše míry. Spočítám z nich BMI, od kterého se odvíjí všechno ostatní.',
+    label: 'Jaká je Vaše výška a váha?', type: 'num',
+    fields: [
+      { key: 'height', label: 'Výška', unit: 'cm', min: 140, max: 210, def: 172 },
+      { key: 'weight', label: 'Váha', unit: 'kg', min: 45, max: 220, def: 92 }
+    ]
+  },
+  target: {
+    marcel: d => {
+      const bmi = calcBMI(d.height, d.weight);
+      return bmi
+        ? `Vaše BMI je ${bmi} — ${bmiCategory(bmi)}. Kam se chcete dostat? Cíl si klidně nastavte ambiciózně, na konzultaci ho doladíme.`
+        : 'Kam se chcete dostat? Cíl si klidně nastavte ambiciózně, na konzultaci ho doladíme.';
+    },
+    label: 'Jaká je Vaše cílová váha?', type: 'num',
+    fields: d => {
+      const w = num(d.weight) || 92;
+      return [{ key: 'targetWeight', label: 'Cílová váha', unit: 'kg', min: Math.max(45, Math.round(w - 80)), max: Math.max(46, Math.round(w - 1)), def: Math.round(w * 0.85) }];
+    }
+  },
+  goal: {
+    marcel: 'Tohle je pro volbu preparátu ta nejdůležitější otázka. Ne každý potřebuje ten nejsilnější lék.',
+    label: 'Co je Vaším hlavním cílem?',
+    opts: ['Zbavit se neustálých chutí a myšlenek na jídlo', 'Zhubnout pár kil', 'Výrazně zhubnout'],
+    rows: true
+  },
+  glp1: {
+    marcel: 'Zajímá mě, jestli už za sebou nějakou zkušenost máte. Podle toho připravíme doporučení a plán terapie.',
+    label: 'Máte zkušenost s GLP-1 léky?', hint: 'Wegovy®, Mounjaro®, Ozempic® a podobně.',
+    opts: ['Nemám zkušenosti', 'Vím o nich, nezkoušel/a jsem', 'Zkoušel/a jsem v minulosti', 'Aktuálně užívám'],
+    rows: true
+  },
+  glp1drug: {
+    marcel: 'A který preparát to byl?',
+    label: 'Jaký lék jste užíval/a?', opts: ['Wegovy®', 'Ozempic®', 'Mounjaro®', 'Jiný'], cond: d => d.glp1 === 'Zkoušel/a jsem v minulosti' || d.glp1 === 'Aktuálně užívám'
+  },
+  glp1sat: {
+    marcel: 'A jak jste s ním byl/a spokojený/á? Tohle nám hodně napoví.',
+    label: 'Jak jste byl/a spokojen/a?', opts: ['Dobrý efekt', 'Slabý efekt', 'Špatně jsem ho snášel/a'], rows: true,
+    cond: d => d.glp1 === 'Zkoušel/a jsem v minulosti' || d.glp1 === 'Aktuálně užívám'
+  },
+  pank: {
+    marcel: 'Teď několik otázek na bezpečnost. Jsou krátké, ale důležité — rozhodují o tom, jestli je terapie vůbec možná.',
+    label: 'Léčil/a jste se někdy se zánětem slinivky břišní (pankreatitida)?', opts: ['Ne', 'Ano']
+  },
+  men2: {
+    marcel: 'Rodinná anamnéza. Když si nejste jistý/á, klidně zvolte „Nevím“.',
+    label: 'Vyskytl se ve Vaší rodině medulární karcinom štítné žlázy nebo syndrom MEN 1/2?', opts: ['Ne', 'Ano', 'Nevím']
+  },
+  diab: {
+    marcel: 'Cukr a inzulin hrají při volbě preparátu velkou roli.',
+    label: 'Byl/a jste diagnostikován/a s poruchou cukru?',
+    opts: ['Ne', 'Prediabetes', 'Inzulinová rezistence', 'Diabetes 2. typu', 'Diabetes 1. typu'], rows: true
+  },
+  zluc: { marcel: 'Pokračujeme. Tohle je kvůli sledování v průběhu programu.', label: 'Máte potíže se žlučníkem nebo žlučové kameny?', opts: ['Ne', 'Ano'] },
+  led:  { marcel: 'Ledviny a játra ovlivňují dávkování.', label: 'Trpíte onemocněním ledvin nebo jater?', opts: ['Ne', 'Ano'] },
+  ppp:  { marcel: 'Tato otázka na bezpečnost je citlivá, ale moc důležitá.', label: 'Léčil/a jste se někdy pro poruchu příjmu potravy?', hint: 'Anorexie, bulimie, záchvatovité přejídání.', opts: ['Ne', 'Ano'] },
+  stit: { marcel: 'Štítná žláza ovlivňuje metabolismus, proto se na ni ptám zvlášť.', label: 'Máte nějaké problémy se štítnou žlázou?', opts: ['Bez problémů', 'Hypotyreóza (léčená)', 'Hypertyreóza (léčená)', 'Nevím'], rows: true },
+  kard: { marcel: 'Tlak a cholesterol se během programu většinou výrazně zlepší. Chci vědět, odkud startujeme.', label: 'Máte zvýšený krevní tlak nebo cholesterol?', opts: ['Žádné problémy', 'Zvýšený tlak', 'Zvýšený cholesterol', 'Obojí', 'Nevím'], rows: true },
+  pohyb: { marcel: 'Teď už jen dvě otázky na životní styl.', label: 'Jak byste popsal/a svoji pohybovou aktivitu?', opts: ['Téměř žádná', '1–2× týdně', '3–4× týdně', '5× týdně a více'], rows: true },
+  spanek: { marcel: 'A úplně poslední. Spánek rozhoduje o chutích víc, než si většina lidí myslí.', label: 'Kolik hodin průměrně spíte?', opts: ['Méně než 6h', '6–7h', '7–8h', '8+ hodin'] }
+};
+
+/* ---------- sekce a kroky ---------- */
+const SEC = {
+  basics:    { lbl: 'Základ',       eyebrow: 'Krok 01 — Základ',       ids: ['gender', 'age', 'hw', 'target'] },
+  goal:      { lbl: 'Cíl',          eyebrow: 'Krok 02 — Cíl',          ids: ['goal', 'glp1', 'glp1drug', 'glp1sat'] },
+  safety:    { lbl: 'Bezpečnost',   eyebrow: 'Krok 03 — Bezpečnost',   ids: ['pank', 'men2', 'diab', 'zluc', 'led', 'ppp', 'stit', 'kard'] },
+  lifestyle: { lbl: 'Životní styl', eyebrow: 'Krok 04 — Životní styl', ids: ['pohyb', 'spanek'] }
+};
+const SECS = ['basics', 'goal', 'safety', 'lifestyle'];
+const STRIP_NAME = { basics: 'ZÁKLAD', goal: 'CÍL', safety: 'BEZPEČNOST', lifestyle: 'ŽIVOTNÍ STYL', result: 'DOPORUČENÍ' };
+const STRIP_ORDER = [...SECS, 'result'];
+
+function sectionItems(sec) { return SEC[sec].ids.filter(id => !Q[id].cond || Q[id].cond(S.a)); }
+function buildSteps() {
+  const st = [{ key: 'intro' }];
+  SECS.forEach(sec => { const items = sectionItems(sec); items.forEach((id, i) => st.push({ key: 'q:' + id, id, sec, i, n: items.length })); });
+  st.push({ key: 'contact' }, { key: 'generating' }, { key: 'result' });
+  return st;
+}
+function curIndex(steps) { const i = steps.findIndex(s => s.key === S.cur); return i < 0 ? 0 : i; }
+
+/* ---------- pozadí ---------- */
+const WAVES = {
+  hero: `<svg class="wave" viewBox="0 0 1920 1080" preserveAspectRatio="xMaxYMax slice">
+    <path d="M1640 -60 C1720 190 1560 440 1310 575 C1170 650 1060 700 890 735 C740 768 640 880 560 1140 L1990 1140 L1990 -60 Z" fill="url(#waveG)" filter="url(#soft)"/>
+    <path d="M1890 -80 C1960 180 1860 380 1700 470 C1620 515 1560 520 1500 505 C1640 400 1740 220 1700 -80 Z" fill="#19191B" opacity="0.55" filter="url(#softer)"/>
+    <rect x="1150" y="-60" width="860" height="720" fill="url(#waveShade)"/></svg><div class="veil"></div>`,
+  gen: `<svg class="wave" viewBox="0 0 1920 1080" preserveAspectRatio="xMaxYMax slice">
+    <path d="M1520 -60 C1640 160 1500 390 1250 520 C1100 600 980 660 820 700 C660 740 560 860 480 1140 L1990 1140 L1990 -60 Z" fill="url(#waveG)" filter="url(#soft)"/>
+    <rect x="1100" y="-60" width="900" height="760" fill="url(#waveShade)"/></svg><div class="veil"></div>`
+};
+const GLOWS = [
+  `<div class="glow" style="right:-16vw;bottom:-30vh;width:60vw;height:80vh;background:radial-gradient(closest-side,rgba(36,131,197,.5),rgba(122,62,158,.32) 55%,rgba(25,25,27,0))"></div>`,
+  `<div class="glow" style="right:-18vw;top:-36vh;width:58vw;height:80vh;background:radial-gradient(closest-side,rgba(122,62,158,.42),rgba(36,131,197,.22) 60%,rgba(25,25,27,0))"></div>`,
+  `<div class="glow" style="left:-22vw;bottom:-40vh;width:58vw;height:80vh;background:radial-gradient(closest-side,rgba(142,60,156,.4),rgba(36,131,197,.18) 60%,rgba(25,25,27,0))"></div>`
+];
+let bgKey = '';
+function setBg(key) {
+  if (key === bgKey) return; bgKey = key;
+  $('#bg').innerHTML = key === 'hero' ? WAVES.hero : key === 'gen' ? WAVES.gen : key === 'result'
+    ? `<div class="glow" style="right:-10vw;top:-20vh;width:64vw;height:100vh;background:radial-gradient(closest-side,rgba(36,131,197,.26),rgba(122,62,158,.18) 60%,rgba(25,25,27,0))"></div>`
+    : GLOWS[+key.slice(1) % GLOWS.length];
+}
+
+/* ---------- hlavička ---------- */
+const LOGO = big => `<div class="logo${big ? ' big' : ''}" aria-label="Aeternum Clinic">${icon('logoMark')}<div class="wm"><b>AETERNUM</b><span>CLINIC</span></div></div>`;
+const CONTACTS = `<nav class="contacts" aria-label="Kontakt">
+  <a href="tel:${CFG.phone}" aria-label="Zavolat klinice"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#fff"/><path d="M8.7 6.4c.45-.32 1.07-.2 1.37.26l1.1 1.7c.28.43.18 1-.22 1.3l-.82.62c.55 1.25 1.53 2.27 2.76 2.87l.63-.8c.31-.4.88-.49 1.3-.2l1.7 1.13c.45.3.56.93.23 1.36l-.72.97c-.5.66-1.37.94-2.15.66-3.05-1.08-5.45-3.5-6.5-6.56-.27-.78.02-1.64.7-2.12z" fill="#19191B"/></svg></a>
+  <a href="mailto:${CFG.email}" aria-label="Napsat e-mail"><svg viewBox="0 0 24 24"><rect x="1.5" y="5" width="21" height="14" rx="1" fill="#fff"/><path d="M2 5.6l10 7.2 10-7.2" stroke="#19191B" stroke-width="1.6" fill="none"/></svg></a>
+  <a href="${CFG.mapUrl}" target="_blank" rel="noopener" aria-label="Kde nás najdete"><svg viewBox="0 0 24 24"><path d="M12 1.5a7.5 7.5 0 0 0-7.5 7.5c0 5.4 7.5 13.5 7.5 13.5s7.5-8.1 7.5-13.5A7.5 7.5 0 0 0 12 1.5z" fill="#fff"/><circle cx="12" cy="9" r="2.7" fill="#19191B"/></svg></a></nav>`;
+
+const GRAD_FROM = [122, 62, 158], GRAD_TO = [47, 134, 204];
+const gradAt = t => `rgb(${GRAD_FROM.map((c, k) => Math.round(c + (GRAD_TO[k] - c) * t)).join(',')})`;
+function segsHTML(n, upTo) {
+  return `<div class="segs">${Array.from({ length: n }, (_, j) => j <= upTo
+    ? `<i class="on" style="background:linear-gradient(90deg,${gradAt(j / n)},${gradAt((j + 1) / n)})"></i>`
+    : '<i></i>').join('')}</div>`;
+}
+function progressHTML(sec) {
+  const i = SECS.indexOf(sec);
+  return `<div class="top-actions"><div class="prog"><span class="lbl"><b>${SEC[sec].lbl.toUpperCase()}</b> · ${pad2(i + 1)} / ${pad2(SECS.length)}</span>${segsHTML(SECS.length, i)}</div></div>`;
+}
+function stripHTML(cur) {
+  return `<div class="strip ${cur ? 'qs' : 'all'}" aria-hidden="true">${STRIP_ORDER.map((k, i) => (i ? '<span>—</span>' : '') + (k === cur ? `<b>${STRIP_NAME[k]}</b>` : `<span>${STRIP_NAME[k]}</span>`)).join('')}</div>`;
+}
+const BACK = `<button type="button" class="round" data-act="back" aria-label="Zpět">${icon('i-back')}</button>`;
+function navHTML(showNext, extra = '') {
+  return `<div class="navrow">${BACK}<span class="err" id="err" role="alert"></span>
+    <div class="nav-right">${extra}${showNext ? `<button type="button" class="btn pri" data-act="next">Pokračovat</button>` : ''}</div></div>`;
+}
+
+/* ---------- Marcel ---------- */
+function marcelText(id) {
+  const m = Q[id] ? Q[id].marcel : null;
+  return typeof m === 'function' ? m(S.a) : (m || '');
+}
+function marcelCol(text, extra = '') {
+  return `<div class="mcol">
+    <div class="mini"><span class="av"><img src="${MARCEL_AVATAR}" alt="Marcel, konzultant Aeternum Clinic"><i></i></span>
+      <span class="nm"><b>Marcel</b><span>Digitální dvojče konzultanta</span></span></div>
+    <p class="mline">${text}</p>${extra}</div>`;
+}
+function marcelHead(text) {
+  return `<div class="mhead"><div class="av"><img src="${MARCEL_AVATAR}" alt="Marcel"><i></i></div>
+    <div class="tx"><b>Marcel · digitální dvojče</b><p>${text}</p></div></div>`;
+}
+
+/* ---------- výpočty ---------- */
+function calcBMI(h, w) { const H = num(h), W = num(w); if (!H || !W) return null; return +(W / Math.pow(H / 100, 2)).toFixed(1); }
+function bmiCategory(bmi) {
+  const b = num(bmi); if (b == null) return '';
+  if (b < 18.5) return 'podváha'; if (b < 25) return 'normální váha'; if (b < 30) return 'nadváha';
+  if (b < 35) return 'obezita I. stupně'; if (b < 40) return 'obezita II. stupně'; return 'obezita III. stupně';
+}
+function programMonths(d) {
+  const start = num(d.weight), target = num(d.targetWeight), h = num(d.height) || 172;
+  if (start == null || target == null || start <= target) return 3;
+  const bmi = start / Math.pow(h / 100, 2);
+  const perMonth = bmi < 27 ? 3.5 : bmi < 30 ? 3.8 : bmi < 35 ? 3.0 : 2.5;
+  return Math.max(3, Math.min(24, Math.round((start - target) / perMonth)));
+}
+function hardContra(d) {
+  const bmi = num(d.bmi);
+  if (d.pank === 'Ano') return 'anamnézy zánětu slinivky břišní (pankreatitida)';
+  if (d.men2 === 'Ano') return 'výskytu syndromu MEN 1/2 nebo medulárního karcinomu štítné žlázy v rodinné anamnéze';
+  if (d.ppp === 'Ano') return 'léčby poruchy příjmu potravy v anamnéze';
+  if (bmi != null && bmi < 23) return `nízkého BMI (${bmi})`;
+  return null;
+}
+function calcScore(d) {
+  let p = 0;
+  if (d.pank === 'Ne') p++;
+  if (d.men2 === 'Ne' || d.men2 === 'Nevím') p++;
+  if (['Ne', 'Prediabetes', 'Inzulinová rezistence'].includes(d.diab)) p++;
+  if (d.zluc === 'Ne') p++;
+  if (d.led === 'Ne') p++;
+  if (d.ppp === 'Ne') p++;
+  const bmi = num(d.bmi) || 0;
+  if (bmi >= 25) p += 2;
+  const diff = (num(d.weight) || 0) - (num(d.targetWeight) || 0);
+  if (diff >= 10) p += 2; else if (diff >= 5) p += 1;
+  const score = Math.min(p, 10);
+  const label = score >= 9 ? 'Výborná' : score >= 8 ? 'Vysoká' : score >= 6 ? 'Střední' : 'Nízká';
+  const cls = score >= 8 ? 'good' : score >= 6 ? 'warn' : 'crit';
+  return { score, label, cls };
+}
+
+/* Volba preparátu — rozhodovací strom odsouhlasený s klinikou.
+   Pořadí podmínek je závazné, první splněná vyhrává. */
+const DRUGS = {
+  wegovy:   { name: 'Wegovy®', inn: 'semaglutid' },
+  mounjaro: { name: 'Mounjaro®', inn: 'tirzepatid' }
+};
+function recommend(d) {
+  const bmi = num(d.bmi) || 0;
+  const w = num(d.weight) || 0, tw = num(d.targetWeight) || 0;
+  const lossPct = w > 0 ? ((w - tw) / w) * 100 : 0;
+  const prev = d.glp1drug || '';
+  const sat = d.glp1sat || '';
+  const hadSema = prev === 'Wegovy®' || prev === 'Ozempic®';
+  const hadTirz = prev === 'Mounjaro®';
+  const dysgly = ['Prediabetes', 'Inzulinová rezistence', 'Diabetes 2. typu'].includes(d.diab);
+
+  let key, why, alt = null;
+
+  if (hadSema && sat === 'Dobrý efekt') {
+    key = 'wegovy';
+    why = 'Semaglutid u Vás už zabíral, takže není důvod ho měnit. Navážeme na to, co fungovalo, a doladíme dávkování.';
+    alt = 'Pokud se úbytek zastaví na plató, je Mounjaro® logickým dalším krokem.';
+  } else if (hadSema && sat === 'Slabý efekt') {
+    key = 'mounjaro';
+    why = 'Semaglutid u Vás nepřinesl očekávaný efekt. Tirzepatid působí přes dva receptory (GIP i GLP-1) a v přímém srovnání dosahuje výrazně vyššího úbytku.';
+  } else if (hadTirz && sat === 'Špatně jsem ho snášel/a') {
+    key = 'wegovy';
+    why = 'Tirzepatid jste snášel/a špatně. Semaglutid bývá pro trávení šetrnější a s pomalým navyšováním dávky se obvykle zvládne dobře.';
+  } else if (hadSema && sat === 'Špatně jsem ho snášel/a') {
+    key = 'wegovy';
+    why = 'Nesnášenlivost bývá nejčastěji z příliš rychlého navyšování dávky. Začneme od nejnižší dávky a budeme postupovat pomaleji.';
+    alt = 'Pokud potíže přetrvají, na kontrole zvážíme přechod na Mounjaro®.';
+  } else if (dysgly) {
+    key = 'mounjaro';
+    why = 'Máte v anamnéze poruchu zpracování cukru. Tirzepatid má nejsilnější efekt na inzulinovou rezistenci a hladinu cukru a zároveň vede k vyššímu úbytku hmotnosti.';
+  } else if (bmi < 25) {
+    key = 'wegovy';
+    why = 'Vaše BMI je v pásmu normální váhy, takže nejsilnější preparát není namístě. Semaglutid utlumí chutě a udrží úbytek pozvolný a bezpečný.';
+  } else if (d.goal === 'Zbavit se neustálých chutí a myšlenek na jídlo') {
+    key = 'wegovy';
+    why = 'Vaším cílem je klid od jídla. Na „food noise“ semaglutid bohatě stačí a nemá smysl jít po nejsilnějším preparátu.';
+    alt = bmi >= 30 ? 'Při Vašem BMI by Mounjaro® přineslo rychlejší úbytek. Pokud budete chtít i výraznější zhubnutí, probereme ho na konzultaci.' : null;
+  } else if (d.goal === 'Výrazně zhubnout') {
+    key = 'mounjaro';
+    why = 'Chcete výrazný úbytek. Tirzepatid je v této třídě nejúčinnější, ve studiích vedl k průměrnému poklesu okolo 20 % hmotnosti.';
+  } else if (lossPct < 10) {
+    key = 'wegovy';
+    why = 'Váš cíl je v dosahu mírnější terapie. Semaglutid na pár kilo stačí a je šetrnější k peněžence i k trávení.';
+  } else {
+    key = 'mounjaro';
+    why = `Chcete se dostat o ${Math.round(lossPct)} % níž. Na takový cíl je tirzepatid vhodnější, protože dosahuje vyššího průměrného úbytku.`;
+  }
+
+  const other = key === 'wegovy' ? 'mounjaro' : 'wegovy';
+  if (!alt && bmi >= 27 && key === 'wegovy') alt = 'Kdyby úbytek nebyl dostatečný, Mounjaro® je připravené jako další krok.';
+  if (!alt && key === 'mounjaro' && d.goal !== 'Výrazně zhubnout') alt = 'Pokud byste chtěl/a začít mírněji, je Wegovy® plnohodnotnou alternativou.';
+
+  return { key, drug: DRUGS[key], why, alt, altDrug: DRUGS[other], offLabel: bmi < 27 };
+}
+
+function compute() {
+  const d = S.a;
+  d.bmi = calcBMI(d.height, d.weight);
+  const months = programMonths(d);
+  const contra = hardContra(d);
+  const sc = calcScore(d);
+  const rec = contra ? null : recommend(d);
+  const w = num(d.weight) || 0, tw = num(d.targetWeight) || 0;
+  return { bmi: d.bmi, months, contra, score: sc, rec, lose: Math.max(0, Math.round(w - tw)), weight: w, target: tw };
+}
+
+/* ---------- render ---------- */
+let autoT = null;
+function render() {
+  clearTimeout(autoT);
+  const steps = buildSteps(); const st = steps[curIndex(steps)];
+  S.cur = st.key;
+  const top = $('#top'), main = $('#main'), foot = $('#foot');
+  foot.className = 'foot';
+  let T = '', M = '', F = '';
+
+  if (st.key === 'intro') {
+    setBg('hero');
+    T = LOGO(true) + `<div class="top-actions"><a class="linkbtn" href="${CFG.site}">Zpátky na web ›</a></div>`;
+    M = `<div class="intro">
+      <div><span class="eyebrow">Průvodce</span>
+        <h1 class="h-hero" style="margin-top:clamp(10px,calc(1*var(--u)),calc(18px*var(--k)))"><span class="fitline">Redukce hmotnosti s GLP-1/GIP/GIT</span><span class="light fitline">Vstupní screening</span></h1>
+        <p class="body-wide intro-lead" style="margin-top:clamp(18px,calc(1.5*var(--u)),calc(28px*var(--k)))">V průběhu 5 minut zjistíme, zda jsou léky jako Wegovy® nebo Mounjaro® pro Vás vhodné, a jaký terapeutický program nejlépe odpovídá Vašim potřebám.</p>
+        <i class="bar" style="margin-top:clamp(26px,calc(2.6*var(--u)),calc(50px*var(--k)))"></i>
+        <button type="button" class="btn lime" style="margin-top:clamp(30px,calc(4.2*var(--u)),calc(80px*var(--k)))" data-act="next">Spustit test</button></div></div>`;
+    F = stripHTML(null);
+  } else if (st.key.startsWith('q:')) {
+    const secIdx = SECS.indexOf(st.sec);
+    setBg('g' + (secIdx % 3));
+    T = LOGO() + progressHTML(st.sec);
+    const mt = marcelText(st.id);
+    const counter = cls => `<div class="qcount ${cls}"><span class="small-caps">Otázka ${st.i + 1} / ${st.n}</span>${segsHTML(st.n, st.i)}</div>`;
+    const left = marcelCol(esc(mt), counter('desk'));
+    M = `<div class="split">${left}<div>${marcelHead(esc(mt))}${counter('mob')}${questionHTML(st.id)}</div></div>`;
+    F = navHTML(needsNext(st.id)) + stripHTML(st.sec);
+  } else if (st.key === 'contact') {
+    setBg('g2');
+    T = LOGO() + progressHTML('lifestyle');
+    const mt = 'Hotovo. Než Vám ukážu výsledky — kam je mám poslat? Tahle stránka po zavření zmizí, ale v e-mailu je budete mít kdykoli po ruce.';
+    M = `<div class="split">${marcelCol(esc(mt))}
+      <div>${marcelHead(esc(mt))}
+        <p class="qtext">Kam Vám pošleme výsledky?</p>
+        <div class="ufrow">
+          ${ufHTML('firstName', 'Jméno a příjmení', { type: 'text', placeholder: 'Jana Nováková', autocomplete: 'name' })}
+          ${ufHTML('email', 'E-mail', { type: 'email', placeholder: 'jana@email.cz', autocomplete: 'email' })}
+        </div>
+        <div class="consents">
+          ${cboxHTML('c-gdpr', S.a.gdpr, 'Souhlasím se zpracováním osobních údajů, včetně údajů o zdravotním stavu, za účelem vyhodnocení screeningu a jeho zaslání na můj e-mail.', 'gdpr')}
+          <details class="legal"><summary>Celé znění souhlasu</summary>
+            <p>Souhlasím se zpracováním svých osobních údajů, včetně údajů o zdravotním stavu, které jsem ve screeningu uvedl/a, společností My Design Creatives s.r.o., IČO 07162235, se sídlem Pod Harfou 943/34, 190 00 Praha 9, provozující Aeternum Clinic, za účelem vyhodnocení screeningu a jeho zaslání na můj e-mail. Souhlas mohu kdykoli odvolat na info@aeternumclinic.cz.</p></details>
+          ${cboxHTML('c-marketing', S.a.marketing, 'Chci e-mailem dostávat tipy k hubnutí a nabídky Aeternum Clinic. <em>(nepovinné)</em>', 'marketing')}
+        </div></div></div>`;
+    F = navHTML(true);
+  } else if (st.key === 'generating') {
+    setBg('gen');
+    T = LOGO();
+    M = `<div class="split" style="align-items:center"><div>
+        <span class="eyebrow">Vyhodnocuji</span>
+        <h1 class="h-hero" style="margin-top:clamp(12px,calc(1.2*var(--u)),calc(22px*var(--k)))">Připravuji<br><span class="light">Váš výsledek</span></h1>
+        <p class="lead gen-status" id="genStatus" aria-live="polite" style="margin-top:clamp(14px,calc(1.4*var(--u)),calc(26px*var(--k)))">${GEN_MESSAGES[0]}</p>
+        <div class="genbar" aria-hidden="true"><i id="genBar"></i></div>
+        <div class="checks" id="checks">${GEN_CHECKS.map((c, i) => `<div data-i="${i}"><span class="ic">${icon('i-check')}</span>${c}</div>`).join('')}</div></div>
+      <div class="ringwrap"><svg viewBox="0 0 520 520" aria-hidden="true"><circle cx="260" cy="260" r="236" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="10"/>
+        <circle id="arc" cx="260" cy="260" r="236" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-dasharray="1482.8" stroke-dashoffset="1482.8" transform="rotate(-90 260 260)"/>
+        <g class="orbit"><circle cx="260" cy="24" r="6" fill="#fff"/></g>
+        <text id="ringTxt" x="260" y="286" text-anchor="middle" font-family="Montserrat, system-ui, sans-serif" font-size="104" font-weight="200" fill="#fff">0 %</text>
+        <text x="260" y="340" text-anchor="middle" font-family="Montserrat, system-ui, sans-serif" font-size="17" font-weight="600" letter-spacing="5" fill="rgba(255,255,255,.75)">HOTOVO</text></svg></div></div>`;
+  } else if (st.key === 'result') {
+    setBg('result');
+    T = LOGO() + `<div class="top-actions"><button class="linkbtn" type="button" data-act="restart">Nový screening</button></div>`;
+    M = '';
+  }
+
+  top.innerHTML = T;
+  foot.innerHTML = F;
+  if (st.key.startsWith('q:') || st.key === 'contact') foot.classList.add('sticky');
+  const app = $('#app');
+  app.querySelectorAll('.rsec,.disclaimer').forEach(n => n.remove());
+  if (st.key === 'result') {
+    main.style.display = 'none';
+    foot.insertAdjacentHTML('beforebegin', renderResult());
+    ensureSubmitted().catch(() => {});
+  } else {
+    main.style.display = '';
+    main.innerHTML = `<div class="screen">${M}</div>`;
+  }
+  if (st.key.startsWith('q:') && Q[st.id].type === 'num') initNumeric(st.id);
+  if (st.key === 'generating') runGenerating();
+  fitScreen();
+  save();
+}
+
+/* Průvodce se musí vejít na jednu obrazovku bez rolování: nejdřív zúžíme
+   jednořádkové titulky, pak celou obrazovku proporčně zmenšíme. Výsledek
+   je dlouhý report, ten roluje normálně. */
+function fitLines() {
+  document.querySelectorAll('.fitline').forEach(el => {
+    el.style.fontSize = '';
+    const parent = el.parentElement;
+    const avail = parent.clientWidth;
+    if (!avail) return;
+    let size = parseFloat(getComputedStyle(el).fontSize);
+    let guard = 60;
+    while (el.scrollWidth > avail && size > 13 && guard--) {
+      size = Math.max(13, size * Math.min(0.97, Math.max(0.75, avail / el.scrollWidth)));
+      el.style.fontSize = size + 'px';
+    }
+  });
+}
+function fitScreen() {
+  const guide = S.cur !== 'result';
+  document.body.classList.toggle('fixed', guide);
+  const sc = document.querySelector('#main > .screen');
+  // animace .screen končí na transform:none, proto zmenšení zapisujeme jako !important
+  if (sc) { sc.style.removeProperty('transform'); sc.style.removeProperty('width'); }
+  if (!guide || !sc) return;
+  fitLines();
+  const main = document.getElementById('main');
+  const cs = getComputedStyle(main);
+  const avail = main.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+  // scrollHeight nepočítá spodní okraje potomků, proto měříme i podle jejich rámečků
+  const top = sc.getBoundingClientRect().top;
+  let bottom = top + sc.scrollHeight;
+  sc.querySelectorAll('*').forEach(el => {
+    if (!el.offsetParent && el.tagName !== 'BODY') return;            // skryté prvky neměříme
+    if (el.closest('details:not([open])') && el.tagName !== 'SUMMARY') return;
+    const b = el.getBoundingClientRect().bottom; if (b > bottom) bottom = b;
+  });
+  const needed = Math.ceil(bottom - top) + 2;
+  if (needed > avail && avail > 0) {
+    const scale = Math.max(0.45, avail / needed);
+    sc.style.setProperty('width', (100 / scale) + '%', 'important');
+    sc.style.setProperty('transform', `scale(${scale})`, 'important');
+  }
+}
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => fitScreen());
+
+function needsNext(id) {
+  const q = Q[id];
+  if (q.type === 'num') return true;
+  return S.a[id] != null;                       // u voleb se tlačítko objeví až po odpovědi
+}
+
+function questionHTML(id) {
+  const q = Q[id];
+  let h = `<p class="qtext${q.label.length > 68 ? ' long' : ''}" id="qtext">${esc(q.label)}</p>`;
+  if (q.hint) h += `<p class="qhint">${esc(q.hint)}</p>`;
+  if (q.type === 'num') {
+    const fields = typeof q.fields === 'function' ? q.fields(S.a) : q.fields;
+    h += isMobile() ? slidersHTML(fields) : fieldsHTML(fields);
+    return h;
+  }
+  const v = S.a[id];
+  const rows = q.rows || q.opts.some(o => o.length > 14);
+  if (rows) {
+    h += `<div class="rows" role="group" aria-labelledby="qtext">${q.opts.map((o, i) => `<button type="button" class="rowopt" data-single="${id}" data-i="${i}" aria-pressed="${v === o}"><span class="mark"></span>${esc(o)}</button>`).join('')}</div>`;
+  } else {
+    h += `<div class="opts" role="group" aria-labelledby="qtext">${q.opts.map((o, i) => `<button type="button" class="opt" data-single="${id}" data-i="${i}" aria-pressed="${v === o}">${esc(o)}</button>`).join('')}</div>`;
+  }
+  return h;
+}
+
+function fieldsHTML(fields) {
+  return `<div class="ufrow${fields.length === 1 ? ' one' : ''}">${fields.map(f => {
+    const val = S.a[f.key] != null ? S.a[f.key] : f.def;
+    return `<div class="uf big" id="w-${f.key}"><label for="f-${f.key}">${esc(f.label)} <em>· ${esc(f.unit)}</em></label>
+      <input id="f-${f.key}" type="number" inputmode="numeric" data-num="${f.key}" min="${f.min}" max="${f.max}" value="${esc(val)}"></div>`;
+  }).join('')}</div>`;
+}
+function slidersHTML(fields) {
+  return `<div class="sliders">${fields.map(f => {
+    const val = S.a[f.key] != null ? +S.a[f.key] : f.def;
+    return `<div class="srow"><div class="slab">${esc(f.label)}</div>
+      <div class="sval" id="v-${f.key}">${val}<em>${esc(f.unit)}</em></div>
+      <input class="srng" type="range" data-rng="${f.key}" data-unit="${esc(f.unit)}" min="${f.min}" max="${f.max}" step="1" value="${val}">
+      <div class="sends"><span>${f.min}</span><span>${f.max}</span></div></div>`;
+  }).join('')}</div>`;
+}
+function initNumeric(id) {
+  const q = Q[id];
+  const fields = typeof q.fields === 'function' ? q.fields(S.a) : q.fields;
+  fields.forEach(f => { if (S.a[f.key] == null) S.a[f.key] = f.def; });
+  document.querySelectorAll('[data-rng]').forEach(r => { paintRange(r); });
+  save();
+}
+function paintRange(r) {
+  const min = +r.min, max = +r.max, v = +r.value;
+  const pct = ((v - min) / (max - min)) * 100;
+  r.style.background = `linear-gradient(90deg,#7A3E9E 0%,#4FA3E0 ${pct}%,rgba(255,255,255,.16) ${pct}%,rgba(255,255,255,.16) 100%)`;
+}
+function ufHTML(key, label, o = {}) {
+  const val = S.a[key] ?? '';
+  return `<div class="uf" id="w-${key}"><label for="f-${key}">${esc(label)}</label>
+    <input id="f-${key}" type="${o.type || 'text'}" inputmode="${o.inputmode || 'text'}" autocomplete="${o.autocomplete || 'off'}" placeholder="${esc(o.placeholder || '')}" data-txt="${key}" value="${esc(val)}"></div>`;
+}
+function cboxHTML(id, checked, html, consentKey) {
+  return `<label class="cbox"><input type="checkbox" id="${id}" data-consent="${consentKey}" ${checked ? 'checked' : ''}><span class="box">${icon('i-check')}</span><span>${html}</span></label>`;
+}
+
+/* ---------- navigace ---------- */
+function go(dir) {
+  const steps = buildSteps(); const st = steps[curIndex(steps)];
+  if (dir > 0) { const err = validate(st); if (err) { showErr(err); return; } }
+  const s2 = buildSteps(); const i2 = Math.max(0, Math.min(s2.length - 1, curIndex(s2) + dir));
+  if (s2[i2].key === 'generating' && dir < 0) { S.cur = 'contact'; render(); window.scrollTo(0, 0); return; }
+  S.cur = s2[i2].key;
+  render(); window.scrollTo(0, 0);
+}
+function showErr(err) {
+  const el = $('#err'); if (el) el.textContent = err.msg;
+  if (err.focus) { const w = document.getElementById('w-' + err.focus), f = document.getElementById('f-' + err.focus);
+    if (w) w.classList.add('invalid');
+    if (f) { f.scrollIntoView({ behavior: 'smooth', block: 'center' }); f.focus({ preventScroll: true }); } }
+}
+function validate(st) {
+  if (st.key.startsWith('q:')) {
+    const q = Q[st.id];
+    if (q.type === 'num') {
+      const fields = typeof q.fields === 'function' ? q.fields(S.a) : q.fields;
+      for (const f of fields) {
+        const v = num(S.a[f.key]);
+        if (v == null) return { msg: `Vyplňte prosím: ${f.label}.`, focus: f.key };
+        if (v < f.min || v > f.max) return { msg: `${f.label}: zadejte hodnotu mezi ${f.min} a ${f.max}.`, focus: f.key };
+      }
+      if (st.id === 'target' && num(S.a.targetWeight) >= num(S.a.weight)) return { msg: 'Cílová váha musí být nižší než současná.', focus: 'targetWeight' };
+      return null;
+    }
+    if (S.a[st.id] == null) return { msg: 'Vyberte prosím odpověď.' };
+  }
+  if (st.key === 'contact') {
+    const nm = (S.a.firstName || '').trim();
+    if (!nm) return { msg: 'Vyplňte prosím jméno a příjmení.', focus: 'firstName' };
+    if (!/\s/.test(nm)) return { msg: 'Doplňte prosím i příjmení.', focus: 'firstName' };
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test((S.a.email || '').trim())) return { msg: 'Zadejte prosím platný e-mail.', focus: 'email' };
+    if (!S.a.gdpr) return { msg: 'Pro pokračování je potřeba souhlas se zpracováním údajů.' };
+  }
+  return null;
+}
+
+/* ---------- události ---------- */
+document.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  const act = b.dataset.act;
+  if (act === 'next') return go(1);
+  if (act === 'back') return go(-1);
+  if (act === 'restart') { if (confirm('Opravdu začít znovu? Vyplněné odpovědi se smažou.')) resetAll(); return; }
+  if (b.dataset.single != null) return pickSingle(b.dataset.single, +b.dataset.i);
+});
+function pickSingle(id, i) {
+  const val = Q[id].opts[i];
+  S.a[id] = val; save();
+  document.querySelectorAll(`[data-single="${id}"]`).forEach(c => c.setAttribute('aria-pressed', +c.dataset.i === i));
+  const err = $('#err'); if (err) err.textContent = '';
+  clearTimeout(autoT);
+  autoT = setTimeout(() => { if (S.cur === 'q:' + id) go(1); }, CFG.autoAdvanceMs);
+}
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (t.dataset.rng) {
+    const key = t.dataset.rng;
+    S.a[key] = +t.value; paintRange(t);
+    const v = document.getElementById('v-' + key);
+    if (v) v.innerHTML = `${t.value}<em>${t.dataset.unit}</em>`;
+    save(); return;
+  }
+  if (t.dataset.num) { S.a[t.dataset.num] = t.value; clearInvalid(t); save(); return; }
+  if (t.dataset.txt) { S.a[t.dataset.txt] = t.value; clearInvalid(t); save(); return; }
+});
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.dataset.consent) { S.a[t.dataset.consent] = t.checked; const err = $('#err'); if (err) err.textContent = ''; save(); }
+});
+function clearInvalid(t) {
+  const w = t.closest('.uf'); if (w) w.classList.remove('invalid');
+  const err = $('#err'); if (err) err.textContent = '';
+}
+let lastNarrow = isMobile();
+let fitT = null;
+window.addEventListener('resize', () => {
+  const n = isMobile();
+  if (n !== lastNarrow) { lastNarrow = n; if (S.cur.startsWith('q:')) { render(); return; } }
+  clearTimeout(fitT); fitT = setTimeout(fitScreen, 120);
+});
+window.addEventListener('orientationchange', () => setTimeout(fitScreen, 250));
+document.addEventListener('toggle', e => { if (e.target.classList && e.target.classList.contains('legal')) fitScreen(); }, true);
+
+/* ---------- vyhodnocování ---------- */
+const GEN_CHECKS = ['ANTROPOMETRIE', 'KONTRAINDIKACE', 'ANAMNÉZA', 'CÍL REDUKCE', 'VOLBA PREPARÁTU', 'PLÁN PROGRAMU'];
+const GEN_MESSAGES = [
+  'Počítám BMI a cílovou redukci…',
+  'Procházím kontraindikace a Vaši anamnézu…',
+  'Porovnávám Váš cíl s účinností jednotlivých preparátů…',
+  'Sestavuji odhad délky programu…',
+  'Skládám výsledek dohromady…'
+];
+let genTimer = null;
+function runGenerating() {
+  const total = 9000, t0 = Date.now();
+  const arc = $('#arc'), txt = $('#ringTxt'), bar = $('#genBar'), stat = $('#genStatus'), checks = $('#checks');
+  let msgIdx = 0;
+  clearInterval(genTimer);
+  genTimer = setInterval(() => {
+    const p = Math.min(1, (Date.now() - t0) / total);
+    const pct = Math.round(p * 100);
+    if (arc) arc.setAttribute('stroke-dashoffset', String(1482.8 * (1 - p)));
+    if (txt) txt.textContent = pct + ' %';
+    if (bar) bar.style.width = pct + '%';
+    const ci = Math.min(GEN_CHECKS.length - 1, Math.floor(p * GEN_CHECKS.length));
+    if (checks) checks.querySelectorAll('div').forEach((d, i) => { d.className = i < ci ? 'done' : i === ci ? 'cur' : ''; });
+    const mi = Math.min(GEN_MESSAGES.length - 1, Math.floor(p * GEN_MESSAGES.length));
+    if (mi !== msgIdx && stat) {
+      msgIdx = mi; stat.classList.add('fade');
+      setTimeout(() => { stat.textContent = GEN_MESSAGES[msgIdx]; stat.classList.remove('fade'); }, 260);
+    }
+    if (p >= 1) {
+      clearInterval(genTimer);
+      if (checks) checks.querySelectorAll('div').forEach(d => d.className = 'done');
+      setTimeout(() => { S.cur = 'result'; render(); window.scrollTo(0, 0); }, 420);
+    }
+  }, 60);
+}
+
+/* ---------- výsledek ---------- */
+const VOC_A = 'adéla adriana alena alexandra alžběta andrea aneta anna barbora bára blanka dana daniela denisa dita dominika eliška eva gabriela hana helena ivana iveta jana jarmila jitka kamila karolína kateřina klára kristýna lada lenka linda ludmila lucie magdaléna marcela markéta marta martina michaela milada milena miroslava monika nikola olga pavla pavlína petra radka renata romana růžena simona soňa stanislava šárka štěpánka tereza vendula věra veronika vladimíra zdeňka zuzana'.split(' ');
+function greetName() {
+  const raw = (S.a.firstName || '').trim().split(/\s+/)[0] || '';
+  if (!raw) return null;
+  const k = raw.toLowerCase(), n = k.charAt(0).toUpperCase() + k.slice(1);
+  if (VOC_A.includes(k)) return n.slice(0, -1) + 'o';
+  if (S.a.gender === 'Žena' && k.endsWith('a')) return n.slice(0, -1) + 'o';
+  return null;                                   // mužská jména raději bez oslovení než špatně
+}
+
+const BENEFITS = [
+  ['Redukce tělesného a viscerálního tuku', () => true],
+  ['Nižší hladina cukru a cholesterolu', d => ['Prediabetes', 'Inzulinová rezistence', 'Diabetes 2. typu'].includes(d.diab) || ['Zvýšený cholesterol', 'Obojí'].includes(d.kard)],
+  ['Snížení krevního tlaku', d => ['Zvýšený tlak', 'Obojí'].includes(d.kard)],
+  ['Více energie a lepší spánek', d => ['Méně než 6h', '6–7h'].includes(d.spanek)],
+  ['Nižší riziko diabetu 2. typu', d => ['Prediabetes', 'Inzulinová rezistence'].includes(d.diab)],
+  ['Lepší pohyblivost a menší zátěž kloubů', d => ['Téměř žádná', '1–2× týdně'].includes(d.pohyb)]
+];
+
+function renderResult() {
+  const R = compute(); window.__result = R;
+  const name = greetName();
+  const head = name ? `${esc(name)}, tady je<br>Váš výsledek` : 'Tady je<br>Váš výsledek';
+
+  if (R.contra) {
+    return `<section class="rsec first"><div class="split">
+      <div><span class="eyebrow">Výsledek screeningu</span><h1 class="h-l">${head}</h1>
+        <div class="alerts"><div class="alert"><span class="pill sm crit">Upozornění</span>
+          <span>Na základě Vašich odpovědí Vám GLP-1 program nedoporučujeme, a to z důvodu <b>${esc(R.contra)}</b>.</span></div></div>
+        <p class="lead summary">Doporučujeme konzultaci s Vaším ošetřujícím lékařem, který posoudí Vaše možnosti individuálně. Souhrn Vám posíláme na e-mail.</p>
+        ${sendStatusHTML()}
+        <p class="lead" style="margin-top:clamp(20px,calc(2*var(--u)),calc(36px*var(--k)))">Děkujeme za Váš čas a přejeme Vám pevné zdraví.<br><b style="color:var(--ink)">Aeternum Clinic</b></p></div>
+      ${marcelCol('Mrzí mě to, ale tohle je hranice, kterou nepřekračujeme. Bezpečnost je vždycky na prvním místě.')}
+    </div></section>${DISCLAIMER}`;
+  }
+
+  const rec = R.rec;
+  const benefits = BENEFITS.map(([txt]) => `<div class="ben hl">${icon('i-check')}<span>${esc(txt)}</span></div>`).join('');
+
+  return `
+  <section class="rsec first"><div class="split" style="align-items:center">
+    <div>
+      <span class="eyebrow">Aeternum GLP-1 Screening</span>
+      <h1 class="h-l">${head}</h1>
+      <div class="index-row"><div class="index-num ${R.score.cls}">${R.score.score}<small>/10</small></div>
+        <div class="index-side"><span class="small-caps" style="color:var(--ink)">Skóre vhodnosti</span>
+          <span class="pill ${R.score.cls}">${R.score.label}</span>
+          <span class="small-caps">Finální posouzení provádí lékař</span></div></div>
+      <p class="lead summary">Podle Vašich odpovědí nevidím nic, co by terapii bránilo. Při BMI ${R.bmi} a cíli mínus ${R.lose} kg odhaduji program na zhruba ${R.months} měsíců.</p>
+      ${sendStatusHTML()}
+      <a class="small-caps more" href="#detail">Podrobný výsledek ${icon('i-down')}</a>
+    </div>
+    ${marcelCol('Výsledek berte jako odborný odhad, ne jako diagnózu. Finální slovo má vždycky lékař na vstupním vyšetření.')}
+  </div></section>
+
+  <section class="rsec" id="detail"><div class="split">
+    <div><span class="eyebrow">Vaše čísla</span><h2 class="h-l">Odkud<br>startujeme</h2>
+      <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))">Odhad vychází z průměrného tempa úbytku v klinických studiích. Skutečný průběh doladíme na kontrolách.</p></div>
+    <div>
+      <div class="vals">
+        <div class="val"><small>BMI</small><b>${R.bmi}</b><span style="color:var(--muted)">${esc(bmiCategory(R.bmi))}</span></div>
+        <div class="val"><small>Odhad programu</small><b>${R.months}<em>měsíců</em></b></div>
+        <div class="val"><small>Cíl redukce</small><b>−${R.lose}<em>kg</em></b></div>
+      </div>
+      <div class="chart"><div class="cl">Předpokládaný průběh hmotnosti</div>${chartSVG(R.weight, R.target, R.months)}
+        <div class="cf"><span>Dnes</span><span>${Math.round(R.months / 2)} měs.</span><span>${R.months} měs.</span></div></div>
+    </div>
+  </div></section>
+
+  <section class="rsec"><div class="split">
+    <div><span class="eyebrow">Doporučení</span><h2 class="h-l">Preparát<br>pro Váš cíl</h2>
+      <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))">Cena programu je u obou preparátů stejná. Rozhoduje tedy jen to, co dává smysl pro Váš cíl a Vaši anamnézu.</p>
+      <div class="bens">${benefits}</div></div>
+    <div class="drug">
+      <span class="eyebrow">Pro Váš cíl vychází nejlépe</span>
+      <h3>${esc(rec.drug.name)}</h3>
+      <p class="lead" style="margin-top:12px;color:var(--ink)">${esc(rec.drug.inn)}</p>
+      <p class="lead" style="margin-top:clamp(14px,calc(1.2*var(--u)),calc(22px*var(--k)))">${esc(rec.why)}</p>
+      ${rec.alt ? `<div class="alt"><span class="small-caps">Alternativa · ${esc(rec.altDrug.name)}</span>
+        <p class="lead" style="margin-top:10px">${esc(rec.alt)}</p></div>` : ''}
+      <p class="fine" style="margin-top:clamp(18px,calc(1.5*var(--u)),calc(28px*var(--k)))">Jde o orientační doporučení ze screeningu. <b style="color:var(--ink)">Finální volbu preparátu i dávkování potvrdí lékař</b> na vstupním vyšetření, kde posoudí Vaši kompletní anamnézu.</p>
+    </div>
+  </div></section>
+
+  <section class="rsec"><div class="split">
+    <div><span class="eyebrow">Varianta programu</span><h2 class="h-l">Jak dlouhý<br>program zvolit</h2>
+      <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))">Délku programu i cenu Vám na konzultaci potvrdíme. Delší varianta vychází levněji na měsíc a dává tělu čas výsledek udržet.</p></div>
+    <div>${variantsHTML(R)}</div>
+  </div></section>
+
+  <section class="rsec"><span class="eyebrow">Benefity programu</span>
+    <h2 class="h-l">Co je v ceně<br>programu</h2>
+    <div class="tiles">${PROGRAM_TILES.map(([e, t, d]) => `<div class="tile"><div class="emoji">${e}</div><b>${esc(t)}</b><span>${esc(d)}</span></div>`).join('')}</div>
+  </section>
+
+  <section class="rsec" id="cta"><div class="split">
+    <div><span class="eyebrow">Další krok</span><h2 class="h-l">Vstupní<br><span class="light">konzultace</span></h2>
+      <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(28px*var(--k)))">S koordinátorem péče společně proberete:</p>
+      <div class="bul"><div>Individuální nastavení Vašeho programu</div><div>Podmínky smlouvy o programu péče</div><div>Možnosti financování programu</div></div>
+      <p class="notice"><span>⚠️</span><span>Součástí vstupu do programu je povinný vstupní lékařský screening (4 970 Kč), který ověří způsobilost a nastaví program na míru.</span></p></div>
+    <div class="panel" id="panel">${bookingHTML()}</div>
+  </div></section>
+  ${DISCLAIMER}`;
+}
+
+/* Varianty programu — ceny a délky drží stejnou logiku jako kalkulator-glp1.html */
+const PROGRAM_TILES = [
+  ['👨‍⚕️', 'Lékařský dohled', 'Pravidelné kontroly, úprava protokolu, monitoring parametrů.'],
+  ['💉', 'Léky v ceně programu', 'All-inclusive program — vše zahrnuto bez skrytých poplatků.'],
+  ['📊', 'Pravidelné krevní testy', 'Pravidelné sledování metabolických parametrů a reakce organismu.'],
+  ['🔀', 'Flexibilní program', 'Program nemá žádnou vázanost a je možné ho zkrátit, ale také prodloužit bez peněžité pokuty nebo placení navíc.'],
+  ['📘', 'Aeternum Longevity Protokol', 'Jídelníček, suplementační plán a individuální doporučení podle Vašeho vstupního auditu.']
+];
+function programVariants(R) {
+  const bmi = num(R.bmi) || 0, est = R.months;
+  const base = bmi < 25 ? 11970 : bmi < 30 ? 12970 : bmi < 35 ? 13970 : 14970;
+  const prices = bmi < 25 ? [11970, 11970, 11970] : [base + 1000, base, base - 1000];
+  return [
+    { emoji: '🔑', name: 'Starter',   months: est,     price: prices[0], desc: 'Přesná délka programu bez tolerance.' },
+    { emoji: '👑', name: 'Transform', months: est + 1, price: prices[1], desc: 'Doporučená délka programu včetně 2měsíční tolerance.', rec: true },
+    { emoji: '💎', name: 'Premium',   months: est + 3, price: prices[2], desc: 'Doporučená délka programu, 2měsíční tolerance + 3 měsíce udržovací fáze.' }
+  ];
+}
+function variantsHTML(R) {
+  const vars = programVariants(R);
+  return `<div class="vars">${vars.map(v => `<div class="var${v.rec ? ' rec' : ''}">${v.rec ? '<span class="badge">★ Doporučujeme</span>' : ''}
+      <div class="emoji">${v.emoji}</div><div class="nm">${esc(v.name)}</div>
+      <div class="mo">${v.months} měsíců</div><div class="pr">${fmt(v.price)} Kč/měs.</div>
+      <div class="ds">${esc(v.desc)}</div></div>`).join('')}</div>`;
+}
+
+const DISCLAIMER = `<div class="disclaimer">Aeternum GLP-1 Screening je orientační vyhodnocení na základě Vašich odpovědí, není lékařským vyšetřením ani diagnózou a nenahrazuje konzultaci s lékařem, který jediný rozhoduje o vhodnosti léků Wegovy® a Mounjaro® vázaných na lékařský předpis · Aeternum Clinic · My Design Creatives s.r.o. · IČO 07162235 · Pod Harfou 943/34, 190 00 Praha 9 · info@aeternumclinic.cz</div>`;
+
+function chartSVG(startW, endW, months) {
+  const W = 620, H = 200, pad = { t: 22, r: 64, b: 26, l: 56 };
+  const iw = W - pad.l - pad.r, ih = H - pad.t - pad.b;
+  const span = Math.max(1, (startW - endW) * 1.2);
+  const minY = endW - (startW - endW) * 0.12;
+  const toX = m => pad.l + (m / months) * iw;
+  const toY = w => pad.t + ih - ((w - minY) / span) * ih;
+  const pts = [];
+  for (let i = 0; i <= 40; i++) {
+    const t = i / 40, eased = 1 - Math.pow(1 - t, 1.8);
+    pts.push([toX(t * months), toY(startW - (startW - endW) * eased)]);
+  }
+  let d = `M ${pts[0][0]},${pts[0][1]}`;
+  for (let i = 1; i < pts.length; i++) {
+    const [x0, y0] = pts[i - 1], [x1, y1] = pts[i], cx = (x0 + x1) / 2;
+    d += ` C ${cx},${y0} ${cx},${y1} ${x1},${y1}`;
+  }
+  const area = d + ` L ${pts[pts.length - 1][0]},${H - pad.b} L ${pts[0][0]},${H - pad.b} Z`;
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Předpokládaný průběh hmotnosti">
+    <line x1="${pad.l}" y1="${toY(startW)}" x2="${W - pad.r}" y2="${toY(startW)}" stroke="rgba(255,255,255,.09)" stroke-dasharray="4,4"/>
+    <line x1="${pad.l}" y1="${toY(endW)}" x2="${W - pad.r}" y2="${toY(endW)}" stroke="rgba(79,163,224,.28)" stroke-dasharray="4,4"/>
+    <path d="${area}" fill="url(#chartG)"/>
+    <path d="${d}" fill="none" stroke="url(#chartL)" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="${toX(0)}" cy="${toY(startW)}" r="5" fill="#B391E0"/>
+    <circle cx="${toX(months)}" cy="${toY(endW)}" r="6" fill="#4FA3E0"/>
+    <circle cx="${toX(months)}" cy="${toY(endW)}" r="12" fill="#4FA3E0" opacity="0.22"/>
+    <text x="${pad.l - 8}" y="${toY(startW) + 5}" text-anchor="end" fill="rgba(244,244,246,.5)" font-size="14" font-family="Montserrat,sans-serif">${Math.round(startW)} kg</text>
+    <text x="${W - pad.r + 10}" y="${toY(endW) + 5}" text-anchor="start" fill="#8FC1EC" font-size="14" font-weight="600" font-family="Montserrat,sans-serif">${Math.round(endW)} kg</text>
+  </svg>`;
+}
+
+/* ---------- rezervace ---------- */
+const DOW = ['neděle', 'pondělí', 'úterý', 'středa', 'čtvrtek', 'pátek', 'sobota'];
+const DOW_SHORT = ['ne', 'po', 'út', 'st', 'čt', 'pá', 'so'];
+const MON = ['ledna', 'února', 'března', 'dubna', 'května', 'června', 'července', 'srpna', 'září', 'října', 'listopadu', 'prosince'];
+let slotCache = null, pollTimer = null;
+
+function bookingHTML() {
+  const B = S.booking;
+  if (B.paid) {
+    const d = new Date(B.slot);
+    return `<div class="success"><div class="tick">${icon('i-check')}</div><span class="eyebrow">Potvrzeno</span>
+      <h3>Termín je Váš</h3>
+      <p class="lead" style="margin-top:14px">${esc(DOW[d.getDay()])} ${d.getDate()}. ${esc(MON[d.getMonth()])}, ${pad2(d.getHours())}:${pad2(d.getMinutes())} — ${B.type === 'online' ? 'online' : 'osobně v Praze'}.</p>
+      <p class="lead" style="margin-top:12px">Potvrzení a pozvánku do kalendáře jsme poslali na <b style="color:var(--ink)">${esc(S.a.email)}</b>. Den před konzultací Vám přijde SMS připomínka.</p>
+      <p class="fine" style="margin-top:16px">Potřebujete termín změnit? Zavolejte nám na ${esc(CFG.phone)}.</p></div>`;
+  }
+  if (B.hold) return paymentHTML();
+  if (B.declined) {
+    return `<span class="eyebrow">Rozumíme</span><h3>Žádný spěch</h3>
+      <p class="lead" style="margin-top:14px">Výsledky Vašeho screeningu jsme Vám poslali na e-mail, takže se k nim můžete kdykoli vrátit a termín vstupní konzultace si zarezervujete jedním kliknutím.</p>
+      <button type="button" class="btn pri" style="margin-top:clamp(20px,calc(1.8*var(--u)),calc(32px*var(--k)))" data-act="rebook">Přece jen chci termín</button>`;
+  }
+
+  const type = B.type;
+  return `<span class="eyebrow">Vstupní konzultace</span><h3>Rezervace termínu</h3>
+    <div class="price"><b>${fmt(CFG.price)} Kč</b><span class="small-caps">${CFG.duration} minut</span></div>
+    <div class="seg2" role="group" aria-label="Forma konzultace">
+      <button type="button" data-btype="online" aria-pressed="${type === 'online'}">Online</button>
+      <button type="button" data-btype="osobne" aria-pressed="${type === 'osobne'}">Osobně v Praze</button>
+    </div>
+    ${type ? slotsHTML() : `<p class="fine" style="margin-top:16px">Vyberte formu konzultace a ukážu Vám volné termíny.</p>`}
+    <div class="decline"><button type="button" class="btn soft-crit" data-act="decline">Nechci vstupní konzultaci 😔</button>
+      <p class="fine">Ještě si to musím rozmyslet</p></div>`;
+}
+
+function slotsHTML() {
+  if (!slotCache) { loadSlots(); return `<p class="emptyslots">Načítám volné termíny…</p>`; }
+  if (!slotCache.length) return `<p class="emptyslots">V nejbližších ${CFG.leadDays} dnech už nemám volno. Zavolejte nám prosím na ${esc(CFG.phone)}, termín najdeme.</p>`;
+  const days = [...new Set(slotCache.map(s => s.slice(0, 10)))];
+  const sel = S.booking.day && days.includes(S.booking.day) ? S.booking.day : days[0];
+  S.booking.day = sel;
+  const times = slotCache.filter(s => s.startsWith(sel));
+  return `<div class="days" role="group" aria-label="Den">${days.map(d => {
+      const dt = new Date(d + 'T12:00:00');
+      return `<button type="button" class="day" data-day="${d}" aria-pressed="${d === sel}"><b>${dt.getDate()}. ${dt.getMonth() + 1}.</b><span>${DOW_SHORT[dt.getDay()]}</span></button>`;
+    }).join('')}</div>
+    <div class="times" role="group" aria-label="Čas">${times.map(t => {
+      const dt = new Date(t);
+      return `<button type="button" class="time" data-slot="${t}" aria-pressed="${S.booking.slot === t}">${pad2(dt.getHours())}:${pad2(dt.getMinutes())}</button>`;
+    }).join('')}</div>
+    ${S.booking.slot ? bookFormHTML() : ''}`;
+}
+
+function bookFormHTML() {
+  return `<div class="bform">
+    <div class="ufrow one">${ufHTML('phone', 'Telefon', { type: 'tel', inputmode: 'tel', autocomplete: 'tel', placeholder: '+420 777 123 456' })}</div>
+    <p class="fine">Telefon potřebujeme na SMS připomínku 24 hodin před konzultací.</p>
+    ${cboxHTML('c-book', S.a.bookConsent, 'Souhlasím, aby mě Aeternum Clinic kontaktovala ohledně rezervované konzultace.', 'bookConsent')}
+    <button type="button" class="btn pri" id="bookBtn">Rezervovat termín</button>
+    <span class="err" id="bookErr" role="alert"></span></div>`;
+}
+
+function paymentHTML() {
+  const h = S.booking.hold, d = new Date(S.booking.slot);
+  return `<span class="eyebrow">Zbývá zaplatit</span><h3>Termín držíme pro Vás</h3>
+    <dl class="summ">
+      <dt>Termín</dt><dd>${DOW_SHORT[d.getDay()]} ${d.getDate()}. ${d.getMonth() + 1}. · ${pad2(d.getHours())}:${pad2(d.getMinutes())}</dd>
+      <dt>Forma</dt><dd>${S.booking.type === 'online' ? 'Online' : 'Osobně'}</dd>
+      <dt>Částka</dt><dd>${fmt(h.amount || CFG.price)} Kč</dd>
+    </dl>
+    <div class="hold"><span class="dot"></span><span>Termín Vám držíme 2 hodiny. Jakmile platba dorazí, pošleme Vám potvrzení a pozvánku do kalendáře.</span></div>
+    <div class="paybox">
+      ${h.checkoutUrl ? `<a class="btn pri" href="${esc(h.checkoutUrl)}">Zaplatit kartou / Apple Pay</a>
+      <p class="fine" style="text-align:center">Potvrzení máte hned, platbu zpracovává Stripe.</p>` : ''}
+      <div class="qrwrap"><div class="qr" id="payQr" aria-label="QR platba"></div>
+        <dl><dt>Částka</dt><dd>${fmt(h.amount || CFG.price)} Kč</dd>
+          <dt>Účet</dt><dd>${esc(h.account || '2801448429/2010')}</dd>
+          <dt>Var. symbol</dt><dd>${esc(h.vs)}</dd></dl></div>
+      <p class="fine">QR platbu spárujeme automaticky, obvykle do 15–30 minut.</p>
+    </div>
+    <div class="waiting"><span class="dot"></span><span id="payWait">Čekám na platbu…</span></div>`;
+}
+
+function rerenderPanel() {
+  const p = $('#panel'); if (!p) return;
+  p.innerHTML = bookingHTML();
+  save();
+  if (S.booking.hold && !S.booking.paid) { showQr(); startPolling(); }
+}
+
+document.addEventListener('click', async e => {
+  const b = e.target.closest('button, a'); if (!b) return;
+  if (b.dataset.act === 'decline') { S.booking.declined = true; S.booking.intent = 'Ne'; rerenderPanel(); return; }
+  if (b.dataset.act === 'rebook') { S.booking.declined = false; S.booking.intent = 'Ano'; rerenderPanel(); if (S.booking.type) loadSlots(); return; }
+  if (b.dataset.btype) { S.booking.type = b.dataset.btype; S.booking.slot = null; slotCache = null; rerenderPanel(); loadSlots(); return; }
+  if (b.dataset.day) { S.booking.day = b.dataset.day; S.booking.slot = null; rerenderPanel(); return; }
+  if (b.dataset.slot) { S.booking.slot = b.dataset.slot; rerenderPanel(); return; }
+  if (b.id === 'bookBtn') { await submitBooking(b); return; }
+});
+
+async function loadSlots() {
+  if (!S.booking.type) return;
+  try {
+    if (CFG.apiUrl) {
+      const j = await api('slots', { type: S.booking.type }, 20000);
+      slotCache = j.slots || [];
+    } else {
+      slotCache = demoSlots();
+    }
+  } catch (e) { slotCache = demoSlots(); }
+  rerenderPanel();
+}
+
+/* Záložní generátor termínů z CFG.hours — používá se, dokud není nasazený backend. */
+function demoSlots() {
+  const out = [];
+  const now = new Date();
+  const from = new Date(now.getTime() + CFG.minHours * 3600e3);
+  for (let dayOff = 0; dayOff <= CFG.leadDays; dayOff++) {
+    const day = new Date(now.getFullYear(), now.getMonth(), now.getDate() + dayOff);
+    (CFG.hours[day.getDay()] || []).forEach(([a, z]) => {
+      const [ah, am] = a.split(':').map(Number), [zh, zm] = z.split(':').map(Number);
+      let t = new Date(day); t.setHours(ah, am, 0, 0);
+      const end = new Date(day); end.setHours(zh, zm, 0, 0);
+      while (t.getTime() + CFG.duration * 60e3 <= end.getTime()) {
+        if (t > from && (t.getDate() + t.getHours()) % 3 !== 0) out.push(localIso(t));
+        t = new Date(t.getTime() + CFG.slotStepMin * 60e3);
+      }
+    });
+  }
+  return out.slice(0, 120);
+}
+const localIso = d => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}T${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+
+async function submitBooking(btn) {
+  const err = m => { const el = $('#bookErr'); if (el) el.textContent = m; };
+  err('');
+  if (!/^\+?[\d\s]{9,16}$/.test((S.a.phone || '').trim())) return err('Telefon zadejte ve tvaru +420 777 123 456.');
+  if (!S.a.bookConsent) return err('Pro rezervaci je potřeba souhlas.');
+  btn.disabled = true; btn.textContent = 'Rezervuji…';
+  try {
+    const id = await ensureSubmitted();
+    let hold;
+    if (CFG.apiUrl) {
+      hold = await api('hold', {
+        id, slot: S.booking.slot, type: S.booking.type,
+        name: S.a.firstName, email: S.a.email, phone: S.a.phone.trim(), consent: true
+      }, 45000);
+    } else {
+      const vs = String(Date.now()).slice(-8);
+      hold = { vs, amount: CFG.price, account: '2801448429/2010', spayd: spaydFor(vs, CFG.price), checkoutUrl: '' };
+    }
+    S.booking.hold = hold;
+    rerenderPanel();
+  } catch (x) {
+    btn.disabled = false; btn.textContent = 'Rezervovat termín';
+    err(x && x.code === 'slot_taken' ? 'Tento termín už je bohužel zabraný. Vyberte prosím jiný.' : 'Rezervaci se nepodařilo dokončit. Zkuste to prosím znovu, nebo nám zavolejte na ' + CFG.phone + '.');
+    if (x && x.code === 'slot_taken') { slotCache = null; S.booking.slot = null; loadSlots(); }
+  }
+}
+
+function spaydFor(vs, amount) {
+  return 'SPD*1.0*ACC:' + CFG.iban + '*AM:' + Number(amount).toFixed(2) + '*CC:CZK*X-VS:' + vs + '*MSG:AETERNUM KONZULTACE*RN:AETERNUM CLINIC';
+}
+const QR_LIB = 'https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js';
+let qrPromise = null;
+function loadQrLib() {
+  if (!qrPromise) qrPromise = new Promise((ok, fail) => {
+    const s = document.createElement('script'); s.src = QR_LIB; s.async = true;
+    s.onload = ok; s.onerror = () => { qrPromise = null; fail(new Error('qr')); };
+    document.head.appendChild(s);
+  });
+  return qrPromise;
+}
+async function showQr() {
+  const box = $('#payQr'), h = S.booking.hold; if (!box || !h) return;
+  const payload = h.spayd || spaydFor(h.vs, h.amount || CFG.price);
+  try {
+    await loadQrLib();
+    const q = window.qrcode(0, 'M'); q.addData(payload); q.make();
+    box.innerHTML = q.createImgTag(5, 2, 'QR platba');
+  } catch (e) {
+    box.textContent = 'QR kód najdete v e-mailu.';
+    box.style.cssText = 'font-size:13px;color:#19191B;line-height:1.4;padding:16px;max-width:150px';
+  }
+}
+function startPolling() {
+  clearInterval(pollTimer);
+  if (!CFG.apiUrl || !S.booking.hold) return;
+  pollTimer = setInterval(async () => {
+    try {
+      const j = await api('payStatus', { vs: S.booking.hold.vs }, 15000);
+      if (j.paid) { clearInterval(pollTimer); S.booking.paid = true; rerenderPanel(); }
+      else if (j.expired) { clearInterval(pollTimer); S.booking.hold = null; S.booking.slot = null; slotCache = null; rerenderPanel(); loadSlots(); }
+    } catch (e) {}
+  }, CFG.pollMs);
+}
+
+/* ---------- odeslání na backend ---------- */
+async function api(action, data, timeoutMs = 30000) {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), timeoutMs);
+  try {
+    const res = await fetch(CFG.apiUrl, {
+      method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action, sid: S.sid, ...data }), signal: ctrl.signal
+    });
+    const j = await res.json();
+    if (!j.ok) { const e = new Error(j.error || 'api'); e.code = j.error; throw e; }
+    return j;
+  } finally { clearTimeout(t); }
+}
+
+let submitPromise = null;
+function sendStatusHTML() {
+  const st = S.send;
+  if (!CFG.apiUrl || !st) return '<p class="send-status" id="sendStatus" hidden></p>';
+  const email = `<b style="color:var(--ink)">${esc(S.a.email)}</b>`;
+  const text = st === 'sending' ? `Posílám Váš výsledek na ${email}…`
+    : st === 'sent' ? `Výsledek jsme poslali na ${email}.`
+    : `Výsledek je uložený, ale e-mail se nepodařilo odeslat. Ozveme se Vám.`;
+  return `<p class="send-status ${st}" id="sendStatus" role="status"><span class="dot"></span><span>${text}</span></p>`;
+}
+function setSend(state) {
+  S.send = state; save();
+  const el = $('#sendStatus'); if (el) el.outerHTML = sendStatusHTML();
+}
+function payload() {
+  const R = window.__result || compute();
+  return {
+    src: CFG.src, startedAt: S.startedAt, finishedAt: new Date().toISOString(),
+    name: S.a.firstName, email: S.a.email, phone: S.a.phone || '',
+    consents: { gdpr: !!S.a.gdpr, marketing: !!S.a.marketing, booking: !!S.a.bookConsent, version: '2026-09-v1' },
+    gender: S.a.gender, age: num(S.a.age), height: num(S.a.height), weight: num(S.a.weight),
+    targetWeight: num(S.a.targetWeight), bmi: R.bmi, bmiCategory: bmiCategory(R.bmi),
+    goal: S.a.goal, glp1: S.a.glp1, glp1drug: S.a.glp1drug || '', glp1sat: S.a.glp1sat || '',
+    answers: { pank: S.a.pank, men2: S.a.men2, diab: S.a.diab, zluc: S.a.zluc, led: S.a.led, ppp: S.a.ppp, stit: S.a.stit, kard: S.a.kard, pohyb: S.a.pohyb, spanek: S.a.spanek },
+    score: R.score.score, scoreLabel: R.score.label, contraindication: R.contra || '',
+    reservationIntent: S.booking.intent || '', bookingType: S.booking.type || '',
+    recommendation: R.rec ? R.rec.drug.name : '', recommendationWhy: R.rec ? R.rec.why : '',
+    alternative: R.rec && R.rec.alt ? R.rec.altDrug.name : '', programMonths: R.months, lose: R.lose
+  };
+}
+function ensureSubmitted() {
+  if (!CFG.apiUrl) return Promise.resolve(null);
+  if (S.recordId) return Promise.resolve(S.recordId);
+  if (submitPromise) return submitPromise;
+  setSend('sending');
+  submitPromise = api('submitScreening', { screening: payload() }, 60000)
+    .then(j => { S.recordId = j.id; setSend(j.emailed ? 'sent' : 'saved'); return j.id; })
+    .catch(e => { setSend('failed'); submitPromise = null; throw e; });
+  return submitPromise;
+}
+
+/* ---------- reset ---------- */
+function resetAll() {
+  clearInterval(genTimer); clearInterval(pollTimer); clearTimeout(autoT);
+  slotCache = null; submitPromise = null;
+  S = blank(); try { sessionStorage.removeItem(CFG.storageKey); } catch (e) {}
+  render(); window.scrollTo(0, 0);
+}
+
+/* ---------- demo ---------- */
+function fillDemo() {
+  S = blank();
+  Object.assign(S.a, {
+    firstName: 'Petra Nováková', email: 'petra.demo@example.cz', gdpr: true, marketing: false,
+    gender: 'Žena', age: 42, height: 168, weight: 92, targetWeight: 78,
+    goal: 'Zbavit se neustálých chutí a myšlenek na jídlo', glp1: 'Nemám zkušenosti',
+    pank: 'Ne', men2: 'Ne', diab: 'Prediabetes', zluc: 'Ne', led: 'Ne', ppp: 'Ne',
+    stit: 'Bez problémů', kard: 'Zvýšený tlak', pohyb: '1–2× týdně', spanek: '6–7h'
+  });
+  S.cur = 'result';
+}
+
+/* ---------- start ---------- */
+if (CFG.demo) { fillDemo(); const t = document.createElement('div'); t.className = 'demo-tag'; t.textContent = 'Ukázková data'; document.body.appendChild(t); }
+else load();
+if (S.cur === 'generating') S.cur = 'contact';
+render();
+</script>
+</body>
+</html>
