@@ -463,6 +463,24 @@ input:autofill{background:transparent;color:var(--ink)}
   .panel{padding:22px 18px;border-radius:22px}
   .seg2 button{height:50px;font-size:14px}
 }
+
+/* ── doladění pro telefon ── */
+@media (max-width:760px){
+  .top-actions .linkbtn{font-size:10px;letter-spacing:.14em}
+  .btn{white-space:normal;height:auto;min-height:54px;padding:14px 22px;line-height:1.25;letter-spacing:.14em;text-align:center}
+  .btn.sm{min-height:44px;padding:10px 16px}
+  .send-status{overflow-wrap:anywhere}
+  .send-status b{overflow-wrap:anywhere}
+  .uf input{overflow-wrap:anywhere}
+  .summ dd,.qrwrap dd{overflow-wrap:anywhere}
+}
+@media (max-width:760px){
+  .rsec{padding-top:36px;padding-bottom:36px}
+  .index-num{font-size:96px}
+  .index-row{gap:16px}
+  .vals{gap:18px}
+  .drug{padding:20px 18px}
+}
 </style>
 </head>
 <body>
@@ -1634,7 +1652,7 @@ function payload() {
   };
 }
 function ensureSubmitted() {
-  if (!CFG.apiUrl) return Promise.resolve(null);
+  if (!CFG.apiUrl || CFG.demo) return Promise.resolve(null);   // ukázková data se nikam neodesílají
   if (S.recordId) return Promise.resolve(S.recordId);
   if (submitPromise) return submitPromise;
   setSend('sending');
