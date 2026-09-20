@@ -77,10 +77,10 @@ main > .screen{width:100%}
 /* typografie */
 .eyebrow{display:inline-block;font-size:clamp(11px,calc(.85*var(--u)),calc(16px*var(--k)));font-weight:600;letter-spacing:.34em;text-transform:uppercase;background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
 .bar{display:block;width:clamp(64px,calc(5.2*var(--u)),calc(100px*var(--k)));height:4px;background:var(--grad)}
-.h-hero{margin:0;font-size:clamp(38px,calc(5*var(--u)),calc(96px*var(--k)));font-weight:700;line-height:1.02;letter-spacing:-.012em;text-wrap:balance}
+.h-hero{margin:0;font-size:clamp(38px,calc(5*var(--u)),calc(96px*var(--k)));font-weight:700;line-height:1.1;letter-spacing:-.012em;text-wrap:balance}
 .light{font-weight:400;background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
 .h-xl{margin:clamp(10px,calc(1*var(--u)),calc(18px*var(--k))) 0 0;font-size:clamp(34px,calc(5.2*var(--u)),calc(104px*var(--k)));font-weight:700;line-height:1;letter-spacing:-.02em}
-.h-l{margin:clamp(10px,calc(1*var(--u)),calc(18px*var(--k))) 0 0;font-size:clamp(30px,calc(3.75*var(--u)),calc(72px*var(--k)));font-weight:700;line-height:1.06;letter-spacing:-.012em}
+.h-l{margin:clamp(10px,calc(1*var(--u)),calc(18px*var(--k))) 0 0;font-size:clamp(30px,calc(3.75*var(--u)),calc(72px*var(--k)));font-weight:700;line-height:1.12;letter-spacing:-.012em}
 .body-wide{font-size:clamp(15px,calc(1.35*var(--u)),calc(26px*var(--k)));font-weight:500;letter-spacing:.14em;line-height:1.62;color:rgba(244,244,246,.92);max-width:31em}
 .lead{font-size:clamp(15px,calc(1.15*var(--u)),calc(22px*var(--k)));font-weight:500;letter-spacing:.04em;line-height:1.62;color:var(--muted);max-width:30em}
 .small-caps{font-size:clamp(11px,calc(.8*var(--u)),calc(15px*var(--k)));letter-spacing:.3em;font-weight:600;color:var(--dim);text-transform:uppercase}
@@ -124,7 +124,7 @@ main > .screen{width:100%}
 @media (max-width:760px){.strip{font-size:11px;letter-spacing:.22em;gap:8px 10px}}
 
 .intro{max-width:calc(1100px*var(--k))}
-.fitline{display:block;white-space:nowrap}
+.fitline{display:block;white-space:nowrap;line-height:1.14;padding-bottom:.04em}
 .intro-lead{font-size:clamp(13px,calc(1.12*var(--u)),calc(21px*var(--k)))}
 body.fixed{overflow:hidden;height:100dvh}
 /* nízké obrazovky (telefon na šířku): kompaktnější rozestupy, ať se vejde vše */
@@ -507,6 +507,7 @@ const CFG = {
   price: 570,                                   // vstupní konzultace
   duration: 30,                                 // minut
   site: 'https://www.aeternumclinic.cz',
+  gdprUrl: 'https://www.aeternumclinic.cz/terms-conditions',
   holdMinutes: 120,                             // jak dlouho držíme termín bez platby
   leadDays: 14,                                 // jak daleko dopředu lze rezervovat
   minHours: 24,                                 // nejbližší možný termín
@@ -857,9 +858,9 @@ function render() {
           ${ufHTML('email', 'E-mail', { type: 'email', placeholder: 'jana@email.cz', autocomplete: 'email' })}
         </div>
         <div class="consents">
-          ${cboxHTML('c-gdpr', S.a.gdpr, 'Souhlasím se zpracováním osobních údajů, včetně údajů o zdravotním stavu, za účelem vyhodnocení screeningu a jeho zaslání na můj e-mail.', 'gdpr')}
+          ${cboxHTML('c-gdpr', S.a.gdpr, 'Souhlasím se zpracováním osobních údajů, včetně údajů o zdravotním stavu, za účelem vyhodnocení screeningu a jeho zaslání na můj e-mail. Více v <a href="' + CFG.gdprUrl + '" target="_blank" rel="noopener" style="color:var(--ink)">zásadách zpracování osobních údajů</a>.', 'gdpr')}
           <details class="legal"><summary>Celé znění souhlasu</summary>
-            <p>Souhlasím se zpracováním svých osobních údajů, včetně údajů o zdravotním stavu, které jsem ve screeningu uvedl/a, společností My Design Creatives s.r.o., IČO 07162235, se sídlem Pod Harfou 943/34, 190 00 Praha 9, provozující Aeternum Clinic, za účelem vyhodnocení screeningu a jeho zaslání na můj e-mail. Souhlas mohu kdykoli odvolat na info@aeternumclinic.cz.</p></details>
+            <p>Souhlasím se zpracováním svých osobních údajů, včetně údajů o zdravotním stavu, které jsem ve screeningu uvedl/a, společností My Design Creatives s.r.o., IČO 07162235, se sídlem Chlumčanského 497/5, 180 00 Praha 8, provozující Aeternum Clinic, za účelem vyhodnocení screeningu a jeho zaslání na můj e-mail. Souhlas mohu kdykoli odvolat na info@aeternumclinic.cz.</p></details>
           ${cboxHTML('c-marketing', S.a.marketing, 'Chci e-mailem dostávat tipy k hubnutí a nabídky Aeternum Clinic. <em>(nepovinné)</em>', 'marketing')}
         </div></div></div>`;
     F = navHTML(true);
@@ -1265,7 +1266,7 @@ function variantsHTML(R) {
       <div class="ds">${esc(v.desc)}</div></div>`).join('')}</div>`;
 }
 
-const DISCLAIMER = `<div class="disclaimer">Aeternum GLP-1 Screening je orientační vyhodnocení na základě Vašich odpovědí, není lékařským vyšetřením ani diagnózou a nenahrazuje konzultaci s lékařem, který jediný rozhoduje o vhodnosti léků Wegovy® a Mounjaro® vázaných na lékařský předpis · Aeternum Clinic · My Design Creatives s.r.o. · IČO 07162235 · Pod Harfou 943/34, 190 00 Praha 9 · info@aeternumclinic.cz</div>`;
+const DISCLAIMER = `<div class="disclaimer">Aeternum GLP-1 Screening je orientační vyhodnocení na základě Vašich odpovědí, není lékařským vyšetřením ani diagnózou a nenahrazuje konzultaci s lékařem, který jediný rozhoduje o vhodnosti léků Wegovy® a Mounjaro® vázaných na lékařský předpis · Aeternum Clinic · My Design Creatives s.r.o. · IČO 07162235 · Chlumčanského 497/5, 180 00 Praha 8 · info@aeternumclinic.cz · <a href="${CFG.gdprUrl}" target="_blank" rel="noopener" style="color:var(--dim)">Zásady zpracování osobních údajů</a></div>`;
 
 function chartSVG(startW, endW, months) {
   const W = 620, H = 200, pad = { t: 22, r: 64, b: 26, l: 56 };
