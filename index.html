@@ -503,6 +503,20 @@ input:autofill{background:transparent;color:var(--ink)}
 /* náznak, že se dny dají posouvat do strany */
 .days{-webkit-mask-image:linear-gradient(90deg,#000 92%,rgba(0,0,0,.25));mask-image:linear-gradient(90deg,#000 92%,rgba(0,0,0,.25))}
 .days::after{content:"";flex:none;width:2px}
+
+/* ── úpravy po kontrole na telefonu ── */
+.price-note{font-size:clamp(13px,calc(.95*var(--u)),calc(17px*var(--k)));color:var(--ink);font-weight:500;margin-top:10px;line-height:1.5}
+/* nadpis platby na jeden řádek, štítek pod něj */
+.payhead{flex-direction:column;align-items:flex-start;gap:8px}
+.payhead b{font-size:clamp(13.5px,calc(.98*var(--u)),calc(19px*var(--k)));white-space:nowrap}
+@media (max-width:400px){.payhead b{font-size:13px}}
+@media (max-width:760px){
+  /* „Termín držíme pro Vás“ na jeden řádek */
+  .panel h3{font-size:21px}
+  /* odmítnutí konzultace i s emoji na jeden řádek */
+  .decline .btn{font-size:11px;letter-spacing:.06em;white-space:nowrap;padding:14px 12px}
+}
+@media (max-width:380px){.decline .btn{font-size:10px}}
 </style>
 </head>
 <body>
@@ -830,7 +844,7 @@ function recommend(d) {
     alt = bmi >= 30 ? 'Při Vašem BMI by Mounjaro® přineslo rychlejší úbytek. Pokud budete chtít i výraznější zhubnutí, probereme ho na konzultaci.' : null;
   } else if (d.goal === 'Výrazně zhubnout') {
     key = 'mounjaro';
-    why = 'Chcete výrazný úbytek. Tirzepatid je v této třídě nejúčinnější, ve studiích vedl k průměrnému poklesu okolo 20 % hmotnosti.';
+    why = 'Pro výrazný úbytek je v této třídě nejúčinnější — ve studiích vedl k průměrnému poklesu okolo 20 % hmotnosti.';
   } else if (lossPct < 10) {
     key = 'wegovy';
     why = 'Váš cíl je v dosahu mírnější terapie. Semaglutid na pár kilo stačí a je šetrnější k peněžence i k trávení.';
@@ -872,7 +886,7 @@ function render() {
     T = LOGO(true) + `<div class="top-actions"><a class="linkbtn" href="${CFG.site}">Zpátky na web ›</a></div>`;
     M = `<div class="intro">
       <div><span class="eyebrow">Průvodce</span>
-        <h1 class="h-hero" style="margin-top:clamp(10px,calc(1*var(--u)),calc(18px*var(--k)))"><span class="fitline">Redukce hmotnosti s GLP-1/GIP/GIT</span><span class="light fitline">Vstupní screening</span></h1>
+        <h1 class="h-hero" style="margin-top:clamp(10px,calc(1*var(--u)),calc(18px*var(--k)))"><span class="fitline">Redukce hmotnosti s GLP-1/GIP</span><span class="light fitline">Vstupní screening</span></h1>
         <p class="body-wide intro-lead" style="margin-top:clamp(18px,calc(1.5*var(--u)),calc(28px*var(--k)))">V průběhu 5 minut zjistíme, zda jsou léky jako Wegovy® nebo Mounjaro® pro Vás vhodné, a jaký terapeutický program nejlépe odpovídá Vašim potřebám.</p>
         <i class="bar" style="margin-top:clamp(26px,calc(2.6*var(--u)),calc(50px*var(--k)))"></i>
         <button type="button" class="btn lime" style="margin-top:clamp(30px,calc(4.2*var(--u)),calc(80px*var(--k)))" data-act="next">Spustit test</button></div></div>`;
@@ -889,7 +903,7 @@ function render() {
   } else if (st.key === 'contact') {
     setBg('g2');
     T = LOGO() + progressHTML('lifestyle');
-    const mt = 'Hotovo. Než Vám ukážu výsledky — kam je mám poslat? Tahle stránka po zavření zmizí, ale v e-mailu je budete mít kdykoli po ruce.';
+    const mt = 'Hotovo! Tahle stránka po zavření zmizí — v e-mailu Vám výsledky zůstanou.';
     M = `<div class="split">${marcelCol(esc(mt))}
       <div>${marcelHead(esc(mt))}
         <p class="qtext">Kam Vám pošleme výsledky?</p>
@@ -1256,11 +1270,10 @@ function renderResult() {
     <div class="drug">
       <span class="eyebrow">Pro Váš cíl vychází nejlépe</span>
       <h3>${esc(rec.drug.name)}</h3>
-      <p class="lead" style="margin-top:12px;color:var(--ink)">${esc(rec.drug.inn)}</p>
       <p class="lead" style="margin-top:clamp(14px,calc(1.2*var(--u)),calc(22px*var(--k)))">${esc(rec.why)}</p>
       ${rec.alt ? `<div class="alt"><span class="small-caps">Alternativa · ${esc(rec.altDrug.name)}</span>
         <p class="lead" style="margin-top:10px">${esc(rec.alt)}</p></div>` : ''}
-      <p class="fine" style="margin-top:clamp(18px,calc(1.5*var(--u)),calc(28px*var(--k)))">Jde o orientační doporučení ze screeningu. <b style="color:var(--ink)">Finální volbu preparátu i dávkování potvrdí lékař</b> na vstupním vyšetření, kde posoudí Vaši kompletní anamnézu.</p>
+      <p class="fine" style="margin-top:clamp(18px,calc(1.5*var(--u)),calc(28px*var(--k)));font-size:clamp(10.5px,calc(.68*var(--u)),calc(13px*var(--k)))">Jde o orientační doporučení ze screeningu. <b style="color:var(--ink)">Finální volbu preparátu i dávkování potvrdí lékař</b> na vstupním vyšetření, kde posoudí Vaši kompletní anamnézu.</p>
     </div>
   </div></section>
 
@@ -1279,7 +1292,7 @@ function renderResult() {
     <div><span class="eyebrow">Další krok</span><h2 class="h-l">Vstupní<br><span class="light">konzultace</span></h2>
       <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(28px*var(--k)))">S koordinátorem péče společně proberete:</p>
       <div class="bul"><div>Individuální nastavení Vašeho programu</div><div>Podmínky smlouvy o programu péče</div><div>Možnosti financování programu</div></div>
-      <p class="notice"><span>⚠️</span><span>Součástí vstupu do programu je povinný vstupní lékařský screening (4 970 Kč), který ověří způsobilost a nastaví program na míru.</span></p></div>
+      <p class="notice"><span>⚠️</span><span>Pro posouzení vhodnosti terapie je nutné podstoupit vstupní screening a lékařské vyšetření (5 570 Kč).</span></p></div>
     <div class="panel" id="panel">${bookingHTML()}</div>
   </div></section>
   ${DISCLAIMER}`;
@@ -1392,12 +1405,12 @@ function bookingHTML() {
   const type = B.type;
   return `<span class="eyebrow">Vstupní konzultace</span><h3>Rezervace termínu</h3>
     <div class="price"><b>${fmt(CFG.price)} Kč</b><span class="small-caps">${CFG.duration} minut</span></div>
-    <p class="fine" style="margin-top:10px">Částku ${fmt(CFG.price)} Kč Vám odečteme z ceny programu péče.</p>
+    <p class="price-note">Tuto částku Vám odečteme z ceny programu péče.</p>
     <div class="seg2" role="group" aria-label="Forma konzultace">
       <button type="button" data-btype="online" aria-pressed="${type === 'online'}">Online</button>
       <button type="button" data-btype="osobne" aria-pressed="${type === 'osobne'}">Osobně v Praze</button>
     </div>
-    ${type ? slotsHTML() : `<p class="fine" style="margin-top:16px">Vyberte formu konzultace a ukážu Vám volné termíny.</p>`}
+    ${type ? slotsHTML() : `<p class="fine" style="margin-top:16px">Vyberte formu konzultace pro zobrazení volných termínů.</p>`}
     <div class="decline"><button type="button" class="btn soft-crit" data-act="decline">Nechci vstupní konzultaci 😔</button>
       <p class="fine">Ještě si to musím rozmyslet</p></div>`;
 }
@@ -1451,13 +1464,13 @@ function paymentHTML() {
     <div class="paychoice">
       <p class="small-caps" style="margin-bottom:12px">Vyberte způsob platby</p>
       ${h.checkoutUrl ? `<div class="payopt">
-        <div class="payhead"><b>Kartou, Apple Pay nebo Google Pay</b><span class="paytag fast">Potvrzení hned</span></div>
+        <div class="payhead"><b>Kartou, Apple Pay nebo Google Pay</b><span class="paytag fast">Rezervace termínu ihned</span></div>
         <a class="btn pri" href="${esc(h.checkoutUrl)}" onclick="this.textContent='Přesměrováváme…';this.style.pointerEvents='none'">Zaplatit kartou</a>
         <p class="fine" style="margin-top:10px">Přesměrujeme Vás na zabezpečenou platební bránu Stripe. Po zaplacení je termín okamžitě potvrzený.</p>
       </div>
       <div class="paysep">nebo</div>` : ''}
       <div class="payopt">
-        <div class="payhead"><b>Převodem přes QR kód</b><span class="paytag slow">Do 10 minut</span></div>
+        <div class="payhead"><b>Převodem přes QR kód</b><span class="paytag slow">Do 5 minut</span></div>
         <div class="qrwrap"><div class="qr" id="payQr" aria-label="QR platba"></div>
           <dl><dt>Částka</dt><dd>${fmt(h.amount || CFG.price)} Kč</dd>
             <dt>Účet</dt><dd>${esc(h.account || '2801448429/2010')}</dd>
