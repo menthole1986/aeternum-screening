@@ -26,6 +26,8 @@
 @media (min-width:3000px) and (min-height:1650px){:root{--k:2}}
 @media (max-width:760px){:root{--u:1vw}}
 html{-webkit-text-size-adjust:100%}
+/* dvojklepnutí na telefonu stránku nezvětší; roztažení dvěma prsty funguje dál */
+body{touch-action:manipulation}
 html,body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--font)}
 body{min-height:100dvh;line-height:1.5}
 button,input,select{font:inherit;color:inherit}
@@ -407,7 +409,7 @@ input:autofill{background:transparent;color:var(--ink)}
 /* načítání: kostra termínů a spinner v tlačítku */
 @keyframes shimmer{0%{background-position:-420px 0}100%{background-position:420px 0}}
 .skel{border-radius:12px;background:linear-gradient(90deg,rgba(255,255,255,.05) 25%,rgba(255,255,255,.12) 50%,rgba(255,255,255,.05) 75%);background-size:420px 100%;animation:shimmer 1.3s linear infinite}
-.skel-days{display:flex;gap:8px;margin-top:18px}
+.skel-days{display:flex;gap:8px;margin-top:18px;max-width:100%;overflow:hidden}
 .skel-days .skel{height:58px;min-width:74px;flex:none;border-radius:14px}
 .skel-times{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px;margin-top:16px}
 .skel-times .skel{height:48px}
@@ -1425,7 +1427,7 @@ function bookingHTML() {
   const type = B.type;
   return `<span class="eyebrow">Vstupní konzultace</span><h3>Rezervace termínu</h3>
     <div class="price"><b>${fmt(CFG.price)} Kč</b><span class="small-caps">${CFG.duration} minut</span></div>
-    <p class="price-note">Tuto částku Vám odečteme z ceny programu péče.</p>
+    <p class="price-note">Částka bude odečtena z ceny programu.</p>
     <div class="seg2" role="group" aria-label="Forma konzultace">
       <button type="button" data-btype="online" aria-pressed="${type === 'online'}">Online</button>
       <button type="button" data-btype="osobne" aria-pressed="${type === 'osobne'}">Osobně v Praze</button>
