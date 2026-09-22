@@ -525,6 +525,9 @@ input:autofill{background:transparent;color:var(--ink)}
   .decline .btn{font-size:11px;letter-spacing:.06em;white-space:nowrap;padding:14px 20px}
 }
 @media (max-width:380px){.decline .btn{font-size:10px}}
+/* slova s pomlčkou (e-mail, GLP-1) se nelámou na konci řádku */
+.nb{white-space:nowrap}
+.lead,.qtext,.mhead,.fine,.summary,.tile span,.panel p{word-break:keep-all;overflow-wrap:break-word}
 </style>
 </head>
 <body>
@@ -1413,7 +1416,7 @@ function bookingHTML() {
         <button type="button" class="btn pri" style="margin-top:clamp(20px,calc(1.8*var(--u)),calc(32px*var(--k)))" data-act="rebook">Přece jen chci termín</button></div>`;
     }
     return `<span class="eyebrow">Rozumíme</span><h3>Žádný spěch</h3>
-      <p class="lead" style="margin-top:14px">Výsledky Vašeho screeningu jsme Vám poslali na e-mail, takže se k nim můžete kdykoli vrátit a termín vstupní konzultace si zarezervujete jedním kliknutím.</p>
+      <p class="lead" style="margin-top:14px">Výsledky screeningu jsme poslali na váš <span class="nb">e-mail</span>, takže se k nim můžete kdykoli vrátit a termín vstupní konzultace si zarezervujete jedním kliknutím.</p>
       <button type="button" class="btn pri" style="margin-top:clamp(20px,calc(1.8*var(--u)),calc(32px*var(--k)))" data-act="rebook">Přece jen chci termín</button>
       <div class="callback"><p class="small-caps">Máte otázku?</p>
         <p class="lead" style="margin-top:10px">Nechte nám telefon a ozveme se Vám. Probereme program, cenu i to, jestli je pro Vás vhodný.</p>
