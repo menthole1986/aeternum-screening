@@ -532,6 +532,9 @@ input:autofill{background:transparent;color:var(--ink)}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 .chip{border:1.5px solid var(--line2);background:transparent;color:var(--muted);border-radius:999px;padding:9px 16px;font-size:clamp(12.5px,calc(.85*var(--u)),calc(15px*var(--k)));font-weight:500;cursor:pointer;transition:border-color .15s,color .15s}
 .chip:hover{border-color:rgba(255,255,255,.5);color:var(--ink)}
+.qbox{width:100%;margin-top:clamp(14px,calc(1.2*var(--u)),calc(22px*var(--k)));background:rgba(255,255,255,.04);border:1.5px solid var(--line2);border-radius:16px;color:var(--ink);font:inherit;font-size:clamp(14px,calc(.95*var(--u)),calc(17px*var(--k)));line-height:1.55;padding:14px 16px;resize:vertical}
+.qbox:focus{outline:none;border-color:#4FA3E0}
+.qbox::placeholder{color:rgba(244,244,246,.35)}
 </style>
 </head>
 <body>
@@ -581,9 +584,9 @@ const CFG = {
   leadDays: 14,                                 // jak daleko dopředu lze rezervovat
   minHours: 24,                                 // nejbližší možný termín
   slotStepMin: 60,                              // 30 min konzultace + pauza
-  hours: {                                      // záloha, když backend neodpoví; zdrojem pravdy je kalendář „Aeternum – dostupnost“
-    1: [['11:00', '19:00']], 2: [['07:00', '10:00']], 3: [['12:00', '19:00']],
-    4: [['07:00', '10:00']], 5: [['12:00', '18:00']], 6: [['17:00', '19:00']], 0: [['11:00', '13:00']]
+  hours: {                                      // záložní hodiny pro demo režim, ostré řídí kalendář
+    0: [['11:00', '13:00']], 1: [['11:00', '14:00']], 2: [['07:00', '09:00'], ['11:00', '14:00']],
+    3: [['11:00', '14:00']], 4: [['07:00', '09:00'], ['11:00', '14:00']], 5: [['11:00', '14:00']], 6: []
   },
   iban: 'CZ5020100000002801448429',
   phone: '+420775481700',
@@ -935,7 +938,6 @@ function render() {
           ${cboxHTML('c-gdpr', S.a.gdpr, 'Souhlasím se zpracováním osobních údajů, včetně údajů o zdravotním stavu, za účelem vyhodnocení screeningu a jeho zaslání na můj e-mail. Více v <a href="' + CFG.gdprUrl + '" target="_blank" rel="noopener" style="color:var(--ink)">zásadách zpracování osobních údajů</a>.', 'gdpr')}
           <details class="legal"><summary>Celé znění souhlasu</summary>
             <p>Souhlasím se zpracováním svých osobních údajů, včetně údajů o zdravotním stavu, které jsem ve screeningu uvedl/a, společností My Design Creatives s.r.o., IČO 07162235, se sídlem Chlumčanského 497/5, 180 00 Praha 8, provozující Aeternum Clinic, za účelem vyhodnocení screeningu a jeho zaslání na můj e-mail. Souhlas mohu kdykoli odvolat na info@aeternumclinic.cz.</p></details>
-          ${cboxHTML('c-marketing', S.a.marketing, 'Chci e-mailem dostávat tipy k hubnutí a nabídky Aeternum Clinic. <em>(nepovinné)</em>', 'marketing')}
         </div></div></div>`;
     F = navHTML(true);
   } else if (st.key === 'generating') {
@@ -1427,16 +1429,16 @@ function bookingHTML() {
       <h3>Termín je Váš</h3>
       <p class="lead" style="margin-top:14px">${esc(DOW[d.getDay()])} ${d.getDate()}. ${esc(MON[d.getMonth()])}, ${pad2(d.getHours())}:${pad2(d.getMinutes())} — ${B.type === 'online' ? 'online' : 'osobně v Praze'}.</p>
       <p class="lead" style="margin-top:12px">Potvrzení a pozvánku do kalendáře jsme poslali na <b style="color:var(--ink)">${esc(S.a.email)}</b>. Den před konzultací Vám přijde SMS připomínka.</p>
-      <p class="fine" style="margin-top:16px">Potřebujete termín změnit? Zavolejte nám na ${esc(CFG.phone)}.</p></div>`;
+      ${B.manageUrl ? `<a class="btn ghost" href="${esc(B.manageUrl)}" style="margin-top:clamp(18px,calc(1.5*var(--u)),calc(28px*var(--k)))">Přesunout nebo zrušit termín</a>` : ''}
+      <p class="fine" style="margin-top:14px">Změnit termín jde nejpozději ${B.minHours || 24} hodin předem. Při pozdějším zrušení nebo neúčasti poplatek propadá a je potřeba rezervovat nový termín.</p></div>`;
   }
   if (S.verifying && B.hold) return verifyHTML();
   if (B.hold) return paymentHTML();
   if (B.declined) {
-    if (B.callbackDone) {
+    if (B.questionSent) {
       return `<div class="success"><div class="tick">${icon('i-check')}</div><span class="eyebrow">Máme to</span>
-        <h3>Ozveme se Vám</h3>
-        <p class="lead" style="margin-top:14px">Zavoláme Vám nejpozději následující pracovní den na <b style="color:var(--ink)">${esc(S.a.phone)}</b>. Rádi zodpovíme cokoli k programu i k ceně.</p>
-        <p class="fine" style="margin-top:16px">Nechcete čekat? Zavolejte nám rovnou na ${esc(CFG.phone)}.</p>
+        <h3>Odpovíme Vám e-mailem</h3>
+        <p class="lead" style="margin-top:14px">Dotaz jsme dostali a odpovíme co nejdříve na <b style="color:var(--ink)">${esc(S.a.email)}</b>.</p>
         <button type="button" class="btn pri" style="margin-top:clamp(20px,calc(1.8*var(--u)),calc(32px*var(--k)))" data-act="rebook">Přece jen chci termín</button></div>`;
     }
     return `<span class="eyebrow">Rozumíme</span><h3>Žádný spěch</h3>
@@ -1444,18 +1446,16 @@ function bookingHTML() {
       <p class="lead" style="margin-top:14px">Výsledky screeningu jsme poslali na váš <span class="nb">e-mail</span>, takže se k nim můžete kdykoli vrátit a termín vstupní konzultace si zarezervujete jedním kliknutím.</p>
       <button type="button" class="btn pri" style="margin-top:clamp(20px,calc(1.8*var(--u)),calc(32px*var(--k)))" data-act="rebook">Přece jen chci termín</button>
       <div class="callback"><p class="small-caps">Máte otázku?</p>
-        <p class="lead" style="margin-top:10px">Nechte nám telefon a ozveme se Vám. Probereme program, cenu i to, jestli je pro Vás vhodný.</p>
-        <div class="ufrow one" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))">${ufHTML('phone', 'Telefon', { type: 'tel', inputmode: 'tel', autocomplete: 'tel', placeholder: '+420 777 123 456' })}</div>
-        ${cboxHTML('c-call', S.a.callConsent, 'Souhlasím, aby mě Aeternum Clinic telefonicky kontaktovala ohledně programu péče.', 'callConsent')}
-        <button type="button" class="btn ghost" id="callBtn" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))">Ozvěte se mi</button>
-        <span class="err" id="callErr" role="alert"></span>
-        <p class="fine" style="margin-top:12px">Nebo rovnou zavolejte na ${esc(CFG.phone)}.</p></div>`;
+        <p class="lead" style="margin-top:10px">Napište nám ji a odpovíme co nejdříve e-mailem. Program, cenu i to, jestli je pro Vás vhodný.</p>
+        <textarea id="qText" class="qbox" rows="4" placeholder="Co Vás zajímá?">${esc(S.a.question || '')}</textarea>
+        <button type="button" class="btn ghost" id="qBtn" style="margin-top:clamp(14px,calc(1.2*var(--u)),calc(22px*var(--k)))">Odeslat dotaz</button>
+        <span class="err" id="qErr" role="alert"></span></div>`;
   }
 
   const type = B.type;
   return `<span class="eyebrow">Vstupní konzultace</span><h3>Rezervace termínu</h3>
     <div class="price"><b>${fmt(CFG.price)} Kč</b><span class="small-caps">${CFG.duration} minut</span></div>
-    <p class="price-note">Částka bude odečtena z ceny programu.</p>
+    <p class="price-note">Poplatek za čas koordinátora a přípravu na Váš případ.</p>
     <div class="seg2" role="group" aria-label="Forma konzultace">
       <button type="button" data-btype="online" aria-pressed="${type === 'online'}">Online</button>
       <button type="button" data-btype="osobne" aria-pressed="${type === 'osobne'}">Osobně v Praze</button>
@@ -1551,7 +1551,23 @@ document.addEventListener('click', async e => {
   if (b.dataset.day) { S.booking.day = b.dataset.day; S.booking.slot = null; rerenderPanel(); return; }
   if (b.dataset.slot) { S.booking.slot = b.dataset.slot; rerenderPanel(); return; }
   if (b.id === 'bookBtn') { await submitBooking(b); return; }
-  if (b.id === 'callBtn') { await submitCallback(b); return; }
+  if (b.id === 'qBtn') {
+    const ta = document.querySelector('#qText');
+    const text = (ta && ta.value || '').trim();
+    const err = m => { const el = $('#qErr'); if (el) el.textContent = m; };
+    if (text.length < 3) return err('Napište prosím, co Vás zajímá.');
+    S.a.question = text;
+    b.disabled = true; b.textContent = 'Odesíláme…';
+    try {
+      if (CFG.apiUrl && !CFG.demo && S.recordId) await api('question', { id: S.recordId, text }, 20000);
+      S.booking.questionSent = true;
+      rerenderPanel();
+    } catch (x) {
+      b.disabled = false; b.textContent = 'Odeslat dotaz';
+      err('Odeslání se nepodařilo. Zkuste to prosím znovu, nebo napište na ' + CFG.email + '.');
+    }
+    return;
+  }
 });
 
 async function loadSlots() {
@@ -1686,6 +1702,8 @@ function startPolling() {
         if (j.slot) S.booking.slot = j.slot;
         if (j.type) S.booking.type = j.type;
         if (j.meet) S.booking.meet = j.meet;
+        if (j.manageUrl) S.booking.manageUrl = j.manageUrl;
+        if (j.minHours) S.booking.minHours = j.minHours;
         if (j.email && !S.a.email) S.a.email = j.email;
         rerenderPanel();
       } else if (j.expired) {
@@ -1704,27 +1722,6 @@ function startPolling() {
 
 /* ---------- odeslání na backend ---------- */
 // Žádost o zpětné volání z obrazovky po odmítnutí termínu.
-async function submitCallback(btn) {
-  const err = m => { const el = $('#callErr'); if (el) el.textContent = m; };
-  err('');
-  const phone = String(S.a.phone || '').trim();
-  if (!/^\+?[\d\s]{9,16}$/.test(phone)) return err('Telefon zadejte ve tvaru +420 777 123 456.');
-  if (!S.a.callConsent) return err('Bez souhlasu Vám bohužel nemůžeme zavolat.');
-  const label = btn.textContent;
-  btn.disabled = true; btn.textContent = 'Odesíláme…';
-  try {
-    if (CFG.apiUrl && !CFG.demo) {
-      const id = await ensureSubmitted();
-      await api('callback', { id: id, phone: phone, consent: true }, 20000);
-    }
-    S.booking.intent = 'Zpětné volání';
-    S.booking.callbackDone = true;
-    save(); rerenderPanel();
-  } catch (e) {
-    btn.disabled = false; btn.textContent = label;
-    err('Odeslání se nepodařilo. Zkuste to prosím znovu, nebo zavolejte na ' + CFG.phone + '.');
-  }
-}
 
 async function api(action, data, timeoutMs = 30000) {
   const ctrl = new AbortController();
