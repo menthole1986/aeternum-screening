@@ -598,7 +598,7 @@ const CFG = {
   minHours: 24,                                 // nejbližší možný termín
   slotStepMin: 60,                              // 30 min konzultace + pauza
   hours: {                                      // záložní hodiny pro demo režim, ostré řídí kalendář
-    0: [['11:00', '14:00']], 1: [['11:00', '13:00'], ['18:00', '20:00']], 2: [['07:00', '09:00'], ['11:00', '14:00']],
+    0: [['11:00', '14:00']], 1: [['11:00', '13:00'], ['18:00', '20:00']], 2: [['07:00', '10:00'], ['18:00', '20:00']],
     3: [['11:00', '14:00']], 4: [], 5: [], 6: [['11:00', '14:00']]
   },
   iban: 'CZ5020100000002801448429',
@@ -618,6 +618,7 @@ const $ = (s, el = document) => el.querySelector(s);
 const mesice = n => Number(n) === 1 ? '1 měsíc' : (Number(n) >= 2 && Number(n) <= 4 ? n + ' měsíce' : n + ' měsíců');
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const fmt = n => Math.round(n).toLocaleString('cs-CZ');
+const dec = n => String(n ?? '').replace('.', ',');   // česky se píše desetinná čárka
 const num = v => { if (v === '' || v == null) return null; const n = parseFloat(String(v).replace(',', '.')); return isNaN(n) ? null : n; };
 const icon = (id, cls = '') => `<svg class="${cls}" aria-hidden="true"><use href="#${id}"/></svg>`;
 const isNarrow = () => matchMedia('(max-width:1000px)').matches;
@@ -654,7 +655,7 @@ const Q = {
     marcel: d => {
       const bmi = calcBMI(d.height, d.weight);
       return bmi
-        ? `Vaše BMI je ${bmi} — ${bmiCategory(bmi)}. Kam se chcete dostat? Cíl si klidně nastavte ambiciózně, na konzultaci ho doladíme.`
+        ? `Vaše BMI je ${dec(bmi)} — ${bmiCategory(bmi)}. Kam se chcete dostat? Cíl si klidně nastavte ambiciózně, na konzultaci ho doladíme.`
         : 'Kam se chcete dostat? Cíl si klidně nastavte ambiciózně, na konzultaci ho doladíme.';
     },
     label: 'Jaká je Vaše cílová váha?', type: 'num',
@@ -815,7 +816,7 @@ function hardContra(d) {
   if (d.pank === 'Ano') return 'anamnézy zánětu slinivky břišní (pankreatitida)';
   if (d.men2 === 'Ano') return 'výskytu syndromu MEN 1/2 nebo medulárního karcinomu štítné žlázy v rodinné anamnéze';
   if (d.ppp === 'Ano') return 'léčby poruchy příjmu potravy v anamnéze';
-  if (bmi != null && bmi < BMI_FLOOR) return `nízkého BMI (${bmi})`;
+  if (bmi != null && bmi < BMI_FLOOR) return `nízkého BMI (${dec(bmi)})`;
   return null;
 }
 function calcScore(d) {
@@ -1277,7 +1278,7 @@ function renderResult() {
         <div class="index-side"><span class="small-caps" style="color:var(--ink)">Skóre vhodnosti</span>
           <span class="pill ${R.score.cls}">${R.score.label}</span>
           <span class="small-caps">Finální posouzení provádí lékař</span></div></div>
-      <p class="lead summary">Podle Vašich odpovědí nevidím nic, co by terapii bránilo. Při BMI ${R.bmi} a cíli mínus ${R.lose} kg odhaduji program na zhruba ${mesice(R.months)}.</p>
+      <p class="lead summary">Podle Vašich odpovědí nevidím nic, co by terapii bránilo. Při BMI ${dec(R.bmi)} a cíli mínus ${R.lose} kg odhaduji program na zhruba ${mesice(R.months)}.</p>
       ${R.bmi < 25 ? `<p class="lead summary" style="margin-top:10px">Vaše BMI je pod 25, takže nejde o klasické hubnutí. Terapie může dávat smysl i tak, například na food noise, tedy neustálé myšlenky na jídlo, na zvládání stresu nebo na udržení váhy. O vhodnosti i dávce rozhoduje lékař podle vstupního vyšetření.</p>` : ''}
       ${sendStatusHTML()}
       <a class="small-caps more" href="#detail">Podrobný výsledek ${icon('i-down')}</a>
@@ -1290,7 +1291,7 @@ function renderResult() {
       <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))">Odhad vychází z průměrného tempa úbytku v klinických studiích. Skutečný průběh doladíme na kontrolách.</p></div>
     <div>
       <div class="vals">
-        <div class="val"><small>BMI</small><b>${R.bmi}</b><span style="color:var(--muted)">${esc(bmiCategory(R.bmi))}</span></div>
+        <div class="val"><small>BMI</small><b>${dec(R.bmi)}</b><span style="color:var(--muted)">${esc(bmiCategory(R.bmi))}</span></div>
         <div class="val"><small>Odhad programu</small><b>${R.months}<em>měsíců</em></b></div>
         <div class="val"><small>Cíl redukce</small><b>−${R.lose}<em>kg</em></b></div>
       </div>
@@ -1514,7 +1515,7 @@ function bookingHTML() {
     <div class="decline">
       <p class="fine" style="margin-bottom:clamp(10px,calc(.9*var(--u)),calc(16px*var(--k)))">Nehodí se Vám to, nebo si ještě nejste jistí?</p>
       <div class="declrow">
-        <button type="button" class="btn ghost sm" data-act="decline">Zatím termín nechci</button>
+        <button type="button" class="btn ghost sm" data-act="decline">Chci si to rozmyslet</button>
         <button type="button" class="btn ghost sm" data-act="ask">Mám otázku</button>
       </div></div>`;
 }
@@ -1601,7 +1602,12 @@ document.addEventListener('click', async e => {
     const reason = b.dataset.reason;
     S.booking.reasonSent = true;
     rerenderPanel();
-    try { if (CFG.apiUrl && !CFG.demo && S.recordId) await api('declineReason', { id: S.recordId, reason }, 15000); } catch (x) {}
+    try {
+      if (CFG.apiUrl && !CFG.demo) {
+        const id = S.recordId || await ensureSubmitted();
+        if (id) await api('declineReason', { id, reason }, 15000);
+      }
+    } catch (x) { /* důvod je bonus, klientovi kvůli němu nic nehlásíme */ }
     return;
   }
   if (b.dataset.act === 'decline') { S.booking.declined = true; S.booking.askOnly = false; S.booking.intent = 'Ne'; rerenderPanel(); return; }
@@ -1624,7 +1630,12 @@ document.addEventListener('click', async e => {
     S.a.question = text;
     b.disabled = true; b.textContent = 'Odesíláme…';
     try {
-      if (CFG.apiUrl && !CFG.demo && S.recordId) await api('question', { id: S.recordId, text }, 20000);
+      if (CFG.apiUrl && !CFG.demo) {
+        // Dotaz nesmí spadnout do prázdna: když se screening ještě neuložil, uložíme ho teď.
+        const id = S.recordId || await ensureSubmitted();
+        if (!id) throw new Error('no_record');
+        await api('question', { id, text }, 20000);
+      }
       S.booking.questionSent = true;
       rerenderPanel();
     } catch (x) {
