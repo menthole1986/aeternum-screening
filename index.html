@@ -1541,7 +1541,10 @@ function bookFormHTML() {
   return `<div class="bform">
     ${pick}
     <div class="ufrow one">${ufHTML('phone', 'Telefon', { type: 'tel', inputmode: 'tel', autocomplete: 'tel', placeholder: '+420 777 123 456' })}</div>
-    <p class="fine">Telefon potřebujeme na SMS připomínku 24 hodin před konzultací.</p>
+    <div class="ufrow one">${ufHTML('street', 'Ulice a číslo popisné', { autocomplete: 'street-address', placeholder: 'Pod Harfou 943/34' })}</div>
+    <div class="ufrow">${ufHTML('city', 'Město', { autocomplete: 'address-level2', placeholder: 'Praha' })}
+      ${ufHTML('zip', 'PSČ', { inputmode: 'numeric', autocomplete: 'postal-code', placeholder: '190 00' })}</div>
+    <p class="fine">Telefon potřebujeme na SMS připomínku 24 hodin před konzultací, adresu na daňový doklad.</p>
     ${cboxHTML('c-book', S.a.bookConsent, 'Souhlasím, aby mě Aeternum Clinic kontaktovala ohledně rezervované konzultace.', 'bookConsent')}
     <button type="button" class="btn pri" id="bookBtn"${slot ? '' : ' disabled'}>Rezervovat termín</button>
     <span class="err" id="bookErr" role="alert"></span></div>`;
@@ -1659,6 +1662,7 @@ const BOOK_ERRORS = {
   bad_email: 'Zadejte prosím platný e-mail.',
   bad_phone: 'Telefon zadejte ve tvaru +420 777 123 456.',
   no_consent: 'Pro rezervaci je potřeba souhlas.',
+  bad_address: 'Zkontrolujte prosím adresu a PSČ.',
   busy: 'Zrovna teď rezervuje někdo jiný. Zkuste to prosím za chvíli.',
   sheet_missing: 'Rezervační systém se právě připravuje. Zavolejte nám prosím na ',
   calendar_missing: 'Rezervační systém se právě připravuje. Zavolejte nám prosím na ',
@@ -1675,6 +1679,9 @@ async function submitBooking(btn) {
   err('');
   if (!S.booking.slot) return err('Vyberte prosím čas konzultace.');
   if (!/^\+?[\d\s]{9,16}$/.test((S.a.phone || '').trim())) return err('Telefon zadejte ve tvaru +420 777 123 456.');
+  if (!(S.a.street || '').trim()) return err('Vyplňte prosím ulici a číslo popisné.');
+  if (!(S.a.city || '').trim()) return err('Vyplňte prosím město.');
+  if (!/^\d{3}\s?\d{2}$/.test((S.a.zip || '').trim())) return err('PSČ zadejte ve tvaru 190 00.');
   if (!S.a.bookConsent) return err('Pro rezervaci je potřeba souhlas.');
   btn.disabled = true;
   btn.innerHTML = '<span class="sp"></span>Blokuji termín…';
@@ -1690,7 +1697,9 @@ async function submitBooking(btn) {
     if (CFG.apiUrl) {
       hold = await api('hold', {
         id, slot: S.booking.slot, type: S.booking.type,
-        name: S.a.firstName, email: S.a.email, phone: S.a.phone.trim(), consent: true
+        name: S.a.firstName, email: S.a.email, phone: S.a.phone.trim(),
+        street: S.a.street.trim(), city: S.a.city.trim(), zip: (S.a.zip || '').replace(/\s/g, ''),
+        consent: true
       }, 45000);
     } else {
       const vs = String(Date.now()).slice(-8);
