@@ -339,6 +339,17 @@ input:autofill{background:transparent;color:var(--ink)}
 .var .mo{font-size:clamp(26px,calc(2.1*var(--u)),calc(40px*var(--k)));font-weight:700;line-height:1.1;margin-top:8px;background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
 .var .pr{font-size:clamp(15px,calc(1.15*var(--u)),calc(22px*var(--k)));font-weight:700;margin-top:6px}
 .var .ds{font-size:clamp(12px,calc(.8*var(--u)),calc(15px*var(--k)));color:var(--muted);line-height:1.5;margin-top:10px}
+.var{cursor:pointer;width:100%;font:inherit;color:inherit;transition:border-color .18s,box-shadow .18s,transform .1s}
+.var:hover{border-color:rgba(255,255,255,.42)}
+.var:active{transform:scale(.995)}
+.var.sel{border-color:#4FA3E0;box-shadow:0 0 0 1px rgba(79,163,224,.55),0 12px 44px rgba(47,134,204,.16)}
+.varinfo{margin-top:clamp(18px,calc(1.5*var(--u)),calc(28px*var(--k)));border:1px solid var(--line);border-radius:clamp(16px,calc(1.3*var(--u)),calc(24px*var(--k)));padding:clamp(18px,calc(1.5*var(--u)),calc(28px*var(--k)));background:rgba(255,255,255,.03)}
+.vi-main{font-size:clamp(13px,calc(.92*var(--u)),calc(17px*var(--k)));line-height:1.6;color:var(--ink)}
+.vi-rows{margin-top:clamp(12px,calc(1*var(--u)),calc(18px*var(--k)))}
+.vi-rows div{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:9px 0;border-top:1px solid var(--line);font-size:clamp(12.5px,calc(.85*var(--u)),calc(16px*var(--k)))}
+.vi-rows div:first-child{border-top:0}
+.vi-rows span{color:var(--muted)}
+.vi-rows b{font-weight:700;text-align:right}
 .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(clamp(180px,calc(13*var(--u)),calc(260px*var(--k))),1fr));gap:clamp(12px,calc(1.1*var(--u)),calc(20px*var(--k)));margin-top:clamp(22px,calc(2*var(--u)),calc(38px*var(--k)))}
 @media (max-width:900px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:520px){.tiles{grid-template-columns:1fr}}
@@ -790,8 +801,8 @@ function programMonths(d) {
   const start = num(d.weight), target = num(d.targetWeight), h = num(d.height) || 172;
   if (start == null || target == null || start <= target) return 3;
   const bmi = start / Math.pow(h / 100, 2);
-  const perMonth = bmi < 27 ? 3.5 : bmi < 30 ? 3.8 : bmi < 35 ? 3.0 : 2.5;
-  return Math.max(3, Math.min(24, Math.round((start - target) / perMonth)));
+  const perMonth = 2.5;                       // sjednoceno s kalkulátorem GLP-1
+  return Math.max(1, Math.min(24, Math.round((start - target) / perMonth)));
 }
 // Pod touto hranicí terapii nenabízíme vůbec. Mezi BMI_FLOOR a 25 rozhoduje lékař,
 // může jít o nízké dávkování na chutě a stres, ne primárně na hubnutí.
@@ -1302,7 +1313,8 @@ function renderResult() {
 
   <section class="rsec"><div class="split">
     <div><span class="eyebrow">Varianta programu</span><h2 class="h-l">Jak dlouhý<br>program zvolit</h2>
-      <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))">Délku programu i cenu Vám na konzultaci potvrdíme. Delší varianta vychází levněji na měsíc a dává tělu čas výsledek udržet.</p></div>
+      <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))">Délku programu i cenu Vám na konzultaci potvrdíme. Delší varianta vychází levněji na měsíc a dává tělu čas výsledek udržet.</p>
+      <p class="fine" style="margin-top:clamp(12px,calc(1*var(--u)),calc(18px*var(--k)))">Klikněte na variantu a porovnejte si je.</p></div>
     <div>${variantsHTML(R)}</div>
   </div></section>
 
@@ -1324,27 +1336,61 @@ function renderResult() {
 /* Varianty programu — ceny a délky drží stejnou logiku jako kalkulator-glp1.html */
 const PROGRAM_TILES = [
   ['👨‍⚕️', 'Lékařský dohled', 'Pravidelné kontroly, úprava protokolu, monitoring parametrů.'],
-  ['💉', 'Léky v ceně programu', 'All-inclusive program — vše zahrnuto bez skrytých poplatků.'],
   ['📊', 'Pravidelné krevní testy', 'Pravidelné sledování metabolických parametrů a reakce organismu.'],
-  ['🔀', 'Flexibilní program', 'Program nemá žádnou vázanost a je možné ho zkrátit, ale také prodloužit bez peněžité pokuty nebo placení navíc.'],
-  ['📘', 'Aeternum Longevity Protokol', 'Jídelníček, suplementační plán a individuální doporučení podle Vašeho vstupního auditu.']
+  ['💉', 'Léky v ceně programu', 'All-inclusive program — vše zahrnuto bez skrytých poplatků.'],
+  ['🔀', 'Flexibilní program', 'Bez vázanosti a storno poplatku. Program lze zkrátit nebo prodloužit dle vývoje váhy.'],
+  ['📘', 'Aeternum Longevity Protokol', 'Individuální nutriční, suplementační, tréninkový, regenerační plán.']
 ];
 function programVariants(R) {
   const bmi = num(R.bmi) || 0, est = R.months;
   const base = bmi < 25 ? 11970 : bmi < 30 ? 12970 : bmi < 35 ? 13970 : 14970;
   const prices = bmi < 25 ? [11970, 11970, 11970] : [base + 1000, base, base - 1000];
   return [
-    { emoji: '🔑', name: 'Starter',   months: est,     price: prices[0], desc: 'Přesná délka programu bez tolerance.' },
-    { emoji: '👑', name: 'Transform', months: est + 1, price: prices[1], desc: 'Doporučená délka programu včetně 2měsíční tolerance.', rec: true },
-    { emoji: '💎', name: 'Premium',   months: est + 3, price: prices[2], desc: 'Doporučená délka programu, 2měsíční tolerance + 3 měsíce udržovací fáze.' }
+    { emoji: '📉', name: 'Starter',   months: est + 1, price: prices[0], desc: 'Přesný počet měsíců dle matematicky odhadované délky programu.',
+      info: 'Negarantujeme výsledky, pokud program ukončíte příliš brzy. Udržovací fáze v Transform a Aeternum je klíčová ochrana proti jo-jo efektu.' },
+    { emoji: '⚖️', name: 'Transform', months: est + 2, price: prices[1], desc: 'Aby byla terapie úspěšná, vždy doporučujeme raději o něco delší délku z důvodu individuální odezvy.', rec: true,
+      info: 'Doporučená délka pro trvalé výsledky. Delší program snižuje riziko jo-jo efektu a dává tělu čas si váhu udržet.' },
+    { emoji: '♾️', name: 'Aeternum',  months: est + 4, price: prices[2], desc: 'Transformační program s následnou udržovací fází, kterou lze flexibilně prodloužit.',
+      info: 'Transformační program s udržovací fází. Čím déle tělo adaptuje, tím trvalejší výsledky — bez jo-jo efektu.' }
   ];
 }
+// Varianty si jde proklikat a porovnat, stejně jako v kalkulátoru.
+let VAR_LIST = [], VAR_PICK = 1;
 function variantsHTML(R) {
-  const vars = programVariants(R);
-  return `<div class="vars">${vars.map(v => `<div class="var${v.rec ? ' rec' : ''}">${v.rec ? '<span class="badge">★ Doporučujeme</span>' : ''}
+  VAR_LIST = programVariants(R);
+  const rec = VAR_LIST.findIndex(v => v.rec);
+  VAR_PICK = rec < 0 ? 1 : rec;
+  return `<div class="vars">${VAR_LIST.map((v, i) => `<button type="button" class="var${v.rec ? ' rec' : ''}${i === VAR_PICK ? ' sel' : ''}" data-var="${i}" aria-pressed="${i === VAR_PICK}">${v.rec ? '<span class="badge">★ Doporučujeme</span>' : ''}
       <div class="emoji">${v.emoji}</div><div class="nm">${esc(v.name)}</div>
       <div class="mo">${mesice(v.months)}</div><div class="pr">${fmt(v.price)} Kč/měs.</div>
-      <div class="ds">${esc(v.desc)}</div></div>`).join('')}</div>`;
+      <div class="ds">${esc(v.desc)}</div></button>`).join('')}</div>
+    <div class="varinfo" id="varinfo">${varInfoHTML()}</div>`;
+}
+
+function varInfoHTML() {
+  const v = VAR_LIST[VAR_PICK]; if (!v) return '';
+  const first = VAR_LIST[0];
+  const save = first.price - v.price;
+  const rows = [
+    ['Délka programu', mesice(v.months)],
+    ['Cena měsíčně', fmt(v.price) + ' Kč'],
+    ['Celkem za program', fmt(v.price * v.months) + ' Kč']
+  ];
+  if (save > 0) rows.push(['Úspora oproti variantě ' + first.name, fmt(save) + ' Kč měsíčně']);
+  if (v.months > first.months) rows.push(['Navíc oproti variantě ' + first.name, mesice(v.months - first.months) + ' terapie']);
+  return `<p class="vi-main">${esc(v.info || v.desc)}</p>
+    <div class="vi-rows">${rows.map(r => `<div><span>${esc(r[0])}</span><b>${esc(r[1])}</b></div>`).join('')}</div>`;
+}
+
+function selectVariant(i) {
+  if (!VAR_LIST[i]) return;
+  VAR_PICK = i;
+  document.querySelectorAll('.var[data-var]').forEach((el, n) => {
+    el.classList.toggle('sel', n === i);
+    el.setAttribute('aria-pressed', String(n === i));
+  });
+  const box = document.getElementById('varinfo');
+  if (box) box.innerHTML = varInfoHTML();
 }
 
 const DISCLAIMER = `<div class="disclaimer">Aeternum GLP-1 Screening je orientační vyhodnocení na základě Vašich odpovědí, není lékařským vyšetřením ani diagnózou a nenahrazuje konzultaci s lékařem, který jediný rozhoduje o vhodnosti léků Wegovy® a Mounjaro® vázaných na lékařský předpis.<br>Aeternum Clinic, My Design Creatives s.r.o., IČO 07162235, Chlumčanského 497/5, 180 00 Praha 8<br>info@aeternumclinic.cz<br><a href="${CFG.gdprUrl}" target="_blank" rel="noopener" style="color:var(--dim)">Zásady zpracování osobních údajů</a></div>`;
@@ -1430,7 +1476,7 @@ function bookingHTML() {
       <p class="lead" style="margin-top:14px">${esc(DOW[d.getDay()])} ${d.getDate()}. ${esc(MON[d.getMonth()])}, ${pad2(d.getHours())}:${pad2(d.getMinutes())} — ${B.type === 'online' ? 'online' : 'osobně v Praze'}.</p>
       <p class="lead" style="margin-top:12px">Potvrzení a pozvánku do kalendáře jsme poslali na <b style="color:var(--ink)">${esc(S.a.email)}</b>. Den před konzultací Vám přijde SMS připomínka.</p>
       ${B.manageUrl ? `<a class="btn ghost" href="${esc(B.manageUrl)}" style="margin-top:clamp(18px,calc(1.5*var(--u)),calc(28px*var(--k)))">Přesunout nebo zrušit termín</a>` : ''}
-      <p class="fine" style="margin-top:14px">Změnit termín jde nejpozději ${B.minHours || 24} hodin předem. Při pozdějším zrušení nebo neúčasti poplatek propadá a je potřeba rezervovat nový termín.</p></div>`;
+      <p class="fine" style="margin-top:14px">Termín si můžete přesunout nebo zrušit až do hodiny před začátkem. Poplatek propadá jen tehdy, když se bez omluvy nedostavíte.</p></div>`;
   }
   if (S.verifying && B.hold) return verifyHTML();
   if (B.hold) return paymentHTML();
@@ -1538,6 +1584,7 @@ function rerenderPanel() {
 
 document.addEventListener('click', async e => {
   const b = e.target.closest('button, a'); if (!b) return;
+  if (b.dataset.var) { selectVariant(Number(b.dataset.var)); return; }
   if (b.dataset.reason) {
     const reason = b.dataset.reason;
     S.booking.reasonSent = true;
