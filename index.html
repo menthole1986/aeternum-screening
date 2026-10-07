@@ -164,6 +164,8 @@ body.fixed main{min-height:0;overflow:hidden}
 #main > .screen{transform-origin:top left;display:flow-root}
 .split{display:grid;grid-template-columns:minmax(0,.86fr) minmax(0,1fr);gap:clamp(36px,calc(6.5*var(--u)),calc(130px*var(--k)));align-items:start}
 .split > *{min-width:0}
+.split.wide{grid-template-columns:minmax(0,1fr)}
+.split.wide > div:first-child{display:none}
 @media (max-width:1000px){.split{grid-template-columns:minmax(0,1fr)}}
 
 /* ---------- Marcel ---------- */
@@ -336,7 +338,7 @@ input:autofill{background:transparent;color:var(--ink)}
 .var .badge{position:absolute;top:0;left:50%;transform:translate(-50%,-50%);background:var(--grad);color:#fff;font-size:clamp(10px,calc(.68*var(--u)),calc(12px*var(--k)));font-weight:700;letter-spacing:.12em;padding:5px 12px;border-radius:999px;white-space:nowrap}
 .var .emoji{font-size:clamp(20px,calc(1.5*var(--u)),calc(26px*var(--k)));line-height:1}
 .var .nm{font-size:clamp(10px,calc(.72*var(--u)),calc(13px*var(--k)));letter-spacing:.24em;text-transform:uppercase;color:var(--dim);font-weight:700;margin-top:8px}
-.var .mo{font-size:clamp(26px,calc(2.1*var(--u)),calc(40px*var(--k)));font-weight:700;line-height:1.1;margin-top:8px;background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
+.var .mo{font-size:clamp(26px,calc(2.1*var(--u)),calc(40px*var(--k)));font-weight:700;line-height:1.35;padding-bottom:2px;margin-top:8px;background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
 .var .pr{font-size:clamp(15px,calc(1.15*var(--u)),calc(22px*var(--k)));font-weight:700;margin-top:6px}
 .var .ds{font-size:clamp(12px,calc(.8*var(--u)),calc(15px*var(--k)));color:var(--muted);line-height:1.5;margin-top:10px}
 .var{cursor:pointer;width:100%;font:inherit;color:inherit;transition:border-color .18s,box-shadow .18s,transform .1s}
@@ -386,7 +388,11 @@ input:autofill{background:transparent;color:var(--ink)}
 .seg2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:clamp(18px,calc(1.5*var(--u)),calc(28px*var(--k)))}
 .seg2 button{height:clamp(52px,calc(3.2*var(--u)),calc(62px*var(--k)));border-radius:16px;border:1.5px solid rgba(255,255,255,.22);background:transparent;font-size:clamp(13px,calc(.92*var(--u)),calc(17px*var(--k)));font-weight:600;cursor:pointer;color:var(--muted);display:flex;align-items:center;justify-content:center;gap:8px}
 .seg2 button[aria-pressed="true"]{background:var(--grad);border-color:transparent;color:#fff}
-.days{display:flex;gap:8px;overflow-x:auto;max-width:100%;margin-top:18px;padding-bottom:6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.days{display:flex;gap:8px;overflow-x:auto;max-width:100%;padding-bottom:6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.daysrow{display:flex;align-items:center;gap:6px;margin-top:18px}
+.daysrow .days{flex:1;margin-top:0}
+.dayarrow{flex:none;width:clamp(30px,calc(2.1*var(--u)),calc(38px*var(--k)));height:clamp(44px,calc(3*var(--u)),calc(56px*var(--k)));border-radius:12px;border:1.5px solid var(--line2);background:transparent;color:var(--muted);font-size:clamp(18px,calc(1.3*var(--u)),calc(24px*var(--k)));line-height:1;cursor:pointer;transition:border-color .15s,color .15s}
+.dayarrow:hover{border-color:rgba(255,255,255,.55);color:var(--ink)}
 .days::-webkit-scrollbar{display:none}
 .day{flex:none;min-width:74px;padding:10px 12px;border-radius:14px;border:1.5px solid rgba(255,255,255,.18);background:transparent;cursor:pointer;text-align:center;color:var(--muted)}
 .day b{display:block;font-size:19px;font-weight:700;color:var(--ink);line-height:1.1}
@@ -398,6 +404,9 @@ input:autofill{background:transparent;color:var(--ink)}
 .time:hover{border-color:rgba(255,255,255,.5)}
 .time[aria-pressed="true"]{background:var(--grad);border-color:transparent;color:#fff}
 .emptyslots{margin-top:16px;font-size:14px;color:var(--muted);line-height:1.6}
+.eyebrow.plain{background:none;-webkit-background-clip:border-box;background-clip:border-box;color:var(--ink);-webkit-text-fill-color:var(--ink)}
+h3.grad,.h3grad{display:block;width:fit-content;align-self:flex-start;background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
+.fsec{display:inline-block;width:fit-content;align-self:flex-start;margin:clamp(26px,calc(2.2*var(--u)),calc(40px*var(--k))) 0 clamp(4px,calc(.5*var(--u)),calc(10px*var(--k)));padding-top:clamp(18px,calc(1.5*var(--u)),calc(28px*var(--k)));font-size:clamp(11px,calc(.8*var(--u)),calc(15px*var(--k)));font-weight:700;letter-spacing:.26em;text-transform:uppercase;background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
 .bform{display:flex;flex-direction:column;gap:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)));margin-top:clamp(20px,calc(1.6*var(--u)),calc(30px*var(--k)))}
 .bform .ufrow{margin-top:0}
 .picked{display:flex;gap:10px;align-items:center;font-size:clamp(13px,calc(.92*var(--u)),calc(17px*var(--k)));color:var(--ink)}
@@ -1181,38 +1190,36 @@ function intakeHTML() {
   const B = S.booking;
   if (B.dataDone) return `<div class="success"><div class="tick">${icon('i-check')}</div><span class="eyebrow">Hotovo</span>
     <h3>Máme všechno</h3>
-    <p class="lead" style="margin-top:14px">Děkuji. Lékař bude mít Vaše údaje k dispozici a žádanku na odběr připravíme.</p>
-    <button type="button" class="btn ghost" style="margin-top:20px" data-act="showterm">Zobrazit termín konzultace</button></div>`;
+    <p class="lead" style="margin-top:14px">Žádanku na odběr Vám pošleme po vstupní konzultaci a uhrazení vstupního screeningu.</p>
+    <button type="button" class="btn ghost" style="margin-top:20px" data-act="showterm">Zobrazit termín konzultace</button>
+    <p class="fine" style="margin-top:14px">Děkujeme, toto okno už můžete zavřít.</p></div>`;
 
-  return `<span class="eyebrow">Poslední krok</span><h3>Vstupní dotazník</h3>
+  return `<span class="eyebrow plain">Poslední krok</span><h3 class="grad">Vstupní dotazník</h3>
     <p class="lead" style="margin-top:12px">Termín máte potvrzený. Vyplňte prosím ještě tenhle dotazník — laboratoř z něj vystaví žádanku a lékař podle něj připraví Váš protokol. Zabere to pár minut.</p>
     <div class="bform" style="margin-top:18px">
       <div class="ufrow one">${ufHTML('name', 'Jméno a příjmení podle průkazu', { autocomplete: 'name', placeholder: 'Jana Nováková' })}</div>
-      <div class="ufrow">${ufHTML('birthDate', 'Datum narození', { type: 'date' })}
-        ${ufHTML('birthNumber', 'Rodné číslo', { inputmode: 'numeric', placeholder: '825310/1234' })}</div>
-      <div class="ufrow">${ufHTML('height', 'Výška · cm', { type: 'number', inputmode: 'numeric', placeholder: '168' })}
-        ${ufHTML('weight', 'Váha · kg', { type: 'number', inputmode: 'numeric', placeholder: '72' })}</div>
-      <div class="ufrow one">${ufHTML('street', 'Ulice a číslo popisné', { autocomplete: 'street-address', placeholder: 'Pod Harfou 943/34' })}</div>
-      <div class="ufrow">${ufHTML('city', 'Město', { autocomplete: 'address-level2', placeholder: 'Praha' })}
-        ${ufHTML('zip', 'PSČ', { inputmode: 'numeric', autocomplete: 'postal-code', placeholder: '190 00' })}</div>
-      <div class="ufrow one">${ufHTML('insurance', 'Zdravotní pojišťovna', { placeholder: 'VZP' })}</div>
-      <p class="small-caps" style="margin:18px 0 0">Zdravotní minimum pro lékaře</p>
+      <div class="ufrow one">${ufHTML('birthDate', 'Datum narození', { type: 'date' })}</div>
+      <div class="ufrow one">${ufHTML('birthNumber', 'Rodné číslo', { inputmode: 'numeric', placeholder: '8601079443' })}</div>
+      <div class="ufrow one">${ufHTML('insurance', 'Zdravotní pojišťovna nebo její kód', { placeholder: 'VZP / 111' })}</div>
+      <div class="ufrow one">${ufHTML('street', 'Ulice a číslo popisné', { autocomplete: 'street-address', placeholder: 'Chlumčanského 497/5' })}</div>
+      <div class="ufrow one">${ufHTML('city', 'Město', { autocomplete: 'address-level2', placeholder: 'Praha 8-Libeň' })}</div>
+      <div class="ufrow one">${ufHTML('zip', 'PSČ', { inputmode: 'numeric', autocomplete: 'postal-code', placeholder: '180 00' })}</div>
+      <p class="fsec">Zdravotní minimum pro lékaře</p>
       <div class="ufrow one">${ufHTML('meds', 'Jaké léky a doplňky pravidelně užíváte?', { placeholder: 'Žádné / Euthyrox, hořčík' })}</div>
-      <div class="ufrow one">${ufHTML('allergies', 'Máte nějaké známé alergie?', { placeholder: 'Ne / penicilin' })}</div>
-      <div class="ufrow">${ufHTML('oncology', 'Probíhá u Vás onkologická léčba?', { placeholder: 'Ne' })}
-        ${ufHTML('pregnancy', 'Těhotenství, kojení nebo plán do 6 měsíců?', { placeholder: 'Ne' })}</div>
-      <p class="small-caps" style="margin:18px 0 0">Doplňující · nepovinné, ale lékaři pomůže</p>
-      <div class="ufrow">${ufHTML('job', 'Povolání a charakter práce', { placeholder: 'Sedavá / aktivní / stresová' })}
-        ${ufHTML('energy', 'Úroveň energie 1–10', { type: 'number', inputmode: 'numeric', placeholder: '6' })}</div>
-      <div class="ufrow">${ufHTML('digestion', 'Zažívací potíže', { placeholder: 'Nadýmání, zácpa, pálení žáhy…' })}
-        ${ufHTML('gyn', 'Gynekologické či hormonální potíže', { placeholder: 'Inzulinová rezistence, PCOS…' })}</div>
-      <div class="ufrow">${ufHTML('pastAttempts', 'Dřívější pokusy o hubnutí a výsledek', { placeholder: 'Co jste zkoušel(a) a jak to dopadlo' })}
-        ${ufHTML('pastDrugs', 'Užíval(a) jste léky na hubnutí?', { placeholder: 'Ne / Saxenda, Ozempic…' })}</div>
+      <div class="ufrow one">${ufHTML('oncology', 'Probíhá u Vás onkologická léčba?', { placeholder: 'Ne' })}</div>
+      <div class="ufrow one">${ufHTML('pregnancy', 'Těhotenství, kojení nebo plán do 6 měsíců?', { placeholder: 'Ne' })}</div>
+      <p class="fsec">Doplňující údaje pro lékaře</p>
+      <div class="ufrow one">${ufHTML('job', 'Práce a její charakter', { placeholder: 'Sedavá / aktivní / stresová' })}</div>
+      <div class="ufrow one">${ufHTML('energy', 'Úroveň energie 1–10', { type: 'number', inputmode: 'numeric', placeholder: '6' })}</div>
+      <div class="ufrow one">${ufHTML('digestion', 'Zažívací potíže', { placeholder: 'Nadýmání, zácpa, pálení žáhy…' })}</div>
+      <div class="ufrow one">${ufHTML('gyn', 'Gynekologické či hormonální potíže', { placeholder: 'PMOS (PCOS), inzulinová rezistence…' })}</div>
+      <div class="ufrow one">${ufHTML('pastAttempts', 'Dřívější pokusy o hubnutí a výsledek', { placeholder: 'Co jste zkoušel(a) a jak to dopadlo' })}</div>
+      <div class="ufrow one">${ufHTML('pastDrugs', 'Užíval(a) jste léky na hubnutí?', { placeholder: 'Ne / Saxenda, Ozempic…' })}</div>
       <div class="ufrow one">${ufHTML('diet', 'Typický jídelníček — snídaně, oběd, večeře, svačiny, sladké', { placeholder: 'Klidně upřímně a stručně' })}</div>
-      <div class="ufrow">${ufHTML('water', 'Kolik čisté vody denně', { placeholder: '1,5 l' })}
-        ${ufHTML('alcohol', 'Vztah k alkoholu', { placeholder: 'Nepiji / příležitostně' })}</div>
-      <div class="ufrow">${ufHTML('smoking', 'Kouření či nikotin', { placeholder: 'Nekouřím' })}
-        ${ufHTML('limits', 'Pohybová omezení', { placeholder: 'Bolesti zad, kolena…' })}</div>
+      <div class="ufrow one">${ufHTML('water', 'Kolik čisté vody denně', { placeholder: '1,5 l' })}</div>
+      <div class="ufrow one">${ufHTML('alcohol', 'Vztah k alkoholu', { placeholder: 'Nepiji / příležitostně' })}</div>
+      <div class="ufrow one">${ufHTML('smoking', 'Kouření či nikotin', { placeholder: 'Nekouřím' })}</div>
+      <div class="ufrow one">${ufHTML('limits', 'Pohybová omezení', { placeholder: 'Ne / bolesti zad, kolena' })}</div>
       <div class="ufrow one">${ufHTML('motivation', 'Co je Vaše hlavní motivace?', { placeholder: 'Proč do toho jdete' })}</div>
       ${cboxHTML('c-lab', S.a.labConsent, 'Souhlasím, aby Aeternum Clinic předala tyto údaje smluvní laboratoři za účelem objednání odběru a provedení vyšetření.', 'labConsent')}
       <button type="button" class="btn pri" id="intakeBtn">Odeslat dotazník</button>
@@ -1228,12 +1235,23 @@ async function submitIntake(btn) {
   if (!a.name || !/\s/.test(a.name.trim())) return err('Vyplňte jméno i příjmení.');
   if (!/^\d{4}-\d{2}-\d{2}$/.test(a.birthDate || '')) return err('Vyplňte datum narození.');
   if (!/^\d{6}\s*\/?\s*\d{3,4}$/.test((a.birthNumber || '').trim())) return err('Rodné číslo zadejte ve tvaru 825310/1234.');
-  if (!(Number(a.height) >= 120)) return err('Vyplňte výšku v centimetrech.');
-  if (!(Number(a.weight) >= 30)) return err('Vyplňte váhu v kilogramech.');
   if (!a.street || !a.city || !/^\d{3}\s?\d{2}$/.test((a.zip || '').trim())) return err('Vyplňte prosím celou adresu včetně PSČ.');
-  if (!(a.meds || '').trim()) return err('Napište prosím léky a doplňky, nebo „žádné“.');
-  if (!(a.allergies || '').trim()) return err('Napište prosím alergie, nebo „ne“.');
-  if (!(a.oncology || '').trim()) return err('Odpovězte prosím na otázku k onkologické léčbě.');
+  if (!(a.insurance || '').toString().trim()) return err('Vyplňte prosím: Zdravotní pojišťovna nebo její kód');
+  if (!(a.meds || '').toString().trim()) return err('Vyplňte prosím: Jaké léky a doplňky pravidelně užíváte?');
+  if (!(a.oncology || '').toString().trim()) return err('Vyplňte prosím: Probíhá u Vás onkologická léčba?');
+  if (!(a.pregnancy || '').toString().trim()) return err('Vyplňte prosím: Těhotenství, kojení nebo plán do 6 měsíců?');
+  if (!(a.job || '').toString().trim()) return err('Vyplňte prosím: Práce a její charakter');
+  if (!(a.energy || '').toString().trim()) return err('Vyplňte prosím: Úroveň energie 1–10');
+  if (!(a.digestion || '').toString().trim()) return err('Vyplňte prosím: Zažívací potíže');
+  if (!(a.gyn || '').toString().trim()) return err('Vyplňte prosím: Gynekologické či hormonální potíže');
+  if (!(a.pastAttempts || '').toString().trim()) return err('Vyplňte prosím: Dřívější pokusy o hubnutí a výsledek');
+  if (!(a.pastDrugs || '').toString().trim()) return err('Vyplňte prosím: Užíval(a) jste léky na hubnutí?');
+  if (!(a.diet || '').toString().trim()) return err('Vyplňte prosím: Typický jídelníček — snídaně, oběd, večeře, svačiny, sladké');
+  if (!(a.water || '').toString().trim()) return err('Vyplňte prosím: Kolik čisté vody denně');
+  if (!(a.alcohol || '').toString().trim()) return err('Vyplňte prosím: Vztah k alkoholu');
+  if (!(a.smoking || '').toString().trim()) return err('Vyplňte prosím: Kouření či nikotin');
+  if (!(a.limits || '').toString().trim()) return err('Vyplňte prosím: Pohybová omezení');
+  if (!(a.motivation || '').toString().trim()) return err('Vyplňte prosím: Co je Vaše hlavní motivace?');
   if (!a.labConsent) return err('Bez souhlasu údaje laboratoři předat nemůžeme.');
 
   const u = S.booking.manageUrl || '';
@@ -1246,7 +1264,7 @@ async function submitIntake(btn) {
   try {
     await api('labData', {
       vs, t, name: a.name.trim(), birthDate: a.birthDate, birthNumber: a.birthNumber.trim(),
-      height: Number(a.height), weight: Number(a.weight), street: a.street.trim(), city: a.city.trim(),
+      street: a.street.trim(), city: a.city.trim(),
       zip: (a.zip || '').replace(/\s/g, ''), insurance: txt('insurance'), consent: true,
       meds: txt('meds'), allergies: txt('allergies'), oncology: txt('oncology'), pregnancy: txt('pregnancy'),
       job: txt('job'), digestion: txt('digestion'), gyn: txt('gyn'), energy: txt('energy'),
@@ -1434,9 +1452,9 @@ function renderResult() {
         <div class="index-side"><span class="small-caps" style="color:var(--ink)">Skóre vhodnosti</span>
           <span class="pill ${R.score.cls}">${R.score.label}</span>
           <span class="small-caps">Finální posouzení provádí lékař</span></div></div>
-      <p class="lead summary">Podle Vašich odpovědí nevidím nic, co by terapii bránilo. Při BMI ${dec(R.bmi)} a cíli mínus ${R.lose} kg odhaduji program na zhruba ${mesice(R.months)}.</p>
-      ${R.retargeted ? `<p class="lead summary" style="margin-top:10px">Vy jste zadal/a cílovou váhu ${R.ownTarget} kg. Program počítám na ${R.target} kg, protože tam začíná pásmo normální váhy — cílem je zbavit se tuku a udržet svaly, ne jen shodit pár kil. Konečný cíl si upřesníme na konzultaci.</p>` : ''}
-      ${R.bmi < 25 ? `<p class="lead summary" style="margin-top:10px">Vaše BMI je pod 25, takže nejde o klasické hubnutí. Terapie může dávat smysl i tak, například na food noise, tedy neustálé myšlenky na jídlo, na zvládání stresu nebo na udržení váhy. O vhodnosti i dávce rozhoduje lékař podle vstupního vyšetření.</p>` : ''}
+      <p class="lead summary">Podle Vašich odpovědí nevidím nic, co by terapii bránilo.</p>
+      ${R.retargeted ? `<p class="lead summary" style="margin-top:10px">Konečný cíl si upřesníme na konzultaci.</p>` : ''}
+      ${R.bmi < 25 ? `<p class="lead summary" style="margin-top:10px">Vaše BMI je pod 25, takže nejde o klasické hubnutí. O vhodnosti terapie rozhoduje lékař podle vstupního vyšetření.</p>` : ''}
       ${sendStatusHTML()}
       <a class="small-caps more" href="#detail">Podrobný výsledek ${icon('i-down')}</a>
     </div>
@@ -1458,22 +1476,20 @@ function renderResult() {
   </div></section>
 
   <section class="rsec"><div class="split">
-    <div><span class="eyebrow">Doporučení</span><h2 class="h-l">Preparát<br>pro Váš cíl</h2>
-      <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))">Cena programu je u obou preparátů stejná. Rozhoduje tedy jen to, co dává smysl pro Váš cíl a Vaši anamnézu.</p>
+    <div><span class="eyebrow">Doporučení</span><h2 class="h-l">Vaše<br>medikace</h2>
+      <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))">Rozhoduje to, co dává smysl pro Váš cíl a Vaši anamnézu. Cenu programu pak určuje zvolená délka.</p>
       <div class="bens">${benefits}</div></div>
     <div class="drug">
       <span class="eyebrow">Pro Váš cíl vychází nejlépe</span>
       <h3>${esc(rec.drug.name)}</h3>
       <p class="lead" style="margin-top:clamp(14px,calc(1.2*var(--u)),calc(22px*var(--k)))">${esc(rec.why)}</p>
-      ${rec.alt ? `<div class="alt"><span class="small-caps">Alternativa · ${esc(rec.altDrug.name)}</span>
-        <p class="lead" style="margin-top:10px">${esc(rec.alt)}</p></div>` : ''}
       <p class="fine" style="margin-top:clamp(18px,calc(1.5*var(--u)),calc(28px*var(--k)));font-size:clamp(10.5px,calc(.68*var(--u)),calc(13px*var(--k)))">Jde o orientační doporučení ze screeningu. <b style="color:var(--ink)">Finální volbu preparátu i dávkování potvrdí lékař</b> na vstupním vyšetření, kde posoudí Vaši kompletní anamnézu.</p>
     </div>
   </div></section>
 
   <section class="rsec"><div class="split">
     <div><span class="eyebrow">Varianta programu</span><h2 class="h-l">Jak dlouhý<br>program zvolit</h2>
-      <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))">Délku programu i cenu Vám na vstupní konzultaci potvrdíme. Delší varianta vychází levněji na měsíc a dává tělu čas výsledek udržet.</p>
+      <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))">Délku programu i cenu Vám na vstupní konzultaci potvrdíme. Delší program snižuje riziko jo-jo efektu a dává tělu čas si váhu udržet.</p>
       <p class="fine" style="margin-top:clamp(12px,calc(1*var(--u)),calc(18px*var(--k)))">Klikněte na variantu a porovnejte si je. Program není závazek na celou dobu — kdykoli ho jde zkrátit i prodloužit, bez storno poplatku.</p></div>
     <div>${variantsHTML(R)}</div>
   </div></section>
@@ -1525,20 +1541,15 @@ function variantsHTML(R) {
   VAR_PICK = rec < 0 ? 1 : rec;
   return `<div class="vars">${VAR_LIST.map((v, i) => `<button type="button" class="var${v.rec ? ' rec' : ''}${i === VAR_PICK ? ' sel' : ''}" data-var="${i}" aria-pressed="${i === VAR_PICK}">${v.rec ? '<span class="badge">★ Doporučujeme</span>' : ''}
       <div class="emoji">${v.emoji}</div><div class="nm">${esc(v.name)}</div>
-      <div class="mo">${mesice(v.months)}</div><div class="pr">${fmt(v.price)} Kč/měs.</div>
+      <div class="mo" data-nonbsp>${mesice(v.months)}</div><div class="pr">${fmt(v.price)} Kč/měs.</div>
       <div class="ds">${esc(v.desc)}</div></button>`).join('')}</div>
     <div class="varinfo" id="varinfo">${varInfoHTML()}</div>`;
 }
 
 function varInfoHTML() {
   const v = VAR_LIST[VAR_PICK]; if (!v) return '';
-  // Program je předplatné, proto ukazujeme jen měsíční cenu — žádné součty za celý program.
-  const rows = [
-    ['Délka programu', mesice(v.months)],
-    ['Cena měsíčně', fmt(v.price) + ' Kč']
-  ];
-  return `<p class="vi-main">${esc(v.info || v.desc)}</p>
-    <div class="vi-rows">${rows.map(r => `<div><span>${esc(r[0])}</span><b>${esc(r[1])}</b></div>`).join('')}</div>`;
+  // Délka i cena jsou vidět na samotné dlaždici, tady stačí vysvětlení.
+  return `<p class="vi-main">${esc(v.info || v.desc)}</p>`;
 }
 
 function selectVariant(i) {
@@ -1703,10 +1714,14 @@ function slotsHTML() {
   const sel = S.booking.day && days.includes(S.booking.day) ? S.booking.day : days[0];
   S.booking.day = sel;
   const times = slotCache.filter(s => s.startsWith(sel));
-  return `<div class="days" role="group" aria-label="Den">${days.map(d => {
+  return `<div class="daysrow">
+      <button type="button" class="dayarrow" data-days="-1" aria-label="Dřívější termíny">‹</button>
+      <div class="days" id="daystrip" role="group" aria-label="Den">${days.map(d => {
       const dt = new Date(d + 'T12:00:00');
       return `<button type="button" class="day" data-day="${d}" aria-pressed="${d === sel}"><b>${dt.getDate()}. ${dt.getMonth() + 1}.</b><span>${DOW_SHORT[dt.getDay()]}</span></button>`;
     }).join('')}</div>
+      <button type="button" class="dayarrow" data-days="1" aria-label="Pozdější termíny">›</button>
+    </div>
     <div class="times" role="group" aria-label="Čas">${times.map(t => {
       const dt = new Date(t);
       return `<button type="button" class="time" data-slot="${t}" aria-pressed="${S.booking.slot === t}">${pad2(dt.getHours())}:${pad2(dt.getMinutes())}</button>`;
@@ -1722,9 +1737,9 @@ function bookFormHTML() {
   return `<div class="bform">
     ${pick}
     <div class="ufrow one">${ufHTML('phone', 'Telefon', { type: 'tel', inputmode: 'tel', autocomplete: 'tel', placeholder: '+420 777 123 456' })}</div>
-    <div class="ufrow one">${ufHTML('street', 'Ulice a číslo popisné', { autocomplete: 'street-address', placeholder: 'Pod Harfou 943/34' })}</div>
-    <div class="ufrow">${ufHTML('city', 'Město', { autocomplete: 'address-level2', placeholder: 'Praha' })}
-      ${ufHTML('zip', 'PSČ', { inputmode: 'numeric', autocomplete: 'postal-code', placeholder: '190 00' })}</div>
+    <div class="ufrow one">${ufHTML('street', 'Ulice a číslo popisné', { autocomplete: 'street-address', placeholder: 'Chlumčanského 497/5' })}</div>
+    <div class="ufrow">${ufHTML('city', 'Město', { autocomplete: 'address-level2', placeholder: 'Praha 8-Libeň' })}
+      ${ufHTML('zip', 'PSČ', { inputmode: 'numeric', autocomplete: 'postal-code', placeholder: '180 00' })}</div>
     <p class="fine">Telefon potřebujeme na SMS připomínku 24 hodin před konzultací, adresu na daňový doklad.</p>
     ${cboxHTML('c-book', S.a.bookConsent, 'Souhlasím, aby mě Aeternum Clinic kontaktovala ohledně rezervované konzultace.', 'bookConsent')}
     <button type="button" class="btn pri" id="bookBtn"${slot ? '' : ' disabled'}>Rezervovat termín</button>
@@ -1759,7 +1774,15 @@ function paymentHTML() {
     <div class="waiting"><span class="dot"></span><span id="payWait">Čekám na platbu…</span></div>`;
 }
 
+/* Dotazník zabere celou šířku — vedle něj už nemá co stát. */
+function wideMode() {
+  const split = document.querySelector('.split');
+  if (!split) return;
+  split.classList.toggle('wide', !!document.getElementById('intakeBtn') || !!document.getElementById('labBtn'));
+}
+
 function rerenderPanel() {
+  setTimeout(wideMode, 0);
   const p = $('#panel'); if (!p) return;
   p.innerHTML = bookingHTML();
   save();
@@ -1769,6 +1792,11 @@ function rerenderPanel() {
 document.addEventListener('click', async e => {
   const b = e.target.closest('button, a'); if (!b) return;
   if (b.dataset.var) { selectVariant(Number(b.dataset.var)); return; }
+  if (b.dataset.days) {
+    const strip = document.getElementById('daystrip');
+    if (strip) strip.scrollBy({ left: Number(b.dataset.days) * Math.max(160, strip.clientWidth * 0.8), behavior: 'smooth' });
+    return;
+  }
   if (b.dataset.reason) {
     const reason = b.dataset.reason;
     S.booking.reasonSent = true;
@@ -1866,8 +1894,8 @@ const BOOK_ERRORS = {
   rc_invalid: 'Rodné číslo nesedí. Zkontrolujte ho prosím.',
   rc_dob: 'Rodné číslo neodpovídá datu narození.',
   bad_birthdate: 'Zkontrolujte prosím datum narození.',
-  bad_height: 'Zkontrolujte prosím výšku.',
-  bad_weight: 'Zkontrolujte prosím váhu.',
+  bad_height: 'Chybí nám výška ze screeningu. Zavolejte prosím na +420 775 481 700.',
+  bad_weight: 'Chybí nám váha ze screeningu. Zavolejte prosím na +420 775 481 700.',
   not_paid: 'Dotazník lze odeslat až po úhradě.',
   busy: 'Zrovna teď rezervuje někdo jiný. Zkuste to prosím za chvíli.',
   sheet_missing: 'Rezervační systém se právě připravuje. Zavolejte nám prosím na ',
@@ -2007,7 +2035,8 @@ function sendStatusHTML() {
   const email = `<b style="color:var(--ink)">${esc(S.a.email)}</b>`;
   const text = st === 'sending' ? `Posílám Váš výsledek na ${email}…`
     : st === 'sent' ? `Výsledek jsme poslali na ${email}.`
-    : `Výsledek je uložený, ale e-mail se nepodařilo odeslat. Ozveme se Vám.`;
+    : st === 'saved' ? `Výsledek je uložený, ale e-mail se nepodařilo odeslat. Ozveme se Vám.`
+    : `Výsledek se nepodařilo odeslat. Zkuste to prosím znovu, nebo nám zavolejte na ${CFG.phone}.`;
   return `<p class="send-status ${st}" id="sendStatus" role="status"><span class="dot"></span><span>${text}</span></p>`;
 }
 function setSend(state) {
@@ -2027,7 +2056,7 @@ function payload() {
     score: R.score.score, scoreLabel: R.score.label, contraindication: R.contra || '',
     reservationIntent: S.booking.intent || '', bookingType: S.booking.type || '',
     recommendation: R.rec ? R.rec.drug.name : '', recommendationWhy: R.rec ? R.rec.why : '',
-    alternative: R.rec && R.rec.alt ? R.rec.altDrug.name : '', programMonths: R.months, lose: R.lose
+    alternative: '', programMonths: R.months, lose: R.lose
   };
 }
 function ensureSubmitted() {
@@ -2094,6 +2123,8 @@ function fixOrphans(root) {
     acceptNode: n => {
       const p = n.parentNode;
       if (!p || skip[p.nodeName]) return NodeFilter.FILTER_REJECT;
+      // Místa, kde potřebujeme zalomení zachovat, se označí atributem data-nonbsp.
+      if (p.closest && p.closest('[data-nonbsp]')) return NodeFilter.FILTER_REJECT;
       return n.data.indexOf(' ') < 0 ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
     }
   });
