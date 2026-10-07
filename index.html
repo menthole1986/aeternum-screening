@@ -350,6 +350,22 @@ input:autofill{background:transparent;color:var(--ink)}
 .vi-rows div:first-child{border-top:0}
 .vi-rows span{color:var(--muted)}
 .vi-rows b{font-weight:700;text-align:right}
+.qlive{display:flex;flex-wrap:wrap;gap:clamp(8px,calc(.7*var(--u)),calc(14px*var(--k)));margin-top:clamp(14px,calc(1.2*var(--u)),calc(22px*var(--k)))}
+.lv{flex:1 1 150px;border:1px solid var(--line);border-radius:14px;padding:clamp(10px,calc(.9*var(--u)),calc(16px*var(--k))) clamp(12px,calc(1*var(--u)),calc(18px*var(--k)));background:rgba(255,255,255,.03);display:flex;flex-direction:column;gap:3px}
+.lv span{font-size:clamp(9.5px,calc(.62*var(--u)),calc(12px*var(--k)));letter-spacing:.2em;text-transform:uppercase;color:var(--dim);font-weight:700}
+.lv b{font-size:clamp(19px,calc(1.5*var(--u)),calc(28px*var(--k)));font-weight:700;line-height:1.1}
+.lv i{font-style:normal;font-size:clamp(11px,calc(.76*var(--u)),calc(14px*var(--k)));color:var(--muted)}
+.lv.kat-normal{background:rgba(94,211,160,.12);border-color:rgba(94,211,160,.32)}
+.lv.kat-normal b{color:#5ED3A0}
+.lv.kat-over{background:rgba(242,180,90,.12);border-color:rgba(242,180,90,.32)}
+.lv.kat-over b{color:#F2B45A}
+.lv.kat-obese1{background:rgba(238,122,109,.12);border-color:rgba(238,122,109,.3)}
+.lv.kat-obese1 b{color:#EE7A6D}
+.lv.kat-obese2{background:rgba(214,60,80,.16);border-color:rgba(214,60,80,.42)}
+.lv.kat-obese2 b{color:#E8647A}
+.lv.kat-under{background:rgba(79,163,224,.12);border-color:rgba(79,163,224,.3)}
+.lv.kat-under b{color:#4FA3E0}
+.lvnote{flex:1 1 100%;font-size:clamp(11.5px,calc(.78*var(--u)),calc(14px*var(--k)));color:var(--muted);line-height:1.5;margin-top:2px}
 .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(clamp(180px,calc(13*var(--u)),calc(260px*var(--k))),1fr));gap:clamp(12px,calc(1.1*var(--u)),calc(20px*var(--k)));margin-top:clamp(22px,calc(2*var(--u)),calc(38px*var(--k)))}
 @media (max-width:900px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:520px){.tiles{grid-template-columns:1fr}}
@@ -695,8 +711,8 @@ const Q = {
   },
   diab: {
     marcel: 'Cukr a inzulin hrají při volbě preparátu velkou roli.',
-    label: 'Byl/a jste diagnostikován/a s poruchou cukru?',
-    opts: ['Ne', 'Prediabetes', 'Inzulinová rezistence', 'Diabetes 2. typu', 'Diabetes 1. typu'], rows: true
+    label: 'Byl/a jste diagnostikován/a s poruchou cukru nebo PMOS?',
+    opts: ['Ne', 'Prediabetes', 'Inzulinová rezistence', 'PMOS (PCOS)', 'Diabetes 2. typu', 'Diabetes 1. typu'], rows: true
   },
   zluc: { marcel: 'Pokračujeme. Tohle je kvůli sledování v průběhu programu.', label: 'Máte potíže se žlučníkem nebo žlučové kameny?', opts: ['Ne', 'Ano'] },
   led:  { marcel: 'Ledviny a játra ovlivňují dávkování.', label: 'Trpíte onemocněním ledvin nebo jater?', opts: ['Ne', 'Ano'] },
@@ -800,10 +816,20 @@ function bmiCategory(bmi) {
   if (b < 18.5) return 'podváha'; if (b < 25) return 'normální váha'; if (b < 30) return 'nadváha';
   if (b < 35) return 'obezita I. stupně'; if (b < 40) return 'obezita II. stupně'; return 'obezita III. stupně';
 }
+/* Cíl, na který program počítáme. Klient často neví, kolik chce shodit — my
+   doporučujeme dostat se do pásma normální váhy, tedy pod BMI 25. Když si řekl
+   o víc, platí jeho cíl; kdo už v normě je, tomu cíl neposouváme. */
+function clinicalTarget(d) {
+  const w = num(d.weight), t = num(d.targetWeight), h = num(d.height) || 172;
+  if (w == null) return t;
+  const healthy = Math.round(24 * Math.pow(h / 100, 2));
+  if (w <= healthy) return t;
+  return t == null ? healthy : Math.min(t, healthy);
+}
+
 function programMonths(d) {
-  const start = num(d.weight), target = num(d.targetWeight), h = num(d.height) || 172;
+  const start = num(d.weight), target = clinicalTarget(d);
   if (start == null || target == null || start <= target) return 3;
-  const bmi = start / Math.pow(h / 100, 2);
   const perMonth = 2.5;                       // sjednoceno s kalkulátorem GLP-1
   return Math.max(1, Math.min(24, Math.round((start - target) / perMonth)));
 }
@@ -845,13 +871,13 @@ const DRUGS = {
 };
 function recommend(d) {
   const bmi = num(d.bmi) || 0;
-  const w = num(d.weight) || 0, tw = num(d.targetWeight) || 0;
+  const w = num(d.weight) || 0, tw = num(clinicalTarget(d)) || 0;
   const lossPct = w > 0 ? ((w - tw) / w) * 100 : 0;
   const prev = d.glp1drug || '';
   const sat = d.glp1sat || '';
   const hadSema = prev === 'Wegovy®' || prev === 'Ozempic®';
   const hadTirz = prev === 'Mounjaro®';
-  const dysgly = ['Prediabetes', 'Inzulinová rezistence', 'Diabetes 2. typu'].includes(d.diab);
+  const dysgly = ['Prediabetes', 'Inzulinová rezistence', 'PMOS (PCOS)', 'Diabetes 2. typu'].includes(d.diab);
 
   let key, why, alt = null;
 
@@ -871,20 +897,22 @@ function recommend(d) {
     alt = 'Pokud potíže přetrvají, na kontrole zvážíme přechod na Mounjaro®.';
   } else if (dysgly) {
     key = 'mounjaro';
-    why = 'Máte v anamnéze poruchu zpracování cukru. Tirzepatid má nejsilnější efekt na inzulinovou rezistenci a hladinu cukru a zároveň vede k vyššímu úbytku hmotnosti.';
+    why = d.diab === 'PMOS (PCOS)'
+      ? 'U PMOS stojí za váhou nejčastěji inzulinová rezistence. Tirzepatid na ni působí ze všech preparátů nejsilněji a zároveň vede k vyššímu úbytku hmotnosti.'
+      : 'Máte v anamnéze poruchu zpracování cukru. Tirzepatid má nejsilnější efekt na inzulinovou rezistenci a hladinu cukru a zároveň vede k vyššímu úbytku hmotnosti.';
   } else if (bmi < 25) {
     key = 'wegovy';
     why = 'Vaše BMI je v pásmu normální váhy, takže nejsilnější preparát není namístě. Semaglutid utlumí chutě a udrží úbytek pozvolný a bezpečný.';
-  } else if (d.goal === 'Zbavit se neustálých chutí a myšlenek na jídlo') {
+  } else if (d.goal === 'Zbavit se neustálých chutí a myšlenek na jídlo' && lossPct < 15) {
     key = 'wegovy';
     why = 'Vaším cílem je klid od jídla. Na „food noise“ semaglutid bohatě stačí a nemá smysl jít po nejsilnějším preparátu.';
     alt = bmi >= 30 ? 'Při Vašem BMI by Mounjaro® přineslo rychlejší úbytek. Pokud budete chtít i výraznější zhubnutí, probereme ho na konzultaci.' : null;
   } else if (d.goal === 'Výrazně zhubnout') {
     key = 'mounjaro';
     why = 'Pro výrazný úbytek je v této třídě nejúčinnější — ve studiích vedl k průměrnému poklesu okolo 20 % hmotnosti.';
-  } else if (lossPct < 10) {
+  } else if (lossPct < 15) {
     key = 'wegovy';
-    why = 'Váš cíl je v dosahu mírnější terapie. Semaglutid na pár kilo stačí a je šetrnější k peněžence i k trávení.';
+    why = 'Váš cíl je v dosahu mírnější terapie. Semaglutid vede ve studiích k průměrnému úbytku kolem 15 % hmotnosti, takže na Váš cíl bohatě stačí — a je šetrnější k trávení.';
   } else {
     key = 'mounjaro';
     why = `Chcete se dostat o ${Math.round(lossPct)} % níž. Na takový cíl je tirzepatid vhodnější, protože dosahuje vyššího průměrného úbytku.`;
@@ -904,8 +932,9 @@ function compute() {
   const contra = hardContra(d);
   const sc = calcScore(d);
   const rec = contra ? null : recommend(d);
-  const w = num(d.weight) || 0, tw = num(d.targetWeight) || 0;
-  return { bmi: d.bmi, months, contra, score: sc, rec, lose: Math.max(0, Math.round(w - tw)), weight: w, target: tw };
+  const w = num(d.weight) || 0, own = num(d.targetWeight) || 0, tw = num(clinicalTarget(d)) || own;
+  return { bmi: d.bmi, months, contra, score: sc, rec, lose: Math.max(0, Math.round(w - tw)),
+    weight: w, target: tw, ownTarget: own, retargeted: own > 0 && tw > 0 && tw < own };
 }
 
 /* ---------- render ---------- */
@@ -1057,6 +1086,7 @@ function questionHTML(id) {
   if (q.type === 'num') {
     const fields = typeof q.fields === 'function' ? q.fields(S.a) : q.fields;
     h += isMobile() ? slidersHTML(fields) : fieldsHTML(fields);
+    h += `<div class="qlive" id="qlive">${liveHTML(id)}</div>`;
     return h;
   }
   const v = S.a[id];
@@ -1085,6 +1115,46 @@ function slidersHTML(fields) {
       <div class="sends"><span>${f.min}</span><span>${f.max}</span></div></div>`;
   }).join('')}</div>`;
 }
+/* Živá analýza pod otázkou: BMI s kategorií barevně a u cílové váhy
+   doporučené pásmo normální hmotnosti. Ať klient hned vidí, kam míří. */
+const BMI_CLASS = b => b < 18.5 ? 'kat-under' : b < 25 ? 'kat-normal' : b < 30 ? 'kat-over' : b < 35 ? 'kat-obese1' : 'kat-obese2';
+
+function idealRange(h) {
+  const m = Math.pow((num(h) || 172) / 100, 2);
+  return [Math.round(22 * m), Math.round(24 * m)];
+}
+
+function liveHTML(id) {
+  const d = S.a, h = num(d.height), w = num(d.weight);
+  if (id !== 'hw' && id !== 'target') return '';
+  if (!h || !w) return '';
+  const bmi = calcBMI(h, w);
+  if (!bmi) return '';
+  const now = `<div class="lv ${BMI_CLASS(bmi)}"><span>Vaše BMI</span><b>${dec(bmi)}</b><i>${esc(bmiCategory(bmi))}</i></div>`;
+  if (id === 'hw') return now;
+
+  const [lo, hi] = idealRange(h);
+  const t = num(d.targetWeight);
+  if (!t) return now + `<div class="lv kat-normal"><span>Ideální váha</span><b>${lo}–${hi} kg</b><i>pásmo BMI 22–24</i></div>`;
+  const tb = calcBMI(h, t);
+  const note = t > hi
+    ? `Do pásma normální váhy je to ${Math.round(w - hi)} kg. Program počítáme tam, cíl doladíme na konzultaci.`
+    : t < lo
+      ? 'Tenhle cíl je pod pásmem normální váhy. Na konzultaci se na něj podíváme, ať nejdete zbytečně nízko.'
+      : 'Tenhle cíl je v pásmu normální váhy. Přesně tam míříme.';
+  return now +
+    `<div class="lv ${BMI_CLASS(tb)}"><span>Po dosažení cíle</span><b>${dec(tb)}</b><i>${esc(bmiCategory(tb))}</i></div>` +
+    `<div class="lv kat-normal"><span>Ideální váha</span><b>${lo}–${hi} kg</b><i>pásmo BMI 22–24</i></div>` +
+    `<p class="lvnote">${esc(note)}</p>`;
+}
+
+function refreshLive() {
+  const el = document.getElementById('qlive');
+  if (!el) return;
+  const id = String(S.cur || '').replace(/^q:/, '');
+  el.innerHTML = liveHTML(id);
+}
+
 function initNumeric(id) {
   const q = Q[id];
   const fields = typeof q.fields === 'function' ? q.fields(S.a) : q.fields;
@@ -1104,6 +1174,92 @@ function ufHTML(key, label, o = {}) {
 }
 function cboxHTML(id, checked, html, consentKey) {
   return `<label class="cbox"><input type="checkbox" id="${id}" data-consent="${consentKey}" ${checked ? 'checked' : ''}><span class="box">${icon('i-check')}</span><span>${html}</span></label>`;
+}
+
+/* ---------- vstupní dotazník hned po úhradě ---------- */
+function intakeHTML() {
+  const B = S.booking;
+  if (B.dataDone) return `<div class="success"><div class="tick">${icon('i-check')}</div><span class="eyebrow">Hotovo</span>
+    <h3>Máme všechno</h3>
+    <p class="lead" style="margin-top:14px">Děkuji. Lékař bude mít Vaše údaje k dispozici a žádanku na odběr připravíme.</p>
+    <button type="button" class="btn ghost" style="margin-top:20px" data-act="showterm">Zobrazit termín konzultace</button></div>`;
+
+  return `<span class="eyebrow">Poslední krok</span><h3>Vstupní dotazník</h3>
+    <p class="lead" style="margin-top:12px">Termín máte potvrzený. Vyplňte prosím ještě tenhle dotazník — laboratoř z něj vystaví žádanku a lékař podle něj připraví Váš protokol. Zabere to pár minut.</p>
+    <div class="bform" style="margin-top:18px">
+      <div class="ufrow one">${ufHTML('name', 'Jméno a příjmení podle průkazu', { autocomplete: 'name', placeholder: 'Jana Nováková' })}</div>
+      <div class="ufrow">${ufHTML('birthDate', 'Datum narození', { type: 'date' })}
+        ${ufHTML('birthNumber', 'Rodné číslo', { inputmode: 'numeric', placeholder: '825310/1234' })}</div>
+      <div class="ufrow">${ufHTML('height', 'Výška · cm', { type: 'number', inputmode: 'numeric', placeholder: '168' })}
+        ${ufHTML('weight', 'Váha · kg', { type: 'number', inputmode: 'numeric', placeholder: '72' })}</div>
+      <div class="ufrow one">${ufHTML('street', 'Ulice a číslo popisné', { autocomplete: 'street-address', placeholder: 'Pod Harfou 943/34' })}</div>
+      <div class="ufrow">${ufHTML('city', 'Město', { autocomplete: 'address-level2', placeholder: 'Praha' })}
+        ${ufHTML('zip', 'PSČ', { inputmode: 'numeric', autocomplete: 'postal-code', placeholder: '190 00' })}</div>
+      <div class="ufrow one">${ufHTML('insurance', 'Zdravotní pojišťovna', { placeholder: 'VZP' })}</div>
+      <p class="small-caps" style="margin:18px 0 0">Zdravotní minimum pro lékaře</p>
+      <div class="ufrow one">${ufHTML('meds', 'Jaké léky a doplňky pravidelně užíváte?', { placeholder: 'Žádné / Euthyrox, hořčík' })}</div>
+      <div class="ufrow one">${ufHTML('allergies', 'Máte nějaké známé alergie?', { placeholder: 'Ne / penicilin' })}</div>
+      <div class="ufrow">${ufHTML('oncology', 'Probíhá u Vás onkologická léčba?', { placeholder: 'Ne' })}
+        ${ufHTML('pregnancy', 'Těhotenství, kojení nebo plán do 6 měsíců?', { placeholder: 'Ne' })}</div>
+      <p class="small-caps" style="margin:18px 0 0">Doplňující · nepovinné, ale lékaři pomůže</p>
+      <div class="ufrow">${ufHTML('job', 'Povolání a charakter práce', { placeholder: 'Sedavá / aktivní / stresová' })}
+        ${ufHTML('energy', 'Úroveň energie 1–10', { type: 'number', inputmode: 'numeric', placeholder: '6' })}</div>
+      <div class="ufrow">${ufHTML('digestion', 'Zažívací potíže', { placeholder: 'Nadýmání, zácpa, pálení žáhy…' })}
+        ${ufHTML('gyn', 'Gynekologické či hormonální potíže', { placeholder: 'Inzulinová rezistence, PCOS…' })}</div>
+      <div class="ufrow">${ufHTML('pastAttempts', 'Dřívější pokusy o hubnutí a výsledek', { placeholder: 'Co jste zkoušel(a) a jak to dopadlo' })}
+        ${ufHTML('pastDrugs', 'Užíval(a) jste léky na hubnutí?', { placeholder: 'Ne / Saxenda, Ozempic…' })}</div>
+      <div class="ufrow one">${ufHTML('diet', 'Typický jídelníček — snídaně, oběd, večeře, svačiny, sladké', { placeholder: 'Klidně upřímně a stručně' })}</div>
+      <div class="ufrow">${ufHTML('water', 'Kolik čisté vody denně', { placeholder: '1,5 l' })}
+        ${ufHTML('alcohol', 'Vztah k alkoholu', { placeholder: 'Nepiji / příležitostně' })}</div>
+      <div class="ufrow">${ufHTML('smoking', 'Kouření či nikotin', { placeholder: 'Nekouřím' })}
+        ${ufHTML('limits', 'Pohybová omezení', { placeholder: 'Bolesti zad, kolena…' })}</div>
+      <div class="ufrow one">${ufHTML('motivation', 'Co je Vaše hlavní motivace?', { placeholder: 'Proč do toho jdete' })}</div>
+      ${cboxHTML('c-lab', S.a.labConsent, 'Souhlasím, aby Aeternum Clinic předala tyto údaje smluvní laboratoři za účelem objednání odběru a provedení vyšetření.', 'labConsent')}
+      <button type="button" class="btn pri" id="intakeBtn">Odeslat dotazník</button>
+      <span class="err" id="intakeErr" role="alert"></span>
+      <p class="fine">Rodné číslo posíláme jen laboratoři. V e-mailech ho nikdy neuvádíme.</p>
+    </div>`;
+}
+
+async function submitIntake(btn) {
+  const err = m => { const el = $('#intakeErr'); if (el) el.textContent = m; };
+  err('');
+  const a = S.a;
+  if (!a.name || !/\s/.test(a.name.trim())) return err('Vyplňte jméno i příjmení.');
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(a.birthDate || '')) return err('Vyplňte datum narození.');
+  if (!/^\d{6}\s*\/?\s*\d{3,4}$/.test((a.birthNumber || '').trim())) return err('Rodné číslo zadejte ve tvaru 825310/1234.');
+  if (!(Number(a.height) >= 120)) return err('Vyplňte výšku v centimetrech.');
+  if (!(Number(a.weight) >= 30)) return err('Vyplňte váhu v kilogramech.');
+  if (!a.street || !a.city || !/^\d{3}\s?\d{2}$/.test((a.zip || '').trim())) return err('Vyplňte prosím celou adresu včetně PSČ.');
+  if (!(a.meds || '').trim()) return err('Napište prosím léky a doplňky, nebo „žádné“.');
+  if (!(a.allergies || '').trim()) return err('Napište prosím alergie, nebo „ne“.');
+  if (!(a.oncology || '').trim()) return err('Odpovězte prosím na otázku k onkologické léčbě.');
+  if (!a.labConsent) return err('Bez souhlasu údaje laboratoři předat nemůžeme.');
+
+  const u = S.booking.manageUrl || '';
+  const q = new URLSearchParams(u.split('?')[1] || '');
+  const vs = q.get('vs') || (S.booking.hold && S.booking.hold.vs), t = q.get('t');
+  if (!vs || !t) return err('Odkaz na rezervaci chybí. Najdete ho v potvrzovacím e-mailu.');
+
+  btn.disabled = true; btn.textContent = 'Odesíláme…';
+  const txt = k => (a[k] == null ? '' : String(a[k]).trim());
+  try {
+    await api('labData', {
+      vs, t, name: a.name.trim(), birthDate: a.birthDate, birthNumber: a.birthNumber.trim(),
+      height: Number(a.height), weight: Number(a.weight), street: a.street.trim(), city: a.city.trim(),
+      zip: (a.zip || '').replace(/\s/g, ''), insurance: txt('insurance'), consent: true,
+      meds: txt('meds'), allergies: txt('allergies'), oncology: txt('oncology'), pregnancy: txt('pregnancy'),
+      job: txt('job'), digestion: txt('digestion'), gyn: txt('gyn'), energy: txt('energy'),
+      pastAttempts: txt('pastAttempts'), pastDrugs: txt('pastDrugs'), diet: txt('diet'), water: txt('water'),
+      alcohol: txt('alcohol'), smoking: txt('smoking'), limits: txt('limits'), motivation: txt('motivation')
+    }, 30000);
+    delete S.a.birthNumber;
+    S.booking.dataDone = true; S.booking.needsData = false;
+    rerenderPanel();
+  } catch (x) {
+    btn.disabled = false; btn.textContent = 'Odeslat dotazník';
+    err(BOOK_ERRORS[x && x.code] || 'Odeslání se nepodařilo. Zkuste to prosím znovu, nebo napište na ' + CFG.email + '.');
+  }
 }
 
 /* ---------- navigace ---------- */
@@ -1170,9 +1326,9 @@ document.addEventListener('input', e => {
     S.a[key] = +t.value; paintRange(t);
     const v = document.getElementById('v-' + key);
     if (v) v.innerHTML = `${t.value}<em>${t.dataset.unit}</em>`;
-    save(); return;
+    refreshLive(); save(); return;
   }
-  if (t.dataset.num) { S.a[t.dataset.num] = t.value; clearInvalid(t); save(); return; }
+  if (t.dataset.num) { S.a[t.dataset.num] = t.value; clearInvalid(t); refreshLive(); save(); return; }
   if (t.dataset.txt) { S.a[t.dataset.txt] = t.value; clearInvalid(t); save(); return; }
 });
 document.addEventListener('change', e => {
@@ -1279,6 +1435,7 @@ function renderResult() {
           <span class="pill ${R.score.cls}">${R.score.label}</span>
           <span class="small-caps">Finální posouzení provádí lékař</span></div></div>
       <p class="lead summary">Podle Vašich odpovědí nevidím nic, co by terapii bránilo. Při BMI ${dec(R.bmi)} a cíli mínus ${R.lose} kg odhaduji program na zhruba ${mesice(R.months)}.</p>
+      ${R.retargeted ? `<p class="lead summary" style="margin-top:10px">Vy jste zadal/a cílovou váhu ${R.ownTarget} kg. Program počítám na ${R.target} kg, protože tam začíná pásmo normální váhy — cílem je zbavit se tuku a udržet svaly, ne jen shodit pár kil. Konečný cíl si upřesníme na konzultaci.</p>` : ''}
       ${R.bmi < 25 ? `<p class="lead summary" style="margin-top:10px">Vaše BMI je pod 25, takže nejde o klasické hubnutí. Terapie může dávat smysl i tak, například na food noise, tedy neustálé myšlenky na jídlo, na zvládání stresu nebo na udržení váhy. O vhodnosti i dávce rozhoduje lékař podle vstupního vyšetření.</p>` : ''}
       ${sendStatusHTML()}
       <a class="small-caps more" href="#detail">Podrobný výsledek ${icon('i-down')}</a>
@@ -1295,7 +1452,7 @@ function renderResult() {
         <div class="val"><small>Odhad programu</small><b>${R.months}<em>měsíců</em></b></div>
         <div class="val"><small>Cíl redukce</small><b>−${R.lose}<em>kg</em></b></div>
       </div>
-      <div class="chart"><div class="cl">Předpokládaný průběh hmotnosti</div>${chartSVG(R.weight, R.target, R.months)}
+      <div class="chart"><div class="cl">Předpokládaný průběh hmotnosti</div>${chartSVG(R.weight, R.target, R.months, num(S.a.height))}
         <div class="cf"><span>Dnes</span><span>${Math.round(R.months / 2)} měs.</span><span>${R.months} měs.</span></div></div>
     </div>
   </div></section>
@@ -1317,7 +1474,7 @@ function renderResult() {
   <section class="rsec"><div class="split">
     <div><span class="eyebrow">Varianta programu</span><h2 class="h-l">Jak dlouhý<br>program zvolit</h2>
       <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))">Délku programu i cenu Vám na vstupní konzultaci potvrdíme. Delší varianta vychází levněji na měsíc a dává tělu čas výsledek udržet.</p>
-      <p class="fine" style="margin-top:clamp(12px,calc(1*var(--u)),calc(18px*var(--k)))">Klikněte na variantu a porovnejte si je.</p></div>
+      <p class="fine" style="margin-top:clamp(12px,calc(1*var(--u)),calc(18px*var(--k)))">Klikněte na variantu a porovnejte si je. Program není závazek na celou dobu — kdykoli ho jde zkrátit i prodloužit, bez storno poplatku.</p></div>
     <div>${variantsHTML(R)}</div>
   </div></section>
 
@@ -1346,8 +1503,11 @@ const PROGRAM_TILES = [
 ];
 function programVariants(R) {
   const bmi = num(R.bmi) || 0, est = R.months;
+  // Wegovy má jednu cenu pro všechny: dávky 0,25–1,0 mg stojí stejně.
+  const wegovy = R.rec && R.rec.key === 'wegovy';
   const base = bmi < 25 ? 11970 : bmi < 30 ? 12970 : bmi < 35 ? 13970 : 14970;
-  const prices = bmi < 25 ? [11970, 11970, 11970] : [base + 1000, base, base - 1000];
+  const prices = wegovy ? [12970, 11970, 10970]
+    : bmi < 25 ? [11970, 11970, 11970] : [base + 1000, base, base - 1000];
   return [
     { emoji: '📉', name: 'Starter',   months: est + 1, price: prices[0], desc: 'Přesný počet měsíců dle matematicky odhadované délky programu.',
       info: 'Negarantujeme výsledky, pokud program ukončíte příliš brzy. Udržovací fáze v Transform a Aeternum je klíčová ochrana proti jo-jo efektu.' },
@@ -1372,15 +1532,11 @@ function variantsHTML(R) {
 
 function varInfoHTML() {
   const v = VAR_LIST[VAR_PICK]; if (!v) return '';
-  const first = VAR_LIST[0];
-  const save = first.price - v.price;
+  // Program je předplatné, proto ukazujeme jen měsíční cenu — žádné součty za celý program.
   const rows = [
     ['Délka programu', mesice(v.months)],
-    ['Cena měsíčně', fmt(v.price) + ' Kč'],
-    ['Celkem za program', fmt(v.price * v.months) + ' Kč']
+    ['Cena měsíčně', fmt(v.price) + ' Kč']
   ];
-  if (save > 0) rows.push(['Úspora oproti variantě ' + first.name, fmt(save) + ' Kč měsíčně']);
-  if (v.months > first.months) rows.push(['Navíc oproti variantě ' + first.name, mesice(v.months - first.months) + ' terapie']);
   return `<p class="vi-main">${esc(v.info || v.desc)}</p>
     <div class="vi-rows">${rows.map(r => `<div><span>${esc(r[0])}</span><b>${esc(r[1])}</b></div>`).join('')}</div>`;
 }
@@ -1398,7 +1554,7 @@ function selectVariant(i) {
 
 const DISCLAIMER = `<div class="disclaimer">Aeternum GLP-1 Screening je orientační vyhodnocení na základě Vašich odpovědí, není lékařským vyšetřením ani diagnózou a nenahrazuje konzultaci s lékařem, který jediný rozhoduje o vhodnosti léků Wegovy® a Mounjaro® vázaných na lékařský předpis.<br>Aeternum Clinic, My Design Creatives s.r.o., IČO 07162235, Chlumčanského 497/5, 180 00 Praha 8 · info@aeternumclinic.cz · <a href="${CFG.gdprUrl}" target="_blank" rel="noopener" style="color:var(--dim)">Zásady zpracování osobních údajů</a></div>`;
 
-function chartSVG(startW, endW, months) {
+function chartSVG(startW, endW, months, height) {
   const W = 620, H = 200, pad = { t: 22, r: 64, b: 26, l: 56 };
   const iw = W - pad.l - pad.r, ih = H - pad.t - pad.b;
   const span = Math.max(1, (startW - endW) * 1.2);
@@ -1416,7 +1572,21 @@ function chartSVG(startW, endW, months) {
     d += ` C ${cx},${y0} ${cx},${y1} ${x1},${y1}`;
   }
   const area = d + ` L ${pts[pts.length - 1][0]},${H - pad.b} L ${pts[0][0]},${H - pad.b} Z`;
+
+  // Hranice BMI 30 a 25 v grafu, ať je vidět, kdy se člověk dostane z obezity a do normy.
+  const m2 = height ? Math.pow(height / 100, 2) : 0;
+  const guide = (bmiVal, color, label) => {
+    if (!m2) return '';
+    const kg = bmiVal * m2;
+    if (kg >= startW || kg <= minY) return '';
+    const y = toY(kg);
+    return `<line x1="${pad.l}" y1="${y}" x2="${W - pad.r}" y2="${y}" stroke="${color}" stroke-width="1" stroke-dasharray="6,5" opacity=".75"/>
+      <text x="${W - pad.r + 10}" y="${y + 4}" text-anchor="start" fill="${color}" font-size="11" font-weight="700" font-family="Montserrat,sans-serif">${label}</text>`;
+  };
+
   return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Předpokládaný průběh hmotnosti">
+    ${guide(30, '#F2B45A', 'BMI 30')}
+    ${guide(25, '#5ED3A0', 'BMI 25')}
     <line x1="${pad.l}" y1="${toY(startW)}" x2="${W - pad.r}" y2="${toY(startW)}" stroke="rgba(255,255,255,.09)" stroke-dasharray="4,4"/>
     <line x1="${pad.l}" y1="${toY(endW)}" x2="${W - pad.r}" y2="${toY(endW)}" stroke="rgba(79,163,224,.28)" stroke-dasharray="4,4"/>
     <path d="${area}" fill="url(#chartG)"/>
@@ -1472,6 +1642,7 @@ function declineReasonHTML() {
 
 function bookingHTML() {
   const B = S.booking;
+  if (B.paid && (B.needsData || B.dataDone) && !B.skipData) return intakeHTML();
   if (B.paid) {
     const d = new Date(B.slot);
     return `<div class="success"><div class="tick">${icon('i-check')}</div><span class="eyebrow">Potvrzeno</span>
@@ -1568,7 +1739,7 @@ function paymentHTML() {
       <dt>Forma</dt><dd>${S.booking.type === 'online' ? 'Online' : 'Osobně'}</dd>
       <dt>Částka</dt><dd>${fmt(h.amount || CFG.price)} Kč</dd>
     </dl>
-    <div class="hold"><span class="dot"></span><span>Termín Vám držíme 2 hodiny. Jakmile platba dorazí, pošleme Vám potvrzení a pozvánku do kalendáře.</span></div>
+    <div class="hold"><span class="dot"></span><span>Po zaplacení prosím nezavírejte toto okno — čeká na Vás ještě krátký vstupní dotazník. Termín Vám držíme 2 hodiny.</span></div>
     <div class="paychoice">
       <p class="small-caps" style="margin-bottom:12px">Vyberte způsob platby</p>
       ${h.checkoutUrl ? `<div class="payopt">
@@ -1622,6 +1793,8 @@ document.addEventListener('click', async e => {
   if (b.dataset.day) { S.booking.day = b.dataset.day; S.booking.slot = null; rerenderPanel(); return; }
   if (b.dataset.slot) { S.booking.slot = b.dataset.slot; rerenderPanel(); return; }
   if (b.id === 'bookBtn') { await submitBooking(b); return; }
+  if (b.id === 'intakeBtn') { await submitIntake(b); return; }
+  if (b.dataset.act === 'showterm') { S.booking.skipData = true; rerenderPanel(); return; }
   if (b.id === 'qBtn') {
     const ta = document.querySelector('#qText');
     const text = (ta && ta.value || '').trim();
@@ -1689,6 +1862,13 @@ const BOOK_ERRORS = {
   bad_phone: 'Telefon zadejte ve tvaru +420 777 123 456.',
   no_consent: 'Pro rezervaci je potřeba souhlas.',
   bad_address: 'Zkontrolujte prosím adresu a PSČ.',
+  bad_health: 'Doplňte prosím léky, alergie a otázku k onkologické léčbě.',
+  rc_invalid: 'Rodné číslo nesedí. Zkontrolujte ho prosím.',
+  rc_dob: 'Rodné číslo neodpovídá datu narození.',
+  bad_birthdate: 'Zkontrolujte prosím datum narození.',
+  bad_height: 'Zkontrolujte prosím výšku.',
+  bad_weight: 'Zkontrolujte prosím váhu.',
+  not_paid: 'Dotazník lze odeslat až po úhradě.',
   busy: 'Zrovna teď rezervuje někdo jiný. Zkuste to prosím za chvíli.',
   sheet_missing: 'Rezervační systém se právě připravuje. Zavolejte nám prosím na ',
   calendar_missing: 'Rezervační systém se právě připravuje. Zavolejte nám prosím na ',
@@ -1785,6 +1965,7 @@ function startPolling() {
         if (j.type) S.booking.type = j.type;
         if (j.meet) S.booking.meet = j.meet;
         if (j.manageUrl) S.booking.manageUrl = j.manageUrl;
+        S.booking.needsData = !!j.needsData;
         if (j.minHours) S.booking.minHours = j.minHours;
         if (j.email && !S.a.email) S.a.email = j.email;
         rerenderPanel();
