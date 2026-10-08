@@ -939,7 +939,9 @@ function compute() {
   d.bmi = calcBMI(d.height, d.weight);
   const months = programMonths(d);
   const contra = hardContra(d);
-  const sc = calcScore(d);
+  // Při kontraindikaci nemá skóre vhodnosti co říkat — ať v tabulce ani v notifikaci
+  // nesvítí 9/10 u klienta, kterému program nedoporučujeme.
+  const sc = contra ? { score: 0, label: 'Nevhodná — kontraindikace', cls: 'crit' } : calcScore(d);
   const rec = contra ? null : recommend(d);
   const w = num(d.weight) || 0, own = num(d.targetWeight) || 0, tw = num(clinicalTarget(d)) || own;
   return { bmi: d.bmi, months, contra, score: sc, rec, lose: Math.max(0, Math.round(w - tw)),
