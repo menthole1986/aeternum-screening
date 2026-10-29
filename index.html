@@ -726,6 +726,16 @@ const Q = {
   zluc: { marcel: 'Pokračujeme. Tohle je kvůli sledování v průběhu programu.', label: 'Máte potíže se žlučníkem nebo žlučové kameny?', opts: ['Ne', 'Ano'] },
   led:  { marcel: 'Ledviny a játra ovlivňují dávkování.', label: 'Trpíte onemocněním ledvin nebo jater?', opts: ['Ne', 'Ano'] },
   ppp:  { marcel: 'Tato otázka na bezpečnost je citlivá, ale moc důležitá.', label: 'Léčil/a jste se někdy pro poruchu příjmu potravy?', hint: 'Anorexie, bulimie, záchvatovité přejídání.', opts: ['Ne', 'Ano'] },
+  pppType: {
+    marcel: 'Děkuju za upřímnost. Pro lékaře je důležité vědět, o kterou poruchu šlo.',
+    label: 'O kterou poruchu šlo?', opts: ['Anorexie', 'Bulimie', 'Záchvatovité přejídání', 'Jiná'], rows: true,
+    cond: d => d.ppp === 'Ano'
+  },
+  pppStav: {
+    marcel: 'A je to minulost, nebo se léčíte i teď?',
+    label: 'Probíhá léčba teď, nebo jde o minulost?', opts: ['Probíhá teď', 'V minulosti, je to v remisi'], rows: true,
+    cond: d => d.ppp === 'Ano' && d.pppType && d.pppType !== 'Záchvatovité přejídání'
+  },
   stit: { marcel: 'Štítná žláza ovlivňuje metabolismus, proto se na ni ptám zvlášť.', label: 'Máte nějaké problémy se štítnou žlázou?', opts: ['Bez problémů', 'Hypotyreóza (léčená)', 'Hypertyreóza (léčená)', 'Nevím'], rows: true },
   kard: { marcel: 'Tlak a cholesterol se během programu většinou výrazně zlepší. Chci vědět, odkud startujeme.', label: 'Máte zvýšený krevní tlak nebo cholesterol?', opts: ['Žádné problémy', 'Zvýšený tlak', 'Zvýšený cholesterol', 'Obojí', 'Nevím'], rows: true },
   pohyb: { marcel: 'Teď už jen dvě otázky na životní styl.', label: 'Jak byste popsal/a svoji pohybovou aktivitu?', opts: ['Téměř žádná', '1–2× týdně', '3–4× týdně', '5× týdně a více'], rows: true },
@@ -736,7 +746,7 @@ const Q = {
 const SEC = {
   basics:    { lbl: 'Základ',       eyebrow: 'Krok 01 — Základ',       ids: ['gender', 'age', 'hw', 'target'] },
   goal:      { lbl: 'Cíl',          eyebrow: 'Krok 02 — Cíl',          ids: ['goal', 'glp1', 'glp1drug', 'glp1sat'] },
-  safety:    { lbl: 'Bezpečnost',   eyebrow: 'Krok 03 — Bezpečnost',   ids: ['pank', 'men2', 'diab', 'zluc', 'led', 'ppp', 'stit', 'kard'] },
+  safety:    { lbl: 'Bezpečnost',   eyebrow: 'Krok 03 — Bezpečnost',   ids: ['pank', 'men2', 'diab', 'zluc', 'led', 'ppp', 'pppType', 'pppStav', 'stit', 'kard'] },
   lifestyle: { lbl: 'Životní styl', eyebrow: 'Krok 04 — Životní styl', ids: ['pohyb', 'spanek'] }
 };
 const SECS = ['basics', 'goal', 'safety', 'lifestyle'];
@@ -850,7 +860,11 @@ function hardContra(d) {
   const bmi = num(d.bmi);
   if (d.pank === 'Ano') return 'anamnézy zánětu slinivky břišní (pankreatitida)';
   if (d.men2 === 'Ano') return 'výskytu syndromu MEN 1/2 nebo medulárního karcinomu štítné žlázy v rodinné anamnéze';
-  if (d.ppp === 'Ano') return 'léčby poruchy příjmu potravy v anamnéze';
+  // Záchvatovité přejídání stopka není — GLP-1 na ně naopak zabírá.
+  // Anorexie a bulimie jsou stopka, dokud léčba probíhá; v remisi rozhodne lékař.
+  if (d.ppp === 'Ano' && d.pppType !== 'Záchvatovité přejídání' && d.pppStav !== 'V minulosti, je to v remisi') {
+    return 'probíhající léčby poruchy příjmu potravy';
+  }
   if (bmi != null && bmi < BMI_FLOOR) return `nízkého BMI (${dec(bmi)})`;
   return null;
 }
@@ -861,7 +875,7 @@ function calcScore(d) {
   if (['Ne', 'Prediabetes', 'Inzulinová rezistence'].includes(d.diab)) p++;
   if (d.zluc === 'Ne') p++;
   if (d.led === 'Ne') p++;
-  if (d.ppp === 'Ne') p++;
+  if (d.ppp === 'Ne' || d.pppType === 'Záchvatovité přejídání' || d.pppStav === 'V minulosti, je to v remisi') p++;
   const bmi = num(d.bmi) || 0;
   if (bmi >= 25) p += 2; else if (bmi >= BMI_FLOOR) p += 1;
   const diff = (num(d.weight) || 0) - (num(d.targetWeight) || 0);
@@ -943,8 +957,11 @@ function compute() {
   // nesvítí 9/10 u klienta, kterému program nedoporučujeme.
   const sc = contra ? { score: 0, label: 'Nevhodná — kontraindikace', cls: 'crit' } : calcScore(d);
   const rec = contra ? null : recommend(d);
+  // Remise poruchy příjmu potravy terapii nebrání, ale lékař o ní má vědět.
+  const caution = (!contra && d.ppp === 'Ano' && d.pppType !== 'Záchvatovité přejídání')
+    ? 'Vzhledem k anamnéze poruchy příjmu potravy posoudí vhodnost terapie lékař na vstupním vyšetření.' : '';
   const w = num(d.weight) || 0, own = num(d.targetWeight) || 0, tw = num(clinicalTarget(d)) || own;
-  return { bmi: d.bmi, months, contra, score: sc, rec, lose: Math.max(0, Math.round(w - tw)),
+  return { bmi: d.bmi, months, contra, caution, score: sc, rec, lose: Math.max(0, Math.round(w - tw)),
     weight: w, target: tw, ownTarget: own, retargeted: own > 0 && tw > 0 && tw < own };
 }
 
@@ -1457,6 +1474,8 @@ function renderResult() {
       <p class="lead summary">Podle Vašich odpovědí nevidím nic, co by terapii bránilo.</p>
       ${R.retargeted ? `<p class="lead summary" style="margin-top:10px">Konečný cíl si upřesníme na konzultaci.</p>` : ''}
       ${R.bmi < 25 ? `<p class="lead summary" style="margin-top:10px">Vaše BMI je pod 25, takže nejde o klasické hubnutí. O vhodnosti terapie rozhoduje lékař podle vstupního vyšetření.</p>` : ''}
+      ${R.caution ? `<div class="alerts" style="margin-top:14px"><div class="alert"><span class="pill sm warn">Posoudí lékař</span>
+          <span>${esc(R.caution)}</span></div></div>` : ''}
       ${sendStatusHTML()}
       <a class="small-caps more" href="#detail">Podrobný výsledek ${icon('i-down')}</a>
     </div>
@@ -2054,8 +2073,8 @@ function payload() {
     gender: S.a.gender, age: num(S.a.age), height: num(S.a.height), weight: num(S.a.weight),
     targetWeight: num(S.a.targetWeight), bmi: R.bmi, bmiCategory: bmiCategory(R.bmi),
     goal: S.a.goal, glp1: S.a.glp1, glp1drug: S.a.glp1drug || '', glp1sat: S.a.glp1sat || '',
-    answers: { pank: S.a.pank, men2: S.a.men2, diab: S.a.diab, zluc: S.a.zluc, led: S.a.led, ppp: S.a.ppp, stit: S.a.stit, kard: S.a.kard, pohyb: S.a.pohyb, spanek: S.a.spanek },
-    score: R.score.score, scoreLabel: R.score.label, contraindication: R.contra || '',
+    answers: { pank: S.a.pank, men2: S.a.men2, diab: S.a.diab, zluc: S.a.zluc, led: S.a.led, ppp: S.a.ppp, pppType: S.a.pppType || '', pppStav: S.a.pppStav || '', stit: S.a.stit, kard: S.a.kard, pohyb: S.a.pohyb, spanek: S.a.spanek },
+    score: R.score.score, scoreLabel: R.score.label, contraindication: R.contra || '', doctorNote: R.caution || '',
     reservationIntent: S.booking.intent || '', bookingType: S.booking.type || '',
     recommendation: R.rec ? R.rec.drug.name : '', recommendationWhy: R.rec ? R.rec.why : '',
     alternative: '', programMonths: R.months, lose: R.lose
