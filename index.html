@@ -111,6 +111,8 @@ main > .screen{width:100%}
 .err:empty{display:none}
 @media (max-width:760px){
   .foot.sticky{position:sticky;bottom:0;padding-top:22px;background:linear-gradient(to top,var(--ground) 72%,rgba(25,25,27,0))}
+  /* když obrazovka roluje, nesmí se poslední obsah schovat pod přilepenou lištou s tlačítkem */
+  body.scrolls main{padding-bottom:calc(104px + env(safe-area-inset-bottom))}
   .navrow{align-items:flex-start}
   .nav-right{flex:1 1 0;min-width:0;gap:10px}
   .nav-right .btn{flex:1 1 100%}
@@ -127,6 +129,7 @@ main > .screen{width:100%}
 
 .intro{max-width:calc(1100px*var(--k))}
 .fitline{display:block;white-space:nowrap;line-height:1.14;padding-bottom:.04em}
+@media (max-width:1200px){.summary.fitline{white-space:normal;line-height:1.62}}
 .intro-lead{font-size:clamp(13px,calc(1.12*var(--u)),calc(21px*var(--k)))}
 body.fixed{overflow:hidden;height:100dvh}
 /* nízké obrazovky (telefon na šířku): kompaktnější rozestupy, ať se vejde vše */
@@ -188,6 +191,10 @@ body.fixed main{min-height:0;overflow:hidden}
 @media (max-width:1000px){
   .mcol{display:none}
   .mcol.intro-portrait{display:flex;gap:14px}
+  /* na výsledkových stránkách Marcelův vzkaz zůstává i na telefonu, jen menší */
+  .mcol.keep{display:flex;gap:12px;margin-top:clamp(24px,6vw,34px)}
+  .mcol.keep .mini .av{width:42px;height:42px}
+  .mcol.keep .mline{font-size:14px;max-width:none}
   .mcol.intro-portrait   .mcol.intro-portrait .mline{font-size:14px}
   .mhead{display:flex}
   main{align-items:flex-start}
@@ -385,6 +392,8 @@ input:autofill{background:transparent;color:var(--ink)}
 .notice{display:flex;gap:12px;align-items:flex-start;margin-top:clamp(18px,calc(1.5*var(--u)),calc(28px*var(--k)));padding:clamp(14px,calc(1.1*var(--u)),calc(20px*var(--k))) clamp(14px,calc(1.2*var(--u)),calc(22px*var(--k)));border:1px solid rgba(242,180,90,.4);background:rgba(242,180,90,.08);border-radius:16px;font-size:clamp(13px,calc(.92*var(--u)),calc(17px*var(--k)));line-height:1.55;color:var(--ink);max-width:40em}
 .notice > span:first-child{flex:none;line-height:1.4}
 .fine{font-size:clamp(12px,calc(.8*var(--u)),calc(15px*var(--k)));color:var(--dim);line-height:1.55}
+.reassure{font-size:clamp(13px,calc(.9*var(--u)),calc(17px*var(--k)));color:var(--muted);line-height:1.6;max-width:40em}
+.reassure b{color:var(--ok);font-weight:600}
 .seg2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:clamp(18px,calc(1.5*var(--u)),calc(28px*var(--k)))}
 .seg2 button{height:clamp(52px,calc(3.2*var(--u)),calc(62px*var(--k)));border-radius:16px;border:1.5px solid rgba(255,255,255,.22);background:transparent;font-size:clamp(13px,calc(.92*var(--u)),calc(17px*var(--k)));font-weight:600;cursor:pointer;color:var(--muted);display:flex;align-items:center;justify-content:center;gap:8px}
 .seg2 button[aria-pressed="true"]{background:var(--grad);border-color:transparent;color:#fff}
@@ -558,7 +567,23 @@ h3.grad,.h3grad{display:block;width:fit-content;align-self:flex-start;background
 @media (max-width:400px){.payhead b{font-size:13px}}
 @media (max-width:760px){
   /* „Termín držíme pro Vás“ na jeden řádek */
-  .panel h3{font-size:21px}
+  .panel h3{font-size:26px}
+  /* na telefonu drží nadpisy sekcí a výsledek střed; odstavce v seznamech, výstrahy
+     a formuláře zůstávají zleva, aby se dobře četly */
+  .ctr{text-align:center}
+  .ctr .bens,.ctr .mline,.ctr .alerts,.ctr .alert{text-align:left}
+  .ctr .bar{margin-left:auto;margin-right:auto}
+  .ctr .index-row{justify-content:center}
+  .ctr .index-side{align-items:center}
+  .ctr .send-status{justify-content:center}
+  .panel > h3,.panel > .eyebrow{text-align:center}
+  .panel > h3.grad{margin-left:auto;margin-right:auto}
+  .panel > .price{justify-content:center}
+  .panel > .price-note{text-align:center}
+  /* plochy na dotek: odkazy v hlavičce a patičce a políčka formuláře měly pod 30 px */
+  .linkbtn{padding:12px 0;margin:-6px 0}
+  .disclaimer a{display:inline-block;padding:8px 0}
+  .uf input{padding:6px 0}
   /* odmítnutí konzultace i s emoji na jeden řádek */
   .decline .btn{font-size:11px;letter-spacing:.06em;white-space:nowrap;padding:14px 20px}
 }
@@ -817,8 +842,8 @@ function marcelText(id) {
   const m = Q[id] ? Q[id].marcel : null;
   return typeof m === 'function' ? m(S.a) : (m || '');
 }
-function marcelCol(text, extra = '') {
-  return `<div class="mcol">
+function marcelCol(text, extra = '', cls = '') {
+  return `<div class="mcol ${cls}">
     <div class="mini"><span class="av"><img src="${MARCEL_AVATAR}" alt="Marcel, konzultant Aeternum Clinic"><i></i></span>
       <span class="nm"><b>Marcel</b><span>Konzultant</span></span></div>
     <p class="mline">${text}</p>${extra}</div>`;
@@ -978,7 +1003,7 @@ function render() {
   if (st.key === 'intro') {
     setBg('hero');
     T = LOGO(true) + `<div class="top-actions"><a class="linkbtn" href="${CFG.site}">Zpátky na web ›</a></div>`;
-    M = `<div class="intro">
+    M = `<div class="intro ctr">
       <div><span class="eyebrow">Průvodce</span>
         <h1 class="h-hero" style="margin-top:clamp(10px,calc(1*var(--u)),calc(18px*var(--k)))"><span class="fitline">Redukce hmotnosti s GLP-1/GIP</span><span class="light fitline">Vstupní screening</span></h1>
         <p class="body-wide intro-lead" style="margin-top:clamp(18px,calc(1.5*var(--u)),calc(28px*var(--k)))">V průběhu 5 minut zjistíme, zda jsou léky jako Wegovy® nebo Mounjaro® pro Vás vhodné, a jaký terapeutický program nejlépe odpovídá Vašim potřebám.</p>
@@ -1007,6 +1032,7 @@ function render() {
         </div>
         <div class="consents">
           ${cboxHTML('c-gdpr', S.a.gdpr, 'Souhlasím se zpracováním osobních údajů, včetně údajů o zdravotním stavu, za účelem vyhodnocení screeningu a jeho zaslání na můj e-mail. Více v <a href="' + CFG.gdprUrl + '" target="_blank" rel="noopener" style="color:var(--ink)">zásadách zpracování osobních údajů</a>.', 'gdpr')}
+          ${cboxHTML('c-news', S.a.marketing, 'Posílejte mi novinky o programu — nejvýš jednou měsíčně, odhlásit se dá jedním kliknutím.', 'marketing')}
           <details class="legal"><summary>Celé znění souhlasu</summary>
             <p>Souhlasím se zpracováním svých osobních údajů, včetně údajů o zdravotním stavu, které jsem ve screeningu uvedl/a, společností My Design Creatives s.r.o., IČO 07162235, se sídlem Chlumčanského 497/5, 180 00 Praha 8, provozující Aeternum Clinic, za účelem vyhodnocení screeningu a jeho zaslání na můj e-mail. Souhlas mohu kdykoli odvolat na info@aeternumclinic.cz.</p></details>
         </div></div></div>`;
@@ -1071,11 +1097,12 @@ function fitLines() {
 function fitScreen() {
   const guide = S.cur !== 'result';
   document.body.classList.toggle('fixed', guide);
+  document.body.classList.remove('scrolls');
   const sc = document.querySelector('#main > .screen');
   // animace .screen končí na transform:none, proto zmenšení zapisujeme jako !important
   if (sc) { sc.style.removeProperty('transform'); sc.style.removeProperty('width'); }
-  if (!guide || !sc) return;
   fitLines();
+  if (!guide || !sc) return;
   const main = document.getElementById('main');
   const cs = getComputedStyle(main);
   const avail = main.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
@@ -1089,6 +1116,13 @@ function fitScreen() {
   });
   const needed = Math.ceil(bottom - top) + 2;
   if (needed > avail && avail > 0) {
+    // na telefonu (klávesnice, malý displej) je čitelnost přednější než jedna obrazovka bez rolování
+    if (isMobile() && avail / needed < 0.86) {
+      document.body.classList.remove('fixed');
+      document.body.classList.add('scrolls');
+      main.style.alignItems = 'flex-start';
+      return;
+    }
     // obsah se nevejde: zmenšíme ho a necháme od horního okraje
     const scale = Math.max(0.45, avail / needed);
     sc.style.setProperty('width', (100 / scale) + '%', 'important');
@@ -1449,13 +1483,13 @@ function renderResult() {
 
   if (R.contra) {
     return `<section class="rsec first"><div class="split">
-      <div><span class="eyebrow">Výsledek screeningu</span><h1 class="h-l">${head}</h1>
+      <div class="ctr"><span class="eyebrow">Výsledek screeningu</span><h1 class="h-l">${head}</h1>
         <div class="alerts"><div class="alert"><span class="pill sm crit">Upozornění</span>
           <span>Na základě Vašich odpovědí Vám GLP-1 program nedoporučujeme, a to z důvodu <b>${esc(R.contra)}</b>.</span></div></div>
         <p class="lead summary">Doporučujeme konzultaci s Vaším ošetřujícím lékařem, který posoudí Vaše možnosti individuálně. Souhrn Vám posíláme na e-mail.</p>
         ${sendStatusHTML()}
         <p class="lead" style="margin-top:clamp(20px,calc(2*var(--u)),calc(36px*var(--k)))">Děkujeme za Váš čas a přejeme Vám pevné zdraví.<br><b style="color:var(--ink)">Aeternum Clinic</b></p></div>
-      ${marcelCol('Mrzí mě to, ale tohle je hranice, kterou nepřekračujeme. Bezpečnost je vždycky na prvním místě.')}
+      ${marcelCol('Mrzí mě to, ale tohle je hranice, kterou nepřekračujeme. Bezpečnost je vždycky na prvním místě.', '', 'keep')}
     </div></section>${DISCLAIMER}`;
   }
 
@@ -1464,26 +1498,26 @@ function renderResult() {
 
   return `
   <section class="rsec first"><div class="split" style="align-items:center">
-    <div>
+    <div class="ctr">
       <span class="eyebrow">Aeternum GLP-1 Screening</span>
       <h1 class="h-l">${head}</h1>
       <div class="index-row"><div class="index-num ${R.score.cls}">${R.score.score}<small>/10</small></div>
         <div class="index-side"><span class="small-caps" style="color:var(--ink)">Skóre vhodnosti</span>
           <span class="pill ${R.score.cls}">${R.score.label}</span>
           <span class="small-caps">Finální posouzení provádí lékař</span></div></div>
-      <p class="lead summary">Podle Vašich odpovědí nevidím nic, co by terapii bránilo.</p>
-      ${R.retargeted ? `<p class="lead summary" style="margin-top:10px">Konečný cíl si upřesníme na konzultaci.</p>` : ''}
+      <p class="lead summary fitline" style="max-width:none">Podle Vašich odpovědí nevidím nic, co by terapii bránilo.</p>
+      ${R.retargeted ? `<p class="lead summary" style="margin-top:10px;font-size:clamp(13px,calc(.98*var(--u)),calc(19px*var(--k)))">Konečný cíl si upřesníme na konzultaci.</p>` : ''}
       ${R.bmi < 25 ? `<p class="lead summary" style="margin-top:10px">Vaše BMI je pod 25, takže nejde o klasické hubnutí. O vhodnosti terapie rozhoduje lékař podle vstupního vyšetření.</p>` : ''}
       ${R.caution ? `<div class="alerts" style="margin-top:14px"><div class="alert"><span class="pill sm warn">Posoudí lékař</span>
           <span>${esc(R.caution)}</span></div></div>` : ''}
       ${sendStatusHTML()}
       <a class="small-caps more" href="#detail">Podrobný výsledek ${icon('i-down')}</a>
     </div>
-    ${marcelCol('Výsledek berte jako odborný odhad, ne jako diagnózu. Finální slovo má vždycky lékař na vstupním vyšetření.')}
+    ${marcelCol('Výsledek berte jako odborný odhad, ne jako diagnózu. Finální slovo má vždycky lékař na vstupním vyšetření.', '', 'keep')}
   </div></section>
 
   <section class="rsec" id="detail"><div class="split">
-    <div><span class="eyebrow">Vaše čísla</span><h2 class="h-l">Odkud<br>startujeme</h2>
+    <div class="ctr"><span class="eyebrow">Vaše čísla</span><h2 class="h-l">Odkud<br>startujeme</h2>
       <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))">Odhad vychází z průměrného tempa úbytku v klinických studiích. Skutečný průběh doladíme na kontrolách.</p></div>
     <div>
       <div class="vals">
@@ -1497,7 +1531,7 @@ function renderResult() {
   </div></section>
 
   <section class="rsec"><div class="split">
-    <div><span class="eyebrow">Doporučení</span><h2 class="h-l">Vaše<br>medikace</h2>
+    <div class="ctr"><span class="eyebrow">Doporučení</span><h2 class="h-l">Vaše<br>medikace</h2>
       <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))">Rozhoduje to, co dává smysl pro Váš cíl a Vaši anamnézu. Cenu programu pak určuje zvolená délka.</p>
       <div class="bens">${benefits}</div></div>
     <div class="drug">
@@ -1509,22 +1543,24 @@ function renderResult() {
   </div></section>
 
   <section class="rsec"><div class="split">
-    <div><span class="eyebrow">Varianta programu</span><h2 class="h-l">Jak dlouhý<br>program zvolit</h2>
+    <div class="ctr"><span class="eyebrow">Varianta programu</span><h2 class="h-l">Jak dlouhý<br>program zvolit</h2>
       <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))">Délku programu i cenu Vám na vstupní konzultaci potvrdíme. Delší program snižuje riziko jo-jo efektu a dává tělu čas si váhu udržet.</p>
       <p class="fine" style="margin-top:clamp(12px,calc(1*var(--u)),calc(18px*var(--k)))">Klikněte na variantu a porovnejte si je. Program není závazek na celou dobu — kdykoli ho jde zkrátit i prodloužit, bez storno poplatku.</p></div>
     <div>${variantsHTML(R)}</div>
   </div></section>
 
-  <section class="rsec"><span class="eyebrow">Benefity programu</span>
+  <section class="rsec ctr"><span class="eyebrow">Benefity programu</span>
     <h2 class="h-l">Co je v ceně<br>programu</h2>
     <div class="tiles">${PROGRAM_TILES.map(([e, t, d]) => `<div class="tile"><div class="emoji">${e}</div><b>${esc(t)}</b><span>${esc(d)}</span></div>`).join('')}</div>
   </section>
 
   <section class="rsec" id="cta"><div class="split">
-    <div><span class="eyebrow">Další krok</span><h2 class="h-l">Vstupní<br><span class="light">konzultace</span></h2>
+    <div><span class="eyebrow">První krok</span><h2 class="h-l">Vstupní<br><span class="light">konzultace</span></h2>
       <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(28px*var(--k)))">S koordinátorem péče, se kterým společně proberete:</p>
-      <div class="bul"><div>Individuální nastavení Vašeho programu</div><div>Podmínky smlouvy o programu péče</div><div>Možnosti financování programu</div></div>
-      <p class="notice"><span>⚠️</span><span>Pro posouzení vhodnosti terapie je nutné podstoupit vstupní screening a lékařské vyšetření (5 170 Kč).</span></p></div>
+      <div class="bul"><div>Seznámení s terapií redukce hmotnosti</div><div>Individuální nastavení Vašeho programu</div></div>
+      <span class="eyebrow" style="margin-top:clamp(38px,calc(3.2*var(--u)),calc(58px*var(--k)))">Druhý krok</span>
+          <p class="notice" style="margin-top:clamp(10px,calc(0.8*var(--u)),calc(14px*var(--k)))"><span>⚠️</span><span>Pro posouzení vhodnosti terapie Vás čeká krevní screening a lékařské vyšetření (4 970 Kč). Hradí se až po vstupní konzultaci, teď neplatíte nic navíc.</span></p>
+          <p class="reassure" style="margin-top:12px"><b>Ze screeningu nemusíte mít žádné obavy.</b> Ověřujeme jím, že je pro Vás terapie bezpečná a v jaké dávce začít. Dotazník, který jste právě vyplnil(a), už to podstatné vyloučil; krevní testy a lékař to jen potvrdí a nastaví.</p></div>
     <div class="panel" id="panel">${bookingHTML()}</div>
   </div></section>
   ${DISCLAIMER}`;
@@ -1707,9 +1743,9 @@ function bookingHTML() {
   }
 
   const type = B.type;
-  return `<span class="eyebrow">Vstupní konzultace</span><h3>Rezervace termínu</h3>
+  return `<h3 class="grad" style="margin-top:0">Rezervace termínu</h3>
     <div class="price"><b>${fmt(CFG.price)} Kč</b><span class="small-caps">${CFG.duration} minut</span></div>
-    <p class="price-note">Poplatek za čas koordinátora a přípravu na Váš případ.</p>
+    <p class="price-note">Částka Vám bude odečtena z první platby za program.</p>
     <div class="seg2" role="group" aria-label="Forma konzultace">
       <button type="button" data-btype="online" aria-pressed="${type === 'online'}">Online</button>
       <button type="button" data-btype="osobne" aria-pressed="${type === 'osobne'}">Osobně v Praze</button>
@@ -1718,7 +1754,6 @@ function bookingHTML() {
     <div class="decline">
       <p class="fine" style="margin-bottom:clamp(10px,calc(.9*var(--u)),calc(16px*var(--k)))">Nehodí se Vám to, nebo si ještě nejste jistí?</p>
       <div class="declrow">
-        <button type="button" class="btn ghost sm" data-act="decline">Chci si to rozmyslet</button>
         <button type="button" class="btn ghost sm" data-act="ask">Mám otázku</button>
       </div></div>`;
 }
@@ -1767,6 +1802,18 @@ function bookFormHTML() {
     <span class="err" id="bookErr" role="alert"></span></div>`;
 }
 
+/* Dokdy termín držíme. Bere se čas z odpovědi serveru, ne pevné číslo —
+   když se doba držení na serveru změní, stránka to řekne správně sama.
+   Kdyby čas nepřišel, napíšeme to obecně, ať tam nesvítí nesmysl. */
+function holdText(h) {
+  const t = h && h.holdUntil ? new Date(h.holdUntil) : null;
+  if (!t || isNaN(t.getTime())) return 'několik hodin';
+  const hh = String(t.getHours()).padStart(2, '0');
+  const mm = String(t.getMinutes()).padStart(2, '0');
+  const dnes = new Date().toDateString() === t.toDateString();
+  return (dnes ? 'do ' : 'do zítřka do ') + hh + ':' + mm;
+}
+
 function paymentHTML() {
   const h = S.booking.hold, d = new Date(S.booking.slot);
   return `<span class="eyebrow">Zbývá zaplatit</span><h3>Termín držíme pro Vás</h3>
@@ -1775,7 +1822,7 @@ function paymentHTML() {
       <dt>Forma</dt><dd>${S.booking.type === 'online' ? 'Online' : 'Osobně'}</dd>
       <dt>Částka</dt><dd>${fmt(h.amount || CFG.price)} Kč</dd>
     </dl>
-    <div class="hold"><span class="dot"></span><span>Po zaplacení prosím nezavírejte toto okno — čeká na Vás ještě krátký vstupní dotazník. Termín Vám držíme 2 hodiny.</span></div>
+    <div class="hold"><span class="dot"></span><span>Po zaplacení prosím nezavírejte toto okno — čeká na Vás ještě krátký vstupní dotazník. Termín Vám držíme ${holdText(h)}.</span></div>
     <div class="paychoice">
       <p class="small-caps" style="margin-bottom:12px">Vyberte způsob platby</p>
       ${h.checkoutUrl ? `<div class="payopt">
@@ -2128,7 +2175,7 @@ render();
 /* ---------- české sirotky ----------------------------------------------
    Jednopísmenné předložky a spojky (k, s, v, z, o, u, a, i) ani krátké
    předložky typu „na“ nebo „do“ nesmí zůstat viset na konci řádku. Stejně
-   tak se nemá rozpadnout číslo od jednotky („30 minut“, „5 170 Kč“).
+   tak se nemá rozpadnout číslo od jednotky („30 minut“, „4 970 Kč“).
    Běží i nad obsahem, který se dokresluje později. */
 const ORPHAN_RE = /(^|[\s(„"'»–—])((?:[aiksuvozAIKSUVOZ]|[Dd]o|[Nn]a|[Pp]o|[Zz]a|[Oo]d|[Vv]e|[Zz]e|[Ss]e|[Kk]e|[Pp]ro|[Pp]ři|[Bb]ez|[Nn]ad|[Pp]od|[Žž]e)) /g;
 function fixTextNode(n) {
