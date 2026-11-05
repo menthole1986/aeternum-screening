@@ -337,6 +337,7 @@ input:autofill{background:transparent;color:var(--ink)}
 .ben.hl svg{stroke:var(--good)}
 
 /* varianty programu */
+.vars.two{grid-template-columns:repeat(2,minmax(0,1fr))}
 .vars{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(22px,calc(1.6*var(--u)),calc(30px*var(--k)));margin-top:clamp(30px,calc(2.4*var(--u)),calc(44px*var(--k)))}
 @media (max-width:760px){.vars{grid-template-columns:1fr;row-gap:34px}}
 .var{position:relative;border:1px solid var(--line);border-radius:clamp(18px,calc(1.5*var(--u)),calc(28px*var(--k)));padding:clamp(26px,calc(2.2*var(--u)),calc(38px*var(--k))) clamp(18px,calc(1.5*var(--u)),calc(26px*var(--k)));text-align:center;background:rgba(255,255,255,.025)}
@@ -345,7 +346,7 @@ input:autofill{background:transparent;color:var(--ink)}
 .var .badge{position:absolute;top:0;left:50%;transform:translate(-50%,-50%);background:var(--grad);color:#fff;font-size:clamp(10px,calc(.68*var(--u)),calc(12px*var(--k)));font-weight:700;letter-spacing:.12em;padding:5px 12px;border-radius:999px;white-space:nowrap}
 .var .emoji{font-size:clamp(20px,calc(1.5*var(--u)),calc(26px*var(--k)));line-height:1}
 .var .nm{font-size:clamp(10px,calc(.72*var(--u)),calc(13px*var(--k)));letter-spacing:.24em;text-transform:uppercase;color:var(--dim);font-weight:700;margin-top:8px}
-.var .mo{font-size:clamp(26px,calc(2.1*var(--u)),calc(40px*var(--k)));font-weight:700;line-height:1.35;padding-bottom:2px;margin-top:8px;background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
+.var .mo{font-size:clamp(22px,calc(1.8*var(--u)),calc(36px*var(--k)));font-weight:700;line-height:1.35;white-space:nowrap;padding-bottom:2px;margin-top:8px;background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
 .var .pr{font-size:clamp(15px,calc(1.15*var(--u)),calc(22px*var(--k)));font-weight:700;margin-top:6px}
 .var .ds{font-size:clamp(12px,calc(.8*var(--u)),calc(15px*var(--k)));color:var(--muted);line-height:1.5;margin-top:10px}
 .var{cursor:pointer;width:100%;font:inherit;color:inherit;transition:border-color .18s,box-shadow .18s,transform .1s}
@@ -395,6 +396,17 @@ input:autofill{background:transparent;color:var(--ink)}
 .reassure{font-size:clamp(13px,calc(.9*var(--u)),calc(17px*var(--k)));color:var(--muted);line-height:1.6;max-width:40em}
 .reassure b{color:var(--ok);font-weight:600}
 .seg2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:clamp(18px,calc(1.5*var(--u)),calc(28px*var(--k)))}
+/* Tři podoby konzultace vedle sebe. Cena patří přímo na tlačítko — jinak by
+   si klient musel pamatovat, co stojí co, než na něco klikne. */
+.seg3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:clamp(18px,calc(1.5*var(--u)),calc(28px*var(--k)))}
+.seg3 button{min-height:clamp(62px,calc(4*var(--u)),calc(78px*var(--k)));padding:10px 8px;border-radius:16px;border:1.5px solid rgba(255,255,255,.22);background:transparent;cursor:pointer;color:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;line-height:1.25}
+.seg3 button b{font-size:clamp(12px,calc(.8*var(--u)),calc(15px*var(--k)));font-weight:600;color:var(--ink)}
+.seg3 button i{font-style:normal;font-size:clamp(11px,calc(.7*var(--u)),calc(13px*var(--k)));font-weight:600;letter-spacing:.04em}
+.seg3 button[aria-pressed="true"]{background:var(--grad);border-color:transparent;color:#fff}
+.seg3 button[aria-pressed="true"] b,.seg3 button[aria-pressed="true"] i{color:#fff}
+.twin{margin-top:clamp(16px,calc(1.3*var(--u)),calc(24px*var(--k)))}
+.twin p{font-size:clamp(13px,calc(.9*var(--u)),calc(17px*var(--k)));color:var(--muted);line-height:1.62;margin:0 0 10px}
+.twin p b{color:var(--ink);font-weight:600}
 .seg2 button{height:clamp(52px,calc(3.2*var(--u)),calc(62px*var(--k)));border-radius:16px;border:1.5px solid rgba(255,255,255,.22);background:transparent;font-size:clamp(13px,calc(.92*var(--u)),calc(17px*var(--k)));font-weight:600;cursor:pointer;color:var(--muted);display:flex;align-items:center;justify-content:center;gap:8px}
 .seg2 button[aria-pressed="true"]{background:var(--grad);border-color:transparent;color:#fff}
 .days{display:flex;gap:8px;overflow-x:auto;max-width:100%;padding-bottom:6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
@@ -517,6 +529,10 @@ h3.grad,.h3grad{display:block;width:fit-content;align-self:flex-start;background
   .rowopt{min-height:52px;font-size:16px;gap:14px}
   .panel{padding:22px 18px;border-radius:22px}
   .seg2 button{height:50px;font-size:14px}
+  .seg3{gap:8px}
+  .seg3 button{min-height:70px;padding:10px 6px}
+  .seg3 button b{font-size:12px}
+  .seg3 button i{font-size:11px}
 }
 
 /* ── doladění pro telefon ── */
@@ -598,6 +614,79 @@ h3.grad,.h3grad{display:block;width:fit-content;align-self:flex-start;background
 .qbox{width:100%;margin-top:clamp(14px,calc(1.2*var(--u)),calc(22px*var(--k)));background:rgba(255,255,255,.04);border:1.5px solid var(--line2);border-radius:16px;color:var(--ink);font:inherit;font-size:clamp(14px,calc(.95*var(--u)),calc(17px*var(--k)));line-height:1.55;padding:14px 16px;resize:vertical}
 .qbox:focus{outline:none;border-color:#4FA3E0}
 .qbox::placeholder{color:rgba(244,244,246,.35)}
+
+/* ---------- Světlý vzhled ----------------------------------------------
+   Pozadí, černý text a limetkové tlačítko podle www.aeternumclinic.cz.
+   Blok je schválně až na konci sešitu: přebíjí tmavé hodnoty výše, takže se
+   dá celý smazat a stránka se vrátí do původní tmavé podoby. */
+:root{
+  --ground:#ECECEC; --ink:#141414;
+  --muted:rgba(20,20,20,.68); --dim:rgba(20,20,20,.46);
+  --line:rgba(20,20,20,.12); --line2:rgba(20,20,20,.22);
+  --grad-text:linear-gradient(90deg,#7A3E9E,#2F86CC);
+  --good:#2E9E6B; --ok:#6F8F12; --warn:#B4770C; --crit:#C8372A;
+  --lime:#BAD758;
+  --karta:rgba(255,255,255,.72);          /* plocha karet na světlém pozadí */
+  --karta-line:rgba(20,20,20,.1);
+}
+html,body{background:var(--ground);color:var(--ink)}
+.bg{background:var(--ground) url("bg.webp") center center/cover no-repeat}
+.bg svg.wave,.bg .veil{display:none}
+
+/* tlačítka */
+.btn.lime{background:var(--lime);color:#141414}
+.btn.ghost{border-color:rgba(20,20,20,.25)}
+.btn.ghost:hover{border-color:rgba(20,20,20,.55)}
+.btn.soft-crit{background:rgba(200,55,42,.08);border-color:rgba(200,55,42,.35);color:#A32B21}
+.btn.soft-crit:hover{background:rgba(200,55,42,.14);border-color:rgba(200,55,42,.6);color:#8A241B}
+.round:hover{border-color:rgba(20,20,20,.55)}
+
+/* odpovědi a formulář */
+.opt{border-color:rgba(20,20,20,.18);background:rgba(255,255,255,.6);color:rgba(20,20,20,.86)}
+.opt:hover{border-color:rgba(20,20,20,.5)}
+.rows{border-bottom-color:rgba(20,20,20,.12)}
+.rowopt .mark{border-color:rgba(20,20,20,.28)}
+.uf input::placeholder{color:rgba(20,20,20,.3)}
+.cbox .box{border-color:rgba(20,20,20,.3);background:rgba(255,255,255,.7)}
+.checks .ic::after{background:rgba(20,20,20,.25)}
+.srng{background:rgba(20,20,20,.16)}
+.segs i{background:rgba(20,20,20,.16)}
+.genbar{background:rgba(20,20,20,.14)}
+.ringwrap::before{background:radial-gradient(circle,rgba(20,20,20,.08),rgba(20,20,20,0) 70%)}
+
+/* karty a plochy */
+.rsec{border-top-color:rgba(20,20,20,.1)}
+.val{border-top-color:rgba(20,20,20,.18)}
+.drug,.var,.varinfo,.lv,.tile,.qbox{background:var(--karta);border-color:var(--karta-line)}
+.var:hover{border-color:rgba(20,20,20,.4)}
+.panel{background:rgba(255,255,255,.82);border-color:var(--karta-line);box-shadow:0 24px 60px rgba(20,20,20,.07)}
+.qbox::placeholder{color:rgba(20,20,20,.38)}
+.chip:hover{border-color:rgba(20,20,20,.5)}
+.body-wide{color:var(--muted)}
+.strip{color:var(--dim)}
+/* barevné záře byly kreslené na tmavé pozadí, na světlém dělají špínu */
+.glow{opacity:.1;filter:blur(70px)}
+.index-num{background:linear-gradient(120deg,#8B5CC7,#2F86CC);-webkit-background-clip:text;background-clip:text}
+
+/* termíny */
+.dayarrow:hover{border-color:rgba(20,20,20,.5)}
+.day,.time{background:rgba(255,255,255,.6)}
+.day:hover,.time:hover{border-color:rgba(20,20,20,.5)}
+.seg2 button{border-color:rgba(20,20,20,.2);background:rgba(255,255,255,.6)}
+.seg3 button{border-color:rgba(20,20,20,.2);background:rgba(255,255,255,.6)}
+.seg3 button:hover{border-color:rgba(20,20,20,.45)}
+.seg2 button:hover{border-color:rgba(20,20,20,.45)}
+.seg2 button[aria-pressed="true"]{background:var(--grad);border-color:transparent;color:#fff}
+
+/* čekací stavy */
+.skel{background:linear-gradient(90deg,rgba(20,20,20,.05) 25%,rgba(20,20,20,.1) 50%,rgba(20,20,20,.05) 75%);background-size:420px 100%}
+.sp{border-color:rgba(20,20,20,.22);border-top-color:#141414}
+.verify .ring .bg2{stroke:rgba(20,20,20,.14)}
+
+/* přilepená lišta s tlačítkem na mobilu */
+@media (max-width:760px){
+  .foot.sticky{background:linear-gradient(to top,var(--ground) 72%,rgba(236,236,236,0))}
+}
 </style>
 </head>
 <body>
@@ -639,7 +728,17 @@ const CFG = {
   apiUrl: 'https://script.google.com/macros/s/AKfycby5mSooRjSpT8CUoaQzhJLW60VzvJwva3e7nLnlLqDBG5FsKBdp70ykk9wO9fE5130p/exec',                                   // webová aplikace z aeternum_screening_apps_script.gs
   src: (URLP.get('src') || 'web').toLowerCase(),
   demo: URLP.get('demo') === '1',
-  price: 570,                                   // vstupní konzultace
+  price: 570,                                   // konzultace se živým koordinátorem (online i osobně)
+  /* AI konzultant. Jméno je na jednom místě schválně — kdyby se měnilo, mění
+     se tady a nikde jinde. Cena je sto korun plus DPH; symbolická částka je
+     tam proto, aby klient konzultaci bral vážně, a odečítá se z první platby
+     za program stejně jako konzultace s člověkem. Termín nepotřebuje, takže
+     se na volné sloty neptáme. Adresu, kde konzultant běží, stránka nezná —
+     dá ji server po zaplacení. */
+  advisorName: 'Marcel AI',                     // 1. pád
+  advisorWith: 'Marcelem AI',                   // 7. pád — „s Marcelem AI"; samotné AI se neskloňuje
+  advisorPrice: 121,                            // 100 Kč + 21 % DPH
+  advisorHours: 24,                             // jak dlouho po zaplacení se dá ke konzultaci vracet
   duration: 30,                                 // minut
   site: 'https://www.aeternumclinic.cz',
   gdprUrl: 'https://www.aeternumclinic.cz/terms-conditions',
@@ -685,8 +784,14 @@ function load() { try { const raw = sessionStorage.getItem(CFG.storageKey); if (
 /* ---------- banka otázek ---------- */
 const Q = {
   gender: {
-    marcel: 'Tímto screeningem Vás provede konzultant Marcel (digitální dvojče konzultanta, se kterým se potkáte na vstupní konzultaci).',
+    marcel: 'Tímto screeningem Vás provede Marcel, náš AI konzultant. Je vyškolený na celý program a na konci Vám řekne, co z Vašich odpovědí vychází.',
     label: 'Jaké je Vaše pohlaví?', opts: ['Žena', 'Muž']
+  },
+  region: {
+    marcel: 'Hned na začátku jedna otázka mimo zdraví. Podle toho, kde žijete, se liší podoba péče i programy, které Vám na konci ukážu.',
+    label: 'Kde žijete?',
+    hint: 'V Praze a okolí si můžete vybrat: chodit k nám na kliniku osobně, nebo vést celou péči na dálku. Odjinud vedeme péči online — konzultace i lékařské vyšetření na dálku a lék na e-recept do Vaší lékárny.',
+    opts: ['Praha nebo okolí do 20 km', 'Jinde v České republice'], rows: true
   },
   age: {
     marcel: 'Věk potřebuji kvůli bezpečnosti terapie a odhadu, jak rychle budete hubnout.',
@@ -769,7 +874,7 @@ const Q = {
 
 /* ---------- sekce a kroky ---------- */
 const SEC = {
-  basics:    { lbl: 'Základ',       eyebrow: 'Krok 01 — Základ',       ids: ['gender', 'age', 'hw', 'target'] },
+  basics:    { lbl: 'Základ',       eyebrow: 'Krok 01 — Základ',       ids: ['gender', 'region', 'age', 'hw', 'target'] },
   goal:      { lbl: 'Cíl',          eyebrow: 'Krok 02 — Cíl',          ids: ['goal', 'glp1', 'glp1drug', 'glp1sat'] },
   safety:    { lbl: 'Bezpečnost',   eyebrow: 'Krok 03 — Bezpečnost',   ids: ['pank', 'men2', 'diab', 'zluc', 'led', 'ppp', 'pppType', 'pppStav', 'stit', 'kard'] },
   lifestyle: { lbl: 'Životní styl', eyebrow: 'Krok 04 — Životní styl', ids: ['pohyb', 'spanek'] }
@@ -1532,7 +1637,7 @@ function renderResult() {
 
   <section class="rsec"><div class="split">
     <div class="ctr"><span class="eyebrow">Doporučení</span><h2 class="h-l">Vaše<br>medikace</h2>
-      <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))">Rozhoduje to, co dává smysl pro Váš cíl a Vaši anamnézu. Cenu programu pak určuje zvolená délka.</p>
+      <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))">Rozhoduje to, co dává smysl pro Váš cíl a Vaši anamnézu. Finální volbu potvrdí lékař na vstupním vyšetření.</p>
       <div class="bens">${benefits}</div></div>
     <div class="drug">
       <span class="eyebrow">Pro Váš cíl vychází nejlépe</span>
@@ -1543,20 +1648,22 @@ function renderResult() {
   </div></section>
 
   <section class="rsec"><div class="split">
-    <div class="ctr"><span class="eyebrow">Varianta programu</span><h2 class="h-l">Jak dlouhý<br>program zvolit</h2>
-      <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))">Délku programu i cenu Vám na vstupní konzultaci potvrdíme. Delší program snižuje riziko jo-jo efektu a dává tělu čas si váhu udržet.</p>
-      <p class="fine" style="margin-top:clamp(12px,calc(1*var(--u)),calc(18px*var(--k)))">Klikněte na variantu a porovnejte si je. Program není závazek na celou dobu — kdykoli ho jde zkrátit i prodloužit, bez storno poplatku.</p></div>
+    <div class="ctr"><span class="eyebrow">Váš program</span><h2 class="h-l">Jak povedeme<br>Vaši péči</h2>
+      <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))">${isPrague()
+        ? 'Jste v dosahu naší ordinace, takže si můžete vybrat ze všech tří programů — dva na dálku a jeden s osobní péčí a léky v ceně.'
+        : 'Celou péči povedeme na dálku: konzultace i lékařské vyšetření online, lék na e-recept do Vaší lékárny.'}</p>
+      <p class="fine" style="margin-top:clamp(12px,calc(1*var(--u)),calc(18px*var(--k)))">Klikněte na program a porovnejte si je. Cena je za měsíc péče a je u všech délek stejná — program lze kdykoli ukončit i prodloužit, bez storno poplatku.</p></div>
     <div>${variantsHTML(R)}</div>
   </div></section>
 
   <section class="rsec ctr"><span class="eyebrow">Benefity programu</span>
     <h2 class="h-l">Co je v ceně<br>programu</h2>
-    <div class="tiles">${PROGRAM_TILES.map(([e, t, d]) => `<div class="tile"><div class="emoji">${e}</div><b>${esc(t)}</b><span>${esc(d)}</span></div>`).join('')}</div>
+    <div class="tiles" id="plantiles">${planTilesHTML()}</div>
   </section>
 
   <section class="rsec" id="cta"><div class="split">
     <div><span class="eyebrow">První krok</span><h2 class="h-l">Vstupní<br><span class="light">konzultace</span></h2>
-      <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(28px*var(--k)))">S koordinátorem péče, se kterým společně proberete:</p>
+      <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(28px*var(--k)))">S naším AI konzultantem, nebo s koordinátorem péče. Tak jako tak proberete:</p>
       <div class="bul"><div>Seznámení s terapií redukce hmotnosti</div><div>Individuální nastavení Vašeho programu</div></div>
       <span class="eyebrow" style="margin-top:clamp(38px,calc(3.2*var(--u)),calc(58px*var(--k)))">Druhý krok</span>
           <p class="notice" style="margin-top:clamp(10px,calc(0.8*var(--u)),calc(14px*var(--k)))"><span>⚠️</span><span>Pro posouzení vhodnosti terapie Vás čeká krevní screening a lékařské vyšetření (4 970 Kč). Hradí se až po vstupní konzultaci, teď neplatíte nic navíc.</span></p>
@@ -1566,47 +1673,118 @@ function renderResult() {
   ${DISCLAIMER}`;
 }
 
-/* Varianty programu — ceny a délky drží stejnou logiku jako kalkulator-glp1.html */
-const PROGRAM_TILES = [
-  ['👨‍⚕️', 'Lékařský dohled', 'Pravidelné kontroly, úprava protokolu, monitoring parametrů.'],
-  ['📊', 'Pravidelné krevní testy', 'Pravidelné sledování metabolických parametrů a reakce organismu.'],
-  ['💉', 'Léky v ceně programu', 'All-inclusive program — vše zahrnuto bez skrytých poplatků.'],
-  ['🔀', 'Flexibilní program', 'Bez vázanosti a storno poplatku. Program lze zkrátit nebo prodloužit dle vývoje váhy.'],
-  ['📘', 'Aeternum Longevity Protokol', 'Individuální nutriční, suplementační, tréninkový, regenerační plán.']
-];
-function programVariants(R) {
-  const bmi = num(R.bmi) || 0, est = R.months;
-  // Wegovy má jednu cenu pro všechny: dávky 0,25–1,0 mg stojí stejně.
-  const wegovy = R.rec && R.rec.key === 'wegovy';
-  const base = bmi < 25 ? 11970 : bmi < 30 ? 12970 : bmi < 35 ? 13970 : 14970;
-  const prices = wegovy ? [12970, 11970, 10970]
-    : bmi < 25 ? [11970, 11970, 11970] : [base + 1000, base, base - 1000];
-  return [
-    { emoji: '📉', name: 'Starter',   months: est + 1, price: prices[0], desc: 'Přesný počet měsíců dle matematicky odhadované délky programu.',
-      info: 'Negarantujeme výsledky, pokud program ukončíte příliš brzy. Udržovací fáze v Transform a Aeternum je klíčová ochrana proti jo-jo efektu.' },
-    { emoji: '⚖️', name: 'Transform', months: est + 2, price: prices[1], desc: 'Aby byla terapie úspěšná, vždy doporučujeme raději o něco delší délku z důvodu individuální odezvy.', rec: true,
-      info: 'Doporučená délka pro trvalé výsledky. Delší program snižuje riziko jo-jo efektu a dává tělu čas si váhu udržet.' },
-    { emoji: '♾️', name: 'Aeternum',  months: est + 4, price: prices[2], desc: 'Transformační program s následnou udržovací fází, kterou lze flexibilně prodloužit.',
-      info: 'Transformační program s udržovací fází. Čím déle tělo adaptuje, tím trvalejší výsledky — bez jo-jo efektu.' }
-  ];
-}
-// Varianty si jde proklikat a porovnat, stejně jako v kalkulátoru.
-let VAR_LIST = [], VAR_PICK = 1;
-function variantsHTML(R) {
-  VAR_LIST = programVariants(R);
-  const rec = VAR_LIST.findIndex(v => v.rec);
-  VAR_PICK = rec < 0 ? 1 : rec;
-  return `<div class="vars">${VAR_LIST.map((v, i) => `<button type="button" class="var${v.rec ? ' rec' : ''}${i === VAR_PICK ? ' sel' : ''}" data-var="${i}" aria-pressed="${i === VAR_PICK}">${v.rec ? '<span class="badge">★ Doporučujeme</span>' : ''}
-      <div class="emoji">${v.emoji}</div><div class="nm">${esc(v.name)}</div>
-      <div class="mo" data-nonbsp>${mesice(v.months)}</div><div class="pr">${fmt(v.price)} Kč/měs.</div>
-      <div class="ds">${esc(v.desc)}</div></button>`).join('')}</div>
-    <div class="varinfo" id="varinfo">${varInfoHTML()}</div>`;
+/* ---------- Programy péče -----------------------------------------------
+   Jedna cena za program, ne žebřík podle délky. Délku odhadneme a doporučíme
+   rezervu, ale program jde kdykoli ukončit i prodloužit bez poplatku — účtovat
+   podle délky by tomu odporovalo.
+
+   Ceny i obsah jsou opsané z www.aeternumclinic.cz/redukce-vahy. Stejná čísla
+   drží CONFIG.PROGRAM v aeternum_screening_apps_script.gs; když se mění ceník,
+   mění se na obou místech. */
+const PLANS = {
+  standard: {
+    key: 'standard', name: 'Telehealth Standard', emoji: '🩺', price: 6970, drugIncluded: false,
+    desc: 'Celá péče na dálku pod přímým dohledem lékaře. Lék si vyzvednete v lékárně na náš e-recept.',
+    tiles: [
+      ['👨‍⚕️', 'Lékařský dohled', 'E-recepty a pravidelné online konzultace s lékařem.'],
+      ['📊', 'Vstupní a průběžný screening', 'Sledování metabolických parametrů a reakce organismu.'],
+      ['📘', 'Aeternum Lifestyle Protocol', 'Tréninkový plán od trenéra, jídelníček a suplementace od nutričního terapeuta.'],
+      ['🤝', 'Podpora koordinátora', 'Koordinátor péče a program manager po celou dobu programu.'],
+      ['🔀', 'Flexibilní program', 'Bez vázanosti a storno poplatku. Kdykoli lze zkrátit i prodloužit.']
+    ]
+  },
+  premium: {
+    key: 'premium', name: 'Telehealth Premium', emoji: '⭐', price: 9970, drugIncluded: false,
+    desc: 'Všechno ze Standardu a k tomu prioritní konzultace a vlastní tým — trenér, výživový specialista, psycholog.',
+    tiles: [
+      ['⚡', 'Prioritní konzultace', 'Bez čekání, kdykoli potřebujete.'],
+      ['🏋️', 'Trenér každý měsíc', 'Konzultace 30 minut a individuální tréninkový plán s detailním rozpisem.'],
+      ['🥗', 'Výživový specialista každý měsíc', 'Konzultace 30 minut, jídelníček na míru a přesný plán suplementace.'],
+      ['🧠', 'Psycholog jednou za tři měsíce', 'Konzultace 30 minut.'],
+      ['📘', 'Pokročilý Lifestyle Protocol', 'Cílený plán pro optimální metabolické zdraví a dlouhověkost.']
+    ]
+  },
+  praha: {
+    key: 'praha', name: 'All-inclusive', emoji: '💉', price: null, drugIncluded: true,
+    desc: 'Kombinace osobních a online konzultací na klinice v Praze. Medikace je v ceně programu.',
+    tiles: [
+      ['💉', 'Léky v ceně programu', 'All-inclusive — žádné skryté poplatky a žádné placení v lékárně.'],
+      ['👨‍⚕️', 'Lékařský dohled', 'Osobní i online konzultace na klinice v Praze.'],
+      ['📊', 'Pravidelné krevní testy', 'Sledování metabolických parametrů a reakce organismu.'],
+      ['📘', 'Aeternum Longevity Protokol', 'Individuální nutriční, suplementační, tréninkový a regenerační plán.'],
+      ['🔀', 'Flexibilní program', 'Bez vázanosti a storno poplatku. Kdykoli lze zkrátit i prodloužit.']
+    ]
+  }
+};
+
+/* Co klient zaplatí v lékárně, když má lék na e-recept. Zrcadlí CONFIG.DRUGS
+   a PROGRAM.STANDARD_DOSES v aeternum_screening_apps_script.gs — „start“ jsou
+   dávky, na kterých se jede do BMI 35, „all“ celý katalog. Dolní hranice je
+   cena s kartou BENU PLUS, horní běžná cena bez karty. */
+const DRUG_PACKS = {
+  mounjaro: { start: [4790, 6890], all: [4790, 12190] },
+  wegovy:   { start: [3590, 3890], all: [3590, 8490] }
+};
+const PRICELIST_URL = 'https://www.benu.cz/ukazkovy-cenik-dalsich-leku-na-diabetes';
+
+// Praha je velká a dojezd do 20 km taky — kdo je blízko, uvidí všechno a vybere si sám.
+function isPrague() { return String(S.a.region || '').indexOf('Praha') === 0; }
+
+// All-inclusive má léčivo v ceně, takže cena roste s BMI: vyšší BMI znamená
+// vyšší dávku a dražší balení. Wegovy stojí ve všech našich dávkách stejně,
+// u něj proto BMI cenu nemění.
+function prahaPrice(bmi, drugKey) {
+  if (drugKey === 'wegovy') return 11970;
+  const b = Number(bmi) || 0;
+  return b < 25 ? 11970 : b < 30 ? 12970 : b < 35 ? 13970 : 14970;
 }
 
-function varInfoHTML() {
+/* Délka: spočítáme odhad a doporučíme dva měsíce navíc jako rezervu. Není to
+   závazek ani cena — program jde kdykoli ukončit i prodloužit bez poplatku. */
+function recMonths(R) { return Math.max(1, Math.round(Number(R.months) || 6)) + 2; }
+
+function programPlans(R) {
+  const drugKey = R.rec && R.rec.key;
+  const praha = Object.assign({}, PLANS.praha, { price: prahaPrice(R.bmi, drugKey) });
+  // Doporučujeme to, co klientovi dává nejmenší starost: v Praze program
+  // s léky v ceně, na dálku Standard. Premium je tam, aby bylo vidět, co víc
+  // jde — ne proto, že ho chceme prodat.
+  return isPrague()
+    ? [Object.assign({}, PLANS.standard), Object.assign({}, PLANS.premium), Object.assign({}, praha, { rec: true })]
+    : [Object.assign({}, PLANS.standard, { rec: true }), Object.assign({}, PLANS.premium)];
+}
+
+// Programy si jde proklikat a porovnat; dlaždice pod nimi ukazují vybraný.
+let VAR_LIST = [], VAR_PICK = 0;
+function variantsHTML(R) {
+  VAR_LIST = programPlans(R);
+  const rec = VAR_LIST.findIndex(v => v.rec);
+  VAR_PICK = rec < 0 ? 0 : rec;
+  return `<div class="vars${VAR_LIST.length === 2 ? ' two' : ''}">${VAR_LIST.map((v, i) => `<button type="button" class="var${v.rec ? ' rec' : ''}${i === VAR_PICK ? ' sel' : ''}" data-var="${i}" aria-pressed="${i === VAR_PICK}">${v.rec ? '<span class="badge">★ Doporučujeme</span>' : ''}
+      <div class="emoji">${v.emoji}</div><div class="nm">${esc(v.name)}</div>
+      <div class="mo" data-nonbsp>${fmt(v.price)} Kč</div><div class="pr">měsíčně</div>
+      <div class="ds">${esc(v.desc)}</div></button>`).join('')}</div>
+    <div class="varinfo" id="varinfo">${varInfoHTML(R)}</div>`;
+}
+
+/* Pod kartami vysvětlíme, co cena obsahuje a co ne. U telemedicíny si klient
+   lék platí sám, takže mu rovnou řekneme, na kolik ho vyjde — jinak by si to
+   spočítal až v lékárně a bral by to jako skryté náklady. */
+function varInfoHTML(R) {
   const v = VAR_LIST[VAR_PICK]; if (!v) return '';
-  // Délka i cena jsou vidět na samotné dlaždici, tady stačí vysvětlení.
-  return `<p class="vi-main">${esc(v.info || v.desc)}</p>`;
+  const m = recMonths(R);
+  let h = `<p class="vi-main">${esc(v.desc)}</p>`;
+  if (!v.drugIncluded) {
+    const key = (R.rec && R.rec.key) || 'mounjaro';
+    const pack = DRUG_PACKS[key] || DRUG_PACKS.mounjaro;
+    const band = (Number(R.bmi) || 0) >= 35 ? pack.all : pack.start;
+    const name = R.rec && R.rec.drug ? R.rec.drug.name : 'Léčivo';
+    h += `<p class="vi-main" style="margin-top:10px">V ceně programu <b>není léčivo</b>. ${esc(name)} si koupíte sám na náš e-recept — podle dávky vyjde na ${fmt(band[0])} až ${fmt(band[1])} Kč za měsíční balení. Dávku určuje lékař a během terapie se může měnit, proto je to rozmezí. <a href="${PRICELIST_URL}" target="_blank" rel="noopener">Ceník lékárny</a>.</p>`;
+  } else {
+    h += `<p class="vi-main" style="margin-top:10px">Léčivo je <b>v ceně programu</b>. V lékárně už neplatíte nic.</p>`;
+  }
+  h += `<p class="vi-main" style="margin-top:10px">Podle Vašich čísel odhadujeme <b>${mesice(R.months)}</b>. Doporučujeme počítat s ${mesice(m)} — dva měsíce navíc jsou rezerva na individuální odezvu a na udržovací fázi, která chrání před jo-jo efektem. Není to závazek: program lze <b>kdykoli ukončit i prodloužit, bez poplatku</b>.</p>`;
+  return h;
 }
 
 function selectVariant(i) {
@@ -1617,7 +1795,14 @@ function selectVariant(i) {
     el.setAttribute('aria-pressed', String(n === i));
   });
   const box = document.getElementById('varinfo');
-  if (box) box.innerHTML = varInfoHTML();
+  if (box) box.innerHTML = varInfoHTML(window.__result || compute());
+  const tl = document.getElementById('plantiles');
+  if (tl) tl.innerHTML = planTilesHTML();
+}
+
+function planTilesHTML() {
+  const v = VAR_LIST[VAR_PICK] || PLANS.standard;
+  return v.tiles.map(([e, t, d]) => `<div class="tile"><div class="emoji">${e}</div><b>${esc(t)}</b><span>${esc(d)}</span></div>`).join('');
 }
 
 const DISCLAIMER = `<div class="disclaimer">Aeternum GLP-1 Screening je orientační vyhodnocení na základě Vašich odpovědí, není lékařským vyšetřením ani diagnózou a nenahrazuje konzultaci s lékařem, který jediný rozhoduje o vhodnosti léků Wegovy® a Mounjaro® vázaných na lékařský předpis.<br>Aeternum Clinic, My Design Creatives s.r.o., IČO 07162235, Chlumčanského 497/5, 180 00 Praha 8 · info@aeternumclinic.cz · <a href="${CFG.gdprUrl}" target="_blank" rel="noopener" style="color:var(--dim)">Zásady zpracování osobních údajů</a></div>`;
@@ -1710,6 +1895,14 @@ function declineReasonHTML() {
 
 function bookingHTML() {
   const B = S.booking;
+  if (B.paid && B.type === 'advisor') {
+    return `<div class="success"><div class="tick">${icon('i-check')}</div><span class="eyebrow">Zaplaceno</span>
+      <h3>Konzultace je připravená</h3>
+      <p class="lead" style="margin-top:14px">${esc(CFG.advisorName)} na Vás čeká. Nemusíte hned — odkaz platí ${CFG.advisorHours} hodin a během nich se ke konzultaci můžete vracet.</p>
+      ${B.advisorUrl ? `<a class="btn pri" href="${esc(B.advisorUrl)}" style="margin-top:clamp(18px,calc(1.5*var(--u)),calc(28px*var(--k)))">Spustit konzultaci</a>`
+        : `<p class="lead" style="margin-top:12px">Odkaz Vám posíláme e-mailem na <b style="color:var(--ink)">${esc(S.a.email)}</b>.</p>`}
+      <p class="fine" style="margin-top:14px">Odkaz i doklad o platbě máme poslané na ${esc(S.a.email)}. Částku Vám odečteme z první platby za program.</p></div>`;
+  }
   if (B.paid && (B.needsData || B.dataDone) && !B.skipData) return intakeHTML();
   if (B.paid) {
     const d = new Date(B.slot);
@@ -1743,14 +1936,14 @@ function bookingHTML() {
   }
 
   const type = B.type;
-  return `<h3 class="grad" style="margin-top:0">Rezervace termínu</h3>
-    <div class="price"><b>${fmt(CFG.price)} Kč</b><span class="small-caps">${CFG.duration} minut</span></div>
-    <p class="price-note">Částka Vám bude odečtena z první platby za program.</p>
-    <div class="seg2" role="group" aria-label="Forma konzultace">
-      <button type="button" data-btype="online" aria-pressed="${type === 'online'}">Online</button>
-      <button type="button" data-btype="osobne" aria-pressed="${type === 'osobne'}">Osobně v Praze</button>
+  return `<h3 class="grad" style="margin-top:0">Vstupní konzultace</h3>
+    ${priceHTML(type)}
+    <div class="seg3" role="group" aria-label="Podoba konzultace">
+      <button type="button" data-btype="advisor" aria-pressed="${type === 'advisor'}"><b>AI konzultant</b><i>${fmt(CFG.advisorPrice)} Kč</i></button>
+      <button type="button" data-btype="online" aria-pressed="${type === 'online'}"><b>Konzultant online</b><i>${fmt(CFG.price)} Kč</i></button>
+      <button type="button" data-btype="osobne" aria-pressed="${type === 'osobne'}"><b>Konzultant v Praze</b><i>${fmt(CFG.price)} Kč</i></button>
     </div>
-    ${type ? slotsHTML() : `<p class="fine" style="margin-top:16px">Vyberte formu konzultace pro zobrazení volných termínů.</p>`}
+    ${type === 'advisor' ? advisorHTML() : type ? slotsHTML() : `<p class="fine" style="margin-top:16px">Vyberte si podobu konzultace a ukážu Vám, jak dál.</p>`}
     <div class="decline">
       <p class="fine" style="margin-bottom:clamp(10px,calc(.9*var(--u)),calc(16px*var(--k)))">Nehodí se Vám to, nebo si ještě nejste jistí?</p>
       <div class="declrow">
@@ -1758,6 +1951,27 @@ function bookingHTML() {
       </div></div>`;
 }
 
+/* Cenu ukazujeme velkým písmem až po volbě — dokud si klient nevybere, stojí
+   konzultace 121 nebo 570 a jedno číslo by lhalo. Do té doby ji nese tlačítko. */
+function priceHTML(type) {
+  if (!type) return '';
+  if (type === 'advisor') return `<div class="price"><b>${fmt(CFG.advisorPrice)} Kč</b><span class="small-caps">hned teď</span></div>
+    <p class="price-note">Částku Vám odečteme z první platby za program.</p>`;
+  return `<div class="price"><b>${fmt(CFG.price)} Kč</b><span class="small-caps">${CFG.duration} minut</span></div>
+    <p class="price-note">Částku Vám odečteme z první platby za program.</p>`;
+}
+
+/* AI konzultant: žádný termín, jen symbolický poplatek předem. Klient musí
+   vědět, že mluví s AI a proč mu to k něčemu je — proto to píšeme rovnou,
+   ne drobným písmem pod čarou. Adresu, kde konzultant běží, stránka nezná;
+   dá ji server až po zaplacení. */
+function advisorHTML() {
+  return `<div class="twin">
+    <p><b>Nenechte se zmást.</b> ${esc(CFG.advisorName)} je vysoce inteligentní digitální kopie našeho konzultanta Marcela, kterou sám natrénoval na svých skutečných konzultacích s klienty.</p>
+    <p>Provede Vás vstupní konzultací na profesionální úrovni a můžete se ho ptát na cokoli — jak terapie probíhá, na ceny, na smlouvu i na vedlejší účinky. Na rozdíl od živého konzultanta nemusíte čekat na termín. O vhodnosti terapie ale vždycky rozhoduje lékař.</p>
+    <p>Konzultaci spustíte hned po zaplacení a platí ${CFG.advisorHours} hodin. Když zrovna spěcháte, nevadí — během té doby se k ní vrátíte a projdete si ji znovu.</p>
+  </div>${bookFormHTML()}`;
+}
 function slotsHTML() {
   if (!slotCache) {
     loadSlots();
@@ -1786,8 +2000,11 @@ function slotsHTML() {
 }
 
 function bookFormHTML() {
+  const ai = S.booking.type === 'advisor';
   const slot = S.booking.slot ? new Date(S.booking.slot) : null;
-  const pick = slot
+  const pick = ai
+    ? `<p class="picked">${icon('i-check')}<span>Konzultace s <b>${esc(CFG.advisorWith)}</b> za <b>${fmt(CFG.advisorPrice)} Kč</b>, bez čekání na termín</span></p>`
+    : slot
     ? `<p class="picked">${icon('i-check')}<span>Vybráno: <b>${DOW[slot.getDay()]} ${slot.getDate()}. ${slot.getMonth() + 1}.</b> v <b>${pad2(slot.getHours())}:${pad2(slot.getMinutes())}</b></span></p>`
     : `<p class="fine">Vyberte si čas výše a pak rezervaci potvrďte.</p>`;
   return `<div class="bform">
@@ -1796,9 +2013,9 @@ function bookFormHTML() {
     <div class="ufrow one">${ufHTML('street', 'Ulice a číslo popisné', { autocomplete: 'street-address', placeholder: 'Chlumčanského 497/5' })}</div>
     <div class="ufrow">${ufHTML('city', 'Město', { autocomplete: 'address-level2', placeholder: 'Praha 8-Libeň' })}
       ${ufHTML('zip', 'PSČ', { inputmode: 'numeric', autocomplete: 'postal-code', placeholder: '180 00' })}</div>
-    <p class="fine">Telefon potřebujeme na SMS připomínku 24 hodin před konzultací, adresu na daňový doklad.</p>
+    <p class="fine">${ai ? 'Adresu potřebujeme na daňový doklad, telefon kdybychom se nemohli spojit e-mailem.' : 'Telefon potřebujeme na SMS připomínku 24 hodin před konzultací, adresu na daňový doklad.'}</p>
     ${cboxHTML('c-book', S.a.bookConsent, 'Souhlasím, aby mě Aeternum Clinic kontaktovala ohledně rezervované konzultace.', 'bookConsent')}
-    <button type="button" class="btn pri" id="bookBtn"${slot ? '' : ' disabled'}>Rezervovat termín</button>
+    <button type="button" class="btn pri" id="bookBtn"${ai || slot ? '' : ' disabled'}>${ai ? `Objednat za ${fmt(CFG.advisorPrice)} Kč` : 'Rezervovat termín'}</button>
     <span class="err" id="bookErr" role="alert"></span></div>`;
 }
 
@@ -1815,14 +2032,20 @@ function holdText(h) {
 }
 
 function paymentHTML() {
-  const h = S.booking.hold, d = new Date(S.booking.slot);
-  return `<span class="eyebrow">Zbývá zaplatit</span><h3>Termín držíme pro Vás</h3>
+  const h = S.booking.hold, ai = S.booking.type === 'advisor';
+  const d = ai ? null : new Date(S.booking.slot);
+  /* AI konzultace nic nedrží, takže se ani nemá co uvolnit — proto tu není
+     lhůta a shrnutí je o jeden řádek kratší. */
+  return `<span class="eyebrow">Zbývá zaplatit</span><h3>${ai ? 'Konzultaci spustíte po zaplacení' : 'Termín držíme pro Vás'}</h3>
     <dl class="summ">
-      <dt>Termín</dt><dd>${DOW_SHORT[d.getDay()]} ${d.getDate()}. ${d.getMonth() + 1}. · ${pad2(d.getHours())}:${pad2(d.getMinutes())}</dd>
-      <dt>Forma</dt><dd>${S.booking.type === 'online' ? 'Online' : 'Osobně'}</dd>
-      <dt>Částka</dt><dd>${fmt(h.amount || CFG.price)} Kč</dd>
+      ${ai ? `<dt>Konzultace</dt><dd>${esc(CFG.advisorName)}</dd>`
+        : `<dt>Termín</dt><dd>${DOW_SHORT[d.getDay()]} ${d.getDate()}. ${d.getMonth() + 1}. · ${pad2(d.getHours())}:${pad2(d.getMinutes())}</dd>
+      <dt>Forma</dt><dd>${S.booking.type === 'online' ? 'Online' : 'Osobně'}</dd>`}
+      <dt>Částka</dt><dd>${fmt(h.amount || (ai ? CFG.advisorPrice : CFG.price))} Kč</dd>
     </dl>
-    <div class="hold"><span class="dot"></span><span>Po zaplacení prosím nezavírejte toto okno — čeká na Vás ještě krátký vstupní dotazník. Termín Vám držíme ${holdText(h)}.</span></div>
+    <div class="hold"><span class="dot"></span><span>${ai
+      ? `Po zaplacení prosím nezavírejte toto okno — odkaz ke konzultaci se otevře rovnou tady a zároveň Vám přijde e-mailem. Platí ${CFG.advisorHours} hodin, takže nic nespěchá.`
+      : `Po zaplacení prosím nezavírejte toto okno — čeká na Vás ještě krátký vstupní dotazník. Termín Vám držíme ${holdText(h)}.`}</span></div>
     <div class="paychoice">
       <p class="small-caps" style="margin-bottom:12px">Vyberte způsob platby</p>
       ${h.checkoutUrl ? `<div class="payopt">
@@ -1885,7 +2108,7 @@ document.addEventListener('click', async e => {
     return;
   }
   if (b.dataset.act === 'rebook') { S.booking.declined = false; S.booking.askOnly = false; S.booking.intent = 'Ano'; rerenderPanel(); if (S.booking.type) loadSlots(); return; }
-  if (b.dataset.btype) { S.booking.type = b.dataset.btype; S.booking.slot = null; slotCache = null; rerenderPanel(); loadSlots(); return; }
+  if (b.dataset.btype) { S.booking.type = b.dataset.btype; S.booking.slot = null; slotCache = null; rerenderPanel(); if (b.dataset.btype !== 'advisor') loadSlots(); return; }
   if (b.dataset.day) { S.booking.day = b.dataset.day; S.booking.slot = null; rerenderPanel(); return; }
   if (b.dataset.slot) { S.booking.slot = b.dataset.slot; rerenderPanel(); return; }
   if (b.id === 'bookBtn') { await submitBooking(b); return; }
@@ -1916,7 +2139,8 @@ document.addEventListener('click', async e => {
 });
 
 async function loadSlots() {
-  if (!S.booking.type) return;
+  // AI konzultant termín nepotřebuje, takže se na volné sloty vůbec neptáme.
+  if (!S.booking.type || S.booking.type === 'advisor') return;
   try {
     if (CFG.apiUrl) {
       const j = await api('slots', { type: S.booking.type }, 20000);
@@ -1968,7 +2192,9 @@ const BOOK_ERRORS = {
   busy: 'Zrovna teď rezervuje někdo jiný. Zkuste to prosím za chvíli.',
   sheet_missing: 'Rezervační systém se právě připravuje. Zavolejte nám prosím na ',
   calendar_missing: 'Rezervační systém se právě připravuje. Zavolejte nám prosím na ',
-  rate_limited: 'Příliš mnoho pokusů. Zkuste to prosím za chvíli.'
+  rate_limited: 'Příliš mnoho pokusů. Zkuste to prosím za chvíli.',
+  need_screening: 'Konzultace s AI konzultantem navazuje na vyplněný screening. Dokončete ho prosím nejdřív.',
+  advisor_off: 'AI konzultanta právě dolaďujeme. Vyberte si prosím konzultanta — online nebo osobně v Praze.'
 };
 function bookError(x) {
   const code = x && x.code;
@@ -1978,37 +2204,42 @@ function bookError(x) {
 }
 async function submitBooking(btn) {
   const err = m => { const el = $('#bookErr'); if (el) el.textContent = m; };
+  const ai = S.booking.type === 'advisor';
   err('');
-  if (!S.booking.slot) return err('Vyberte prosím čas konzultace.');
+  if (!ai && !S.booking.slot) return err('Vyberte prosím čas konzultace.');
   if (!/^\+?[\d\s]{9,16}$/.test((S.a.phone || '').trim())) return err('Telefon zadejte ve tvaru +420 777 123 456.');
   if (!(S.a.street || '').trim()) return err('Vyplňte prosím ulici a číslo popisné.');
   if (!(S.a.city || '').trim()) return err('Vyplňte prosím město.');
   if (!/^\d{3}\s?\d{2}$/.test((S.a.zip || '').trim())) return err('PSČ zadejte ve tvaru 190 00.');
   if (!S.a.bookConsent) return err('Pro rezervaci je potřeba souhlas.');
   btn.disabled = true;
-  btn.innerHTML = '<span class="sp"></span>Blokuji termín…';
+  btn.innerHTML = ai ? '<span class="sp"></span>Připravuji platbu…' : '<span class="sp"></span>Blokuji termín…';
   const wait = document.createElement('p');
   wait.className = 'fine';
   wait.style.textAlign = 'center';
-  wait.textContent = 'Držíme pro Vás termín a připravujeme platbu, chvilku strpení.';
+  wait.textContent = ai ? 'Připravujeme platbu, chvilku strpení.' : 'Držíme pro Vás termín a připravujeme platbu, chvilku strpení.';
   btn.insertAdjacentElement('afterend', wait);
-  const cleanup = () => { wait.remove(); btn.innerHTML = 'Rezervovat termín'; };
+  const cleanup = () => { wait.remove(); btn.innerHTML = ai ? `Objednat za ${fmt(CFG.advisorPrice)} Kč` : 'Rezervovat termín'; };
   try {
     const id = await ensureSubmitted();
     let hold;
     if (CFG.apiUrl) {
       hold = await api('hold', {
-        id, slot: S.booking.slot, type: S.booking.type,
+        id, kind: ai ? 'advisor' : 'consult',
+        slot: ai ? '' : S.booking.slot, type: S.booking.type,
         name: S.a.firstName, email: S.a.email, phone: S.a.phone.trim(),
         street: S.a.street.trim(), city: S.a.city.trim(), zip: (S.a.zip || '').replace(/\s/g, ''),
         consent: true
       }, 45000);
     } else {
       const vs = String(Date.now()).slice(-8);
-      hold = { vs, amount: CFG.price, account: '2801448429/2010', spayd: spaydFor(vs, CFG.price), checkoutUrl: '' };
+      const amount = ai ? CFG.advisorPrice : CFG.price;
+      hold = { vs, amount, account: '2801448429/2010', spayd: spaydFor(vs, amount), checkoutUrl: '' };
     }
     if (!hold || !hold.vs) throw Object.assign(new Error('no_vs'), { code: 'no_vs' });
     S.booking.hold = hold;
+    // Kdo si konzultaci koupil dřív a vrátil se, nemá platit podruhé.
+    if (hold.alreadyPaid) { S.booking.paid = true; S.booking.advisorUrl = hold.advisorUrl || ''; }
     rerenderPanel();
   } catch (x) {
     btn.disabled = false; cleanup();
@@ -2061,6 +2292,8 @@ function startPolling() {
         if (j.type) S.booking.type = j.type;
         if (j.meet) S.booking.meet = j.meet;
         if (j.manageUrl) S.booking.manageUrl = j.manageUrl;
+        if (j.advisorUrl) S.booking.advisorUrl = j.advisorUrl;
+        if (j.kind === 'advisor') S.booking.type = 'advisor';
         S.booking.needsData = !!j.needsData;
         if (j.minHours) S.booking.minHours = j.minHours;
         if (j.email && !S.a.email) S.a.email = j.email;
@@ -2117,7 +2350,7 @@ function payload() {
     src: CFG.src, startedAt: S.startedAt, finishedAt: new Date().toISOString(),
     name: S.a.firstName, email: S.a.email, phone: S.a.phone || '',
     consents: { gdpr: !!S.a.gdpr, marketing: !!S.a.marketing, booking: !!S.a.bookConsent, version: '2026-09-v1' },
-    gender: S.a.gender, age: num(S.a.age), height: num(S.a.height), weight: num(S.a.weight),
+    gender: S.a.gender, region: S.a.region || '', age: num(S.a.age), height: num(S.a.height), weight: num(S.a.weight),
     targetWeight: num(S.a.targetWeight), bmi: R.bmi, bmiCategory: bmiCategory(R.bmi),
     goal: S.a.goal, glp1: S.a.glp1, glp1drug: S.a.glp1drug || '', glp1sat: S.a.glp1sat || '',
     answers: { pank: S.a.pank, men2: S.a.men2, diab: S.a.diab, zluc: S.a.zluc, led: S.a.led, ppp: S.a.ppp, pppType: S.a.pppType || '', pppStav: S.a.pppStav || '', stit: S.a.stit, kard: S.a.kard, pohyb: S.a.pohyb, spanek: S.a.spanek },
@@ -2151,7 +2384,7 @@ function fillDemo() {
   S = blank();
   Object.assign(S.a, {
     firstName: 'Petra Nováková', email: 'petra.demo@example.cz', gdpr: true, marketing: false,
-    gender: 'Žena', age: 42, height: 168, weight: 92, targetWeight: 78,
+    gender: 'Žena', region: 'Jinde v České republice', age: 42, height: 168, weight: 92, targetWeight: 78,
     goal: 'Zbavit se neustálých chutí a myšlenek na jídlo', glp1: 'Nemám zkušenosti',
     pank: 'Ne', men2: 'Ne', diab: 'Prediabetes', zluc: 'Ne', led: 'Ne', ppp: 'Ne',
     stit: 'Bez problémů', kard: 'Zvýšený tlak', pohyb: '1–2× týdně', spanek: '6–7h'
