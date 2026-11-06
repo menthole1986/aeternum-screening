@@ -738,6 +738,9 @@ const CFG = {
   advisorName: 'Marcel AI',                     // 1. pád
   advisorWith: 'Marcelem AI',                   // 7. pád — „s Marcelem AI"; samotné AI se neskloňuje
   advisorPrice: 121,                            // 100 Kč + 21 % DPH
+  // Obchodní podmínky. Server posílá platnou adresu; tahle je záloha,
+  // kdyby odpověď nedorazila. Prázdno = odkaz se nikde neukáže.
+  termsUrl: 'https://www.aeternumclinic.cz/obchodni-podminky',
   advisorHours: 72,                             // jak dlouho po zaplacení se dá ke konzultaci vracet
   duration: 30,                                 // minut
   site: 'https://www.aeternumclinic.cz',
@@ -2019,6 +2022,19 @@ function bookFormHTML() {
     <span class="err" id="bookErr" role="alert"></span></div>`;
 }
 
+/* Odkaz na obchodní podmínky. Server posílá platnou adresu, CFG má zálohu;
+   když ani jedno není, odkaz se neukáže — vést klienta na stránku, která
+   neexistuje, je horší než neodkazovat nikam. */
+function podminkyUrl() {
+  try { return String((S.booking && S.booking.termsUrl) || CFG.termsUrl || '').trim(); }
+  catch (e) { return String(CFG.termsUrl || '').trim(); }
+}
+function podminkyVeta() {
+  const u = podminkyUrl();
+  return u ? '<p class="fine" style="margin-top:12px">Úhradou potvrzujete, že jste se seznámil'
+    + '(a) s <a href="' + esc(u) + '" target="_blank" rel="noopener">obchodními podmínkami</a>.</p>' : '';
+}
+
 /* Dokdy termín držíme. Bere se čas z odpovědi serveru, ne pevné číslo —
    když se doba držení na serveru změní, stránka to řekne správně sama.
    Kdyby čas nepřišel, napíšeme to obecně, ať tam nesvítí nesmysl. */
@@ -2048,6 +2064,7 @@ function paymentHTML() {
       : `Po zaplacení prosím nezavírejte toto okno — čeká na Vás ještě krátký vstupní dotazník. Termín Vám držíme ${holdText(h)}.`}</span></div>
     <div class="paychoice">
       <p class="small-caps" style="margin-bottom:12px">Vyberte způsob platby</p>
+      ${podminkyVeta()}
       ${h.checkoutUrl ? `<div class="payopt">
         <div class="payhead"><b>Kartou, Apple Pay nebo Google Pay</b><span class="paytag fast">Rezervace termínu ihned</span></div>
         <a class="btn pri" href="${esc(h.checkoutUrl)}" onclick="this.textContent='Přesměrováváme…';this.style.pointerEvents='none'">Zaplatit kartou</a>
