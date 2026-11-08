@@ -796,7 +796,7 @@ const Q = {
   region: {
     marcel: 'Hned na začátku jedna otázka mimo zdraví. Podle toho, kde žijete, se liší podoba péče i programy, které Vám na konci ukážu.',
     label: 'Kde žijete?',
-    hint: 'V Praze a okolí si můžete vybrat: chodit k nám na kliniku osobně, nebo vést péči na dálku. Odjinud vedeme péči online — konzultace i vstupní vyšetření na dálku a lék na e-recept do Vaší lékárny. Jednou za celou terapii se ale potřebujeme vidět osobně, na kontrole po třech měsících.',
+    hint: 'V Praze a okolí si můžete vybrat: chodit k nám na kliniku osobně, nebo vést péči na dálku. Odjinud vedeme péči online — konzultace i vstupní vyšetření na dálku a lék na e-recept do Vaší lékárny. Jednou za celou terapii se ale potřebujeme vidět osobně: buď přijedete na vstupní vyšetření, nebo na kontrolu po třech měsících.',
     opts: ['Praha nebo okolí do 20 km', 'Jinde v České republice'], rows: true
   },
   age: {
@@ -1051,7 +1051,7 @@ function recommend(d) {
   if (bmi >= 23 && bmi <= 27) {
     return {
       key: 'wegovy', drug: DRUGS.wegovy, altDrug: DRUGS.mounjaro, alt: null,
-      why: 'Při Vašem BMI nejde o velké hubnutí, ale o postupné doladění a klid od jídla. Semaglutid na to bohatě stačí a drží tempo úbytku tak, aby šel dolů tuk a ne svaly — proto u Vás nejdeme po nejsilnějším preparátu.',
+      why: 'Mounjaro je z téhle třídy nejsilnější a míří hlavně na klienty s BMI nad 30, kde jde o velký úbytek. U Vás jde spíš o kosmetickou redukci a klid od jídla, a na to je Wegovy vhodnější: je mírnější, dávkuje se jemněji a drží tempo úbytku tak, aby šel dolů tuk a ne svaly.',
       offLabel: bmi < 27
     };
   }
@@ -1674,7 +1674,7 @@ function renderResult() {
       <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))">${isPrague()
         ? 'Jste v dosahu naší ordinace, takže si můžete vybrat ze všech programů — tři na dálku a jeden s osobní péčí a léky v ceně.'
         : 'Péči povedeme na dálku: konzultace i vstupní lékařské vyšetření online a lék na e-recept do Vaší lékárny.'}</p>
-      ${isPrague() ? '' : `<p class="lead" style="margin-top:clamp(12px,calc(1*var(--u)),calc(18px*var(--k)))"><b>Jednou za celou terapii se ale potřebujeme vidět osobně.</b> Vstupní vyšetření se dá udělat na dálku, ale na kontrolní vyšetření po třech měsících od zahájení terapie přijedete do ordinace. Je to jedna návštěva za celou terapii, ne cesta ke každé kontrole — a v novém roce k Praze chystáme ordinace v Brně a v Olomouci, ať to nemáte daleko.</p>`}
+      ${isPrague() ? '' : `<p class="lead" style="margin-top:clamp(12px,calc(1*var(--u)),calc(18px*var(--k)))"><b>Jednou za celou terapii se ale potřebujeme vidět osobně.</b> Máte na výběr: buď přijedete rovnou na vstupní lékařské vyšetření, nebo si ho uděláte online a přijedete až na kontrolní vyšetření tři měsíce po zahájení terapie. Tak jako tak je to jedna návštěva za celou terapii, ne cesta ke každé kontrole — a v novém roce k Praze chystáme ordinace v Brně a v Olomouci, ať to nemáte daleko.</p>`}
       <p class="fine" style="margin-top:clamp(12px,calc(1*var(--u)),calc(18px*var(--k)))">Klikněte na program a porovnejte si je. Cena je za měsíc péče a je u všech délek stejná — program lze kdykoli ukončit i prodloužit, bez storno poplatku.</p></div>
     <div>${variantsHTML(R)}</div>
   </div></section>
