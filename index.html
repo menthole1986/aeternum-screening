@@ -759,6 +759,11 @@ const CFG = {
   iban: 'CZ5020100000002801448429',
   phone: '+420775481700',
   email: 'info@aeternumclinic.cz',
+  /* Tlačítko „Mám otázku“ na stránce s výsledky. Za měsíce provozu přes něj
+     přišlo pár dotazů a nic z toho nevzešlo, takže je vypnuté a klient se
+     místo něj dozví e-mail a telefon. Kód zůstává: přepnout na true stačí,
+     kdyby se ukázalo, že chybí. */
+  askEnabled: false,
   bookingFallback: 'https://calendar.app.google/GA7v3J2WymtP1Hix9',
   mapUrl: 'https://maps.google.com/?q=Bulovka+Medical+%26+Business+Centre+Praha+8',
   storageKey: 'aeternum-screening-v1',
@@ -904,7 +909,31 @@ const Q = {
   stit: { marcel: 'Štítná žláza ovlivňuje metabolismus, proto se na ni ptám zvlášť.', label: 'Máte nějaké problémy se štítnou žlázou?', opts: ['Bez problémů', 'Hypotyreóza (léčená)', 'Hypertyreóza (léčená)', 'Nevím'], rows: true },
   kard: { marcel: 'Tlak a cholesterol se během programu většinou výrazně zlepší. Chci vědět, odkud startujeme.', label: 'Máte zvýšený krevní tlak nebo cholesterol?', opts: ['Žádné problémy', 'Zvýšený tlak', 'Zvýšený cholesterol', 'Obojí', 'Nevím'], rows: true },
   pohyb: { marcel: 'Teď už jen dvě otázky na životní styl.', label: 'Jak byste popsal/a svoji pohybovou aktivitu?', opts: ['Téměř žádná', '1–2× týdně', '3–4× týdně', '5× týdně a více'], rows: true },
-  spanek: { marcel: 'A úplně poslední. Spánek rozhoduje o chutích víc, než si většina lidí myslí.', label: 'Kolik hodin průměrně spíte?', opts: ['Méně než 6h', '6–7h', '7–8h', '8+ hodin'] }
+  spanek: { marcel: 'Spánek rozhoduje o chutích víc, než si většina lidí myslí.', label: 'Kolik hodin průměrně spíte?', opts: ['Méně než 6h', '6–7h', '7–8h', '8+ hodin'] },
+  /* Počet hodin sám o sobě nestačí — osm hodin a ráno rozlámaný je něco
+     jiného než šest hodin a svěží. Lékař podle toho pozná spánkovou apnoe
+     i přetížení, což obojí redukci váhy brzdí. */
+  odpocaty: {
+    marcel: 'A ještě jedna věc kolem spánku.',
+    label: 'Cítíte se po probuzení odpočatý/á?',
+    opts: ['Ano, většinou ano', 'Spíš ne', 'Vůbec ne'], rows: true
+  },
+  /* Frekvence bez druhu pohybu je k ničemu: třikrát týdně jóga a třikrát
+     týdně silový trénink staví úplně jiný program. */
+  pohybTyp: {
+    marcel: 'A k tomu pohybu ještě přesněji.',
+    label: 'Jaký pohyb děláte a kolikrát týdně?',
+    hint: 'Třeba „2× týdně běh, 1× posilovna“. Když žádný, napište „žádný“.',
+    type: 'text', placeholder: '2× týdně běh / žádný'
+  },
+  /* Jediná otázka v dotazníku, která neslouží péči, ale nám: bez ní nevíme,
+     co z marketingu funguje. Je úplně poslední schválně — kdo doklikal až
+     sem, odpoví, a nikoho to neodradí na začátku. */
+  odkud: {
+    marcel: 'Hotovo. Poslední otázka už není o zdraví, ta je pro nás.',
+    label: 'Jak jste se o nás dozvěděl/a?',
+    opts: ['Reklama ve vyhledávači', 'Reklama na sociálních sítích', 'Od umělé inteligence (ChatGPT a podobné)', 'Od známého', 'Jinak'], rows: true
+  }
 };
 
 /* ---------- sekce a kroky ---------- */
@@ -912,7 +941,7 @@ const SEC = {
   basics:    { lbl: 'Základ',       eyebrow: 'Krok 01 — Základ',       ids: ['gender', 'region', 'age', 'hw', 'target'] },
   goal:      { lbl: 'Cíl',          eyebrow: 'Krok 02 — Cíl',          ids: ['goal', 'glp1', 'glp1drug', 'glp1sat'] },
   safety:    { lbl: 'Bezpečnost',   eyebrow: 'Krok 03 — Bezpečnost',   ids: ['pank', 'men2', 'diab', 'zluc', 'led', 'ppp', 'pppType', 'pppStav', 'onko', 'tehot', 'leky', 'alergie', 'stit', 'kard'] },
-  lifestyle: { lbl: 'Životní styl', eyebrow: 'Krok 04 — Životní styl', ids: ['pohyb', 'spanek'] }
+  lifestyle: { lbl: 'Životní styl', eyebrow: 'Krok 04 — Životní styl', ids: ['pohyb', 'pohybTyp', 'spanek', 'odpocaty', 'odkud'] }
 };
 const SECS = ['basics', 'goal', 'safety', 'lifestyle'];
 const STRIP_NAME = { basics: 'ZÁKLAD', goal: 'CÍL', safety: 'BEZPEČNOST', lifestyle: 'ŽIVOTNÍ STYL', result: 'DOPORUČENÍ' };
@@ -2034,9 +2063,10 @@ function bookingHTML() {
     ${type === 'advisor' ? advisorHTML() : type ? slotsHTML() : `<p class="fine" style="margin-top:16px">Vyberte si podobu konzultace a ukážu Vám, jak dál.</p>`}
     <div class="decline">
       <p class="fine" style="margin-bottom:clamp(10px,calc(.9*var(--u)),calc(16px*var(--k)))">Nehodí se Vám to, nebo si ještě nejste jistí?</p>
-      <div class="declrow">
-        <button type="button" class="btn ghost sm" data-act="ask">Mám otázku</button>
-      </div></div>`;
+      ${CFG.askEnabled
+        ? `<div class="declrow"><button type="button" class="btn ghost sm" data-act="ask">Mám otázku</button></div>`
+        : `<p class="fine">Napište nám na <a href="mailto:${esc(CFG.email)}" style="color:var(--ink)">${esc(CFG.email)}</a> nebo zavolejte na ${esc(CFG.phone)}.</p>`}
+      </div>`;
 }
 
 /* Cenu ukazujeme velkým písmem až po volbě — dokud si klient nevybere, stojí
@@ -2455,7 +2485,8 @@ function payload() {
     gender: S.a.gender, region: S.a.region || '', age: num(S.a.age), height: num(S.a.height), weight: num(S.a.weight),
     targetWeight: num(S.a.targetWeight), bmi: R.bmi, bmiCategory: bmiCategory(R.bmi),
     goal: S.a.goal, glp1: S.a.glp1, glp1drug: S.a.glp1drug || '', glp1sat: S.a.glp1sat || '',
-    answers: { pank: S.a.pank, men2: S.a.men2, diab: S.a.diab, zluc: S.a.zluc, led: S.a.led, ppp: S.a.ppp, pppType: S.a.pppType || '', pppStav: S.a.pppStav || '', onko: S.a.onko || '', tehot: S.a.tehot || '', leky: S.a.leky || '', alergie: S.a.alergie || '', stit: S.a.stit, kard: S.a.kard, pohyb: S.a.pohyb, spanek: S.a.spanek },
+    answers: { pank: S.a.pank, men2: S.a.men2, diab: S.a.diab, zluc: S.a.zluc, led: S.a.led, ppp: S.a.ppp, pppType: S.a.pppType || '', pppStav: S.a.pppStav || '', onko: S.a.onko || '', tehot: S.a.tehot || '', leky: S.a.leky || '', alergie: S.a.alergie || '',
+      pohybTyp: S.a.pohybTyp || '', odpocaty: S.a.odpocaty || '', odkud: S.a.odkud || '', stit: S.a.stit, kard: S.a.kard, pohyb: S.a.pohyb, spanek: S.a.spanek },
     score: R.score.score, scoreLabel: R.score.label, contraindication: R.contra || '', doctorNote: R.caution || '',
     reservationIntent: S.booking.intent || '', bookingType: S.booking.type || '',
     recommendation: R.rec ? R.rec.drug.name : '', recommendationWhy: R.rec ? R.rec.why : '',
@@ -2490,6 +2521,7 @@ function fillDemo() {
     goal: 'Zbavit se neustálých chutí a myšlenek na jídlo', glp1: 'Nemám zkušenosti',
     pank: 'Ne', men2: 'Ne', diab: 'Prediabetes', zluc: 'Ne', led: 'Ne', ppp: 'Ne',
     onko: 'Ne', tehot: 'Ne', leky: 'Žádné', alergie: 'Žádné',
+    pohybTyp: '2× týdně běh', odpocaty: 'Spíš ne', odkud: 'Od známého',
     stit: 'Bez problémů', kard: 'Zvýšený tlak', pohyb: '1–2× týdně', spanek: '6–7h'
   });
   S.cur = 'result';
