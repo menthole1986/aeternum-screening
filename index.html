@@ -1037,6 +1037,22 @@ function recommend(d) {
 
   let key, why, alt = null;
 
+  /* BMI 23 až 27 je vždycky Wegovy, ať z ostatních odpovědí vychází cokoli.
+     V tomhle pásmu nejde o velký úbytek, ale o doladění postavy a klid od
+     jídla. Tirzepatid tu potlačí chuť tak, že klient nedá do těla ani
+     bílkoviny, a váha pak jde dolů i přes svaly — výsledkem je horší postava
+     a nižší bazální metabolismus, tedy pravý opak toho, proč klient přišel.
+     Mounjaro tu nenabízíme ani jako alternativu: nabídnout ho znamená pozvat
+     k němu. Pravidlo stojí před vším ostatním schválně, i před předchozí
+     zkušeností a poruchou cukru. */
+  if (bmi >= 23 && bmi <= 27) {
+    return {
+      key: 'wegovy', drug: DRUGS.wegovy, altDrug: DRUGS.mounjaro, alt: null,
+      why: 'Při Vašem BMI nejde o velké hubnutí, ale o postupné doladění a klid od jídla. Semaglutid na to bohatě stačí a drží tempo úbytku tak, aby šel dolů tuk a ne svaly — proto u Vás nejdeme po nejsilnějším preparátu.',
+      offLabel: bmi < 27
+    };
+  }
+
   if (hadSema && sat === 'Dobrý efekt') {
     key = 'wegovy';
     why = 'Semaglutid u Vás už zabíral, takže není důvod ho měnit. Navážeme na to, co fungovalo, a doladíme dávkování.';
