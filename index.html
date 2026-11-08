@@ -1682,7 +1682,32 @@ const BENEFITS = [
   ['Lepší pohyblivost a menší zátěž kloubů', d => ['Téměř žádná', '1–2× týdně'].includes(d.pohyb)]
 ];
 
+/* Screening v tomhle prohlížeči nikdo nevyplnil — stav je prázdný. Stane se
+   to po návratu z platební brány v jiném prohlížeči nebo po smazání dat. */
+function hasScreening() { return Number(S.a && S.a.weight) > 0 && Number(S.a && S.a.height) > 0; }
+
+/* Návrat z platby bez uloženého screeningu. Ukážeme jen platbu a odkaz na
+   konzultaci — čísla screeningu bychom si museli vymyslet. */
+function paidOnlyHTML() {
+  const B = S.booking || {};
+  const body = B.paid
+    ? `<div class="success"><div class="tick">${icon('i-check')}</div><span class="eyebrow">Zaplaceno</span>
+        <h3>Konzultace je připravená</h3>
+        <p class="lead" style="margin-top:14px">${esc(CFG.advisorName)} na Vás čeká. Odkaz platí ${CFG.advisorHours} hodin a během nich se ke konzultaci můžete vracet.</p>
+        ${B.advisorUrl ? `<a class="btn pri" href="${esc(B.advisorUrl)}" style="margin-top:clamp(18px,calc(1.5*var(--u)),calc(28px*var(--k)))">Spustit konzultaci</a>`
+          : `<p class="lead" style="margin-top:12px">Odkaz Vám posíláme e-mailem.</p>`}
+        <p class="fine" style="margin-top:14px">Odkaz i doklad o platbě posíláme e-mailem. Částku Vám odečteme z první platby za program.</p></div>`
+    : `<div class="success"><span class="eyebrow">Platba</span>
+        <h3>Ověřujeme platbu</h3>
+        <p class="lead" style="margin-top:14px">Chvilku strpení, hned to bude. Jakmile platbu potvrdíme, pošleme Vám e-mailem odkaz ke konzultaci.</p></div>`;
+  return `<section class="rsec first"><div class="split">
+    <div class="ctr"><span class="eyebrow">Vstupní konzultace</span><h1 class="h-l">Máme<br>Vaši platbu</h1>
+      <p class="lead summary">Výsledky screeningu tady nevidíte proto, že jste ho vyplňoval(a) v jiném prohlížeči nebo se mezitím smazala data. Nic se neděje — máme je uložené a lékař je bude mít u sebe.</p></div>
+    <div>${body}</div></div></section>`;
+}
+
 function renderResult() {
+  if (!hasScreening() && S.booking && S.booking.hold) return paidOnlyHTML();
   const R = compute(); window.__result = R;
   const name = greetName();
   const head = name ? `${esc(name)}, tady je<br>Váš výsledek` : 'Tady je<br>Váš výsledek';
@@ -2499,6 +2524,8 @@ function payload() {
 function ensureSubmitted() {
   if (!CFG.apiUrl || CFG.demo) return Promise.resolve(null);   // ukázková data se nikam neodesílají
   if (S.recordId) return Promise.resolve(S.recordId);
+  // Prázdný stav (návrat z platby v jiném prohlížeči) nemá co odesílat.
+  if (!hasScreening()) return Promise.resolve(null);
   if (submitPromise) return submitPromise;
   setSend('sending');
   submitPromise = api('submitScreening', { screening: payload() }, 60000)
