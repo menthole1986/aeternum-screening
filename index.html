@@ -886,6 +886,21 @@ const Q = {
     opts: ['Ne', 'Ano, jsem těhotná nebo kojím', 'Plánuji do šesti měsíců'], rows: true,
     cond: d => d.gender === 'Žena'
   },
+  /* Volný text: tohle se nedá odklikat z nabídky a lékař to potřebuje vědět
+     dřív, než klient za něco zaplatí. Interakce s léky i alergie můžou
+     terapii změnit, nebo ji úplně zastavit. */
+  leky: {
+    marcel: 'Teď dvě otázky, na které potřebuju Vaše vlastní slova.',
+    label: 'Jaké léky a doplňky stravy pravidelně užíváte?',
+    hint: 'I volně prodejné a vitamíny. Když žádné, napište „žádné“.',
+    type: 'text', placeholder: 'Žádné / Euthyrox, hořčík'
+  },
+  alergie: {
+    marcel: 'A ještě alergie.',
+    label: 'Máte nějaké známé alergie?',
+    hint: 'Na léky i na potraviny. Když žádné, napište „žádné“.',
+    type: 'text', placeholder: 'Žádné / penicilin, ořechy'
+  },
   stit: { marcel: 'Štítná žláza ovlivňuje metabolismus, proto se na ni ptám zvlášť.', label: 'Máte nějaké problémy se štítnou žlázou?', opts: ['Bez problémů', 'Hypotyreóza (léčená)', 'Hypertyreóza (léčená)', 'Nevím'], rows: true },
   kard: { marcel: 'Tlak a cholesterol se během programu většinou výrazně zlepší. Chci vědět, odkud startujeme.', label: 'Máte zvýšený krevní tlak nebo cholesterol?', opts: ['Žádné problémy', 'Zvýšený tlak', 'Zvýšený cholesterol', 'Obojí', 'Nevím'], rows: true },
   pohyb: { marcel: 'Teď už jen dvě otázky na životní styl.', label: 'Jak byste popsal/a svoji pohybovou aktivitu?', opts: ['Téměř žádná', '1–2× týdně', '3–4× týdně', '5× týdně a více'], rows: true },
@@ -896,7 +911,7 @@ const Q = {
 const SEC = {
   basics:    { lbl: 'Základ',       eyebrow: 'Krok 01 — Základ',       ids: ['gender', 'region', 'age', 'hw', 'target'] },
   goal:      { lbl: 'Cíl',          eyebrow: 'Krok 02 — Cíl',          ids: ['goal', 'glp1', 'glp1drug', 'glp1sat'] },
-  safety:    { lbl: 'Bezpečnost',   eyebrow: 'Krok 03 — Bezpečnost',   ids: ['pank', 'men2', 'diab', 'zluc', 'led', 'ppp', 'pppType', 'pppStav', 'onko', 'tehot', 'stit', 'kard'] },
+  safety:    { lbl: 'Bezpečnost',   eyebrow: 'Krok 03 — Bezpečnost',   ids: ['pank', 'men2', 'diab', 'zluc', 'led', 'ppp', 'pppType', 'pppStav', 'onko', 'tehot', 'leky', 'alergie', 'stit', 'kard'] },
   lifestyle: { lbl: 'Životní styl', eyebrow: 'Krok 04 — Životní styl', ids: ['pohyb', 'spanek'] }
 };
 const SECS = ['basics', 'goal', 'safety', 'lifestyle'];
@@ -1284,7 +1299,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => fitS
 
 function needsNext(id) {
   const q = Q[id];
-  if (q.type === 'num') return true;
+  if (q.type === 'num' || q.type === 'text') return true;
   return S.a[id] != null;                       // u voleb se tlačítko objeví až po odpovědi
 }
 
@@ -1296,6 +1311,13 @@ function questionHTML(id) {
     const fields = typeof q.fields === 'function' ? q.fields(S.a) : q.fields;
     h += isMobile() ? slidersHTML(fields) : fieldsHTML(fields);
     h += `<div class="qlive" id="qlive">${liveHTML(id)}</div>`;
+    return h;
+  }
+  if (q.type === 'text') {
+    const v = S.a[id] != null ? S.a[id] : '';
+    h += `<div class="ufrow one"><div class="uf big" id="w-${id}">
+      <input id="f-${id}" type="text" data-txt="${id}" autocomplete="off"
+        placeholder="${esc(q.placeholder || '')}" value="${esc(v)}"></div></div>`;
     return h;
   }
   const v = S.a[id];
@@ -1506,6 +1528,11 @@ function validate(st) {
         if (v < f.min || v > f.max) return { msg: `${f.label}: zadejte hodnotu mezi ${f.min} a ${f.max}.`, focus: f.key };
       }
       if (st.id === 'target' && num(S.a.targetWeight) >= num(S.a.weight)) return { msg: 'Cílová váha musí být nižší než současná.', focus: 'targetWeight' };
+      return null;
+    }
+    if (q.type === 'text') {
+      // Prázdné pole neznamená „nic neberu“, ale „nepřečetl jsem to“.
+      if (!String(S.a[st.id] || '').trim()) return { msg: `Vyplňte prosím: ${q.label}`, focus: st.id };
       return null;
     }
     if (S.a[st.id] == null) return { msg: 'Vyberte prosím odpověď.' };
@@ -2428,7 +2455,7 @@ function payload() {
     gender: S.a.gender, region: S.a.region || '', age: num(S.a.age), height: num(S.a.height), weight: num(S.a.weight),
     targetWeight: num(S.a.targetWeight), bmi: R.bmi, bmiCategory: bmiCategory(R.bmi),
     goal: S.a.goal, glp1: S.a.glp1, glp1drug: S.a.glp1drug || '', glp1sat: S.a.glp1sat || '',
-    answers: { pank: S.a.pank, men2: S.a.men2, diab: S.a.diab, zluc: S.a.zluc, led: S.a.led, ppp: S.a.ppp, pppType: S.a.pppType || '', pppStav: S.a.pppStav || '', onko: S.a.onko || '', tehot: S.a.tehot || '', stit: S.a.stit, kard: S.a.kard, pohyb: S.a.pohyb, spanek: S.a.spanek },
+    answers: { pank: S.a.pank, men2: S.a.men2, diab: S.a.diab, zluc: S.a.zluc, led: S.a.led, ppp: S.a.ppp, pppType: S.a.pppType || '', pppStav: S.a.pppStav || '', onko: S.a.onko || '', tehot: S.a.tehot || '', leky: S.a.leky || '', alergie: S.a.alergie || '', stit: S.a.stit, kard: S.a.kard, pohyb: S.a.pohyb, spanek: S.a.spanek },
     score: R.score.score, scoreLabel: R.score.label, contraindication: R.contra || '', doctorNote: R.caution || '',
     reservationIntent: S.booking.intent || '', bookingType: S.booking.type || '',
     recommendation: R.rec ? R.rec.drug.name : '', recommendationWhy: R.rec ? R.rec.why : '',
@@ -2462,7 +2489,7 @@ function fillDemo() {
     gender: 'Žena', region: 'Jinde v České republice', age: 42, height: 168, weight: 92, targetWeight: 78,
     goal: 'Zbavit se neustálých chutí a myšlenek na jídlo', glp1: 'Nemám zkušenosti',
     pank: 'Ne', men2: 'Ne', diab: 'Prediabetes', zluc: 'Ne', led: 'Ne', ppp: 'Ne',
-    onko: 'Ne', tehot: 'Ne',
+    onko: 'Ne', tehot: 'Ne', leky: 'Žádné', alergie: 'Žádné',
     stit: 'Bez problémů', kard: 'Zvýšený tlak', pohyb: '1–2× týdně', spanek: '6–7h'
   });
   S.cur = 'result';
