@@ -338,6 +338,9 @@ input:autofill{background:transparent;color:var(--ink)}
 
 /* varianty programu */
 .vars.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+/* Čtyři programy (Praha) se do tří sloupců nevejdou, aby poslední nezůstal
+   sám na řádku — dáme je do dvou řad po dvou. */
+.vars.four{grid-template-columns:repeat(2,minmax(0,1fr))}
 .vars{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(22px,calc(1.6*var(--u)),calc(30px*var(--k)));margin-top:clamp(30px,calc(2.4*var(--u)),calc(44px*var(--k)))}
 @media (max-width:760px){.vars{grid-template-columns:1fr;row-gap:34px}}
 .var{position:relative;border:1px solid var(--line);border-radius:clamp(18px,calc(1.5*var(--u)),calc(28px*var(--k)));padding:clamp(26px,calc(2.2*var(--u)),calc(38px*var(--k))) clamp(18px,calc(1.5*var(--u)),calc(26px*var(--k)));text-align:center;background:rgba(255,255,255,.025)}
@@ -793,7 +796,7 @@ const Q = {
   region: {
     marcel: 'Hned na začátku jedna otázka mimo zdraví. Podle toho, kde žijete, se liší podoba péče i programy, které Vám na konci ukážu.',
     label: 'Kde žijete?',
-    hint: 'V Praze a okolí si můžete vybrat: chodit k nám na kliniku osobně, nebo vést celou péči na dálku. Odjinud vedeme péči online — konzultace i lékařské vyšetření na dálku a lék na e-recept do Vaší lékárny.',
+    hint: 'V Praze a okolí si můžete vybrat: chodit k nám na kliniku osobně, nebo vést péči na dálku. Odjinud vedeme péči online — konzultace i vstupní vyšetření na dálku a lék na e-recept do Vaší lékárny. Jednou za celou terapii se ale potřebujeme vidět osobně, na kontrole po třech měsících.',
     opts: ['Praha nebo okolí do 20 km', 'Jinde v České republice'], rows: true
   },
   age: {
@@ -1669,8 +1672,9 @@ function renderResult() {
   <section class="rsec"><div class="split">
     <div class="ctr"><span class="eyebrow">Váš program</span><h2 class="h-l">Jak povedeme<br>Vaši péči</h2>
       <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))">${isPrague()
-        ? 'Jste v dosahu naší ordinace, takže si můžete vybrat ze všech tří programů — dva na dálku a jeden s osobní péčí a léky v ceně.'
-        : 'Celou péči povedeme na dálku: konzultace i lékařské vyšetření online, lék na e-recept do Vaší lékárny.'}</p>
+        ? 'Jste v dosahu naší ordinace, takže si můžete vybrat ze všech programů — tři na dálku a jeden s osobní péčí a léky v ceně.'
+        : 'Péči povedeme na dálku: konzultace i vstupní lékařské vyšetření online a lék na e-recept do Vaší lékárny.'}</p>
+      ${isPrague() ? '' : `<p class="lead" style="margin-top:clamp(12px,calc(1*var(--u)),calc(18px*var(--k)))"><b>Jednou za celou terapii se ale potřebujeme vidět osobně.</b> Vstupní vyšetření se dá udělat na dálku, ale na kontrolní vyšetření po třech měsících od zahájení terapie přijedete do ordinace. Je to jedna návštěva za celou terapii, ne cesta ke každé kontrole — a v novém roce k Praze chystáme ordinace v Brně a v Olomouci, ať to nemáte daleko.</p>`}
       <p class="fine" style="margin-top:clamp(12px,calc(1*var(--u)),calc(18px*var(--k)))">Klikněte na program a porovnejte si je. Cena je za měsíc péče a je u všech délek stejná — program lze kdykoli ukončit i prodloužit, bez storno poplatku.</p></div>
     <div>${variantsHTML(R)}</div>
   </div></section>
@@ -1701,9 +1705,21 @@ function renderResult() {
    drží CONFIG.PROGRAM v aeternum_screening_apps_script.gs; když se mění ceník,
    mění se na obou místech. */
 const PLANS = {
+  /* Light je nejlevnější vstup do programu: lékař, e-recepty a sledování
+     zdravotního stavu. Nic kolem životního stylu — ten je od Standardu výš. */
+  light: {
+    key: 'light', name: 'Telehealth Light', emoji: '🪶', price: 4970, drugIncluded: false,
+    desc: 'Lékařský dohled, e-recepty a průběžný screening zdravotního stavu. Bez tréninkového plánu a jídelníčku.',
+    tiles: [
+      ['👨‍⚕️', 'Lékařský dohled', 'E-recepty a pravidelné online konzultace s lékařem.'],
+      ['📊', 'Průběžný screening', 'Sledování metabolických parametrů a reakce organismu.'],
+      ['🤝', 'Podpora koordinátora', 'Koordinátor péče po celou dobu programu.'],
+      ['🔀', 'Flexibilní program', 'Bez vázanosti a storno poplatku. Kdykoli lze zkrátit i prodloužit.']
+    ]
+  },
   standard: {
     key: 'standard', name: 'Telehealth Standard', emoji: '🩺', price: 6970, drugIncluded: false,
-    desc: 'Celá péče na dálku pod přímým dohledem lékaře. Lék si vyzvednete v lékárně na náš e-recept.',
+    desc: 'Všechno z Lightu a k tomu Aeternum Lifestyle Protocol — tréninkový plán od trenéra a jídelníček s doplňky.',
     tiles: [
       ['👨‍⚕️', 'Lékařský dohled', 'E-recepty a pravidelné online konzultace s lékařem.'],
       ['📊', 'Vstupní a průběžný screening', 'Sledování metabolických parametrů a reakce organismu.'],
@@ -1714,7 +1730,7 @@ const PLANS = {
   },
   premium: {
     key: 'premium', name: 'Telehealth Premium', emoji: '⭐', price: 9970, drugIncluded: false,
-    desc: 'Všechno ze Standardu a k tomu prioritní konzultace a vlastní tým — trenér, výživový specialista, psycholog.',
+    desc: 'Všechno ze Standardu a k tomu prioritní konzultace, vlastní tým a péče o metabolické zdraví a dlouhověkost.',
     tiles: [
       ['⚡', 'Prioritní konzultace', 'Bez čekání, kdykoli potřebujete.'],
       ['🏋️', 'Trenér každý měsíc', 'Konzultace 30 minut a individuální tréninkový plán s detailním rozpisem.'],
@@ -1766,11 +1782,16 @@ function programPlans(R) {
   const drugKey = R.rec && R.rec.key;
   const praha = Object.assign({}, PLANS.praha, { price: prahaPrice(R.bmi, drugKey) });
   // Doporučujeme to, co klientovi dává nejmenší starost: v Praze program
-  // s léky v ceně, na dálku Standard. Premium je tam, aby bylo vidět, co víc
-  // jde — ne proto, že ho chceme prodat.
-  return isPrague()
-    ? [Object.assign({}, PLANS.standard), Object.assign({}, PLANS.premium), Object.assign({}, praha, { rec: true })]
-    : [Object.assign({}, PLANS.standard, { rec: true }), Object.assign({}, PLANS.premium)];
+  // s léky v ceně, na dálku Standard. Light je levnější vstup pro toho, kdo
+  // jde hlavně po ceně, Premium ukazuje, co víc jde — ani jedno není to,
+  // co bychom tlačili.
+  const tele = [
+    Object.assign({}, PLANS.light),
+    Object.assign({}, PLANS.standard, { rec: true }),
+    Object.assign({}, PLANS.premium)
+  ];
+  if (!isPrague()) return tele;
+  return tele.map(v => Object.assign({}, v, { rec: false })).concat([Object.assign({}, praha, { rec: true })]);
 }
 
 // Programy si jde proklikat a porovnat; dlaždice pod nimi ukazují vybraný.
@@ -1779,7 +1800,8 @@ function variantsHTML(R) {
   VAR_LIST = programPlans(R);
   const rec = VAR_LIST.findIndex(v => v.rec);
   VAR_PICK = rec < 0 ? 0 : rec;
-  return `<div class="vars${VAR_LIST.length === 2 ? ' two' : ''}">${VAR_LIST.map((v, i) => `<button type="button" class="var${v.rec ? ' rec' : ''}${i === VAR_PICK ? ' sel' : ''}" data-var="${i}" aria-pressed="${i === VAR_PICK}">${v.rec ? '<span class="badge">★ Doporučujeme</span>' : ''}
+  const cols = VAR_LIST.length === 2 ? ' two' : VAR_LIST.length === 4 ? ' four' : '';
+  return `<div class="vars${cols}">${VAR_LIST.map((v, i) => `<button type="button" class="var${v.rec ? ' rec' : ''}${i === VAR_PICK ? ' sel' : ''}" data-var="${i}" aria-pressed="${i === VAR_PICK}">${v.rec ? '<span class="badge">★ Doporučujeme</span>' : ''}
       <div class="emoji">${v.emoji}</div><div class="nm">${esc(v.name)}</div>
       <div class="mo" data-nonbsp>${fmt(v.price)} Kč</div><div class="pr">měsíčně</div>
       <div class="ds">${esc(v.desc)}</div></button>`).join('')}</div>
