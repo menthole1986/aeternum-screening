@@ -872,6 +872,20 @@ const Q = {
     label: 'Probíhá léčba teď, nebo jde o minulost?', opts: ['Probíhá teď', 'V minulosti, je to v remisi'], rows: true,
     cond: d => d.ppp === 'Ano' && d.pppType && d.pppType !== 'Záchvatovité přejídání'
   },
+  /* Dvě otázky, které terapii vylučují úplně. Ptáme se na ně tady, ne až
+     u objednávky vyšetření: klienta, kterého stejně odmítneme, nemáme nechat
+     zaplatit 4 970 za screening, aby se to dozvěděl od lékaře. */
+  onko: {
+    marcel: 'Ještě dvě otázky, u kterých musím mít jistotu.',
+    label: 'Léčíte se nebo jste se léčil/a s onkologickým onemocněním?',
+    opts: ['Ne', 'Ano, v minulosti', 'Ano, léčba probíhá'], rows: true
+  },
+  tehot: {
+    marcel: 'A tahle se týká jen žen.',
+    label: 'Jste těhotná, kojíte, nebo těhotenství plánujete do šesti měsíců?',
+    opts: ['Ne', 'Ano, jsem těhotná nebo kojím', 'Plánuji do šesti měsíců'], rows: true,
+    cond: d => d.gender === 'Žena'
+  },
   stit: { marcel: 'Štítná žláza ovlivňuje metabolismus, proto se na ni ptám zvlášť.', label: 'Máte nějaké problémy se štítnou žlázou?', opts: ['Bez problémů', 'Hypotyreóza (léčená)', 'Hypertyreóza (léčená)', 'Nevím'], rows: true },
   kard: { marcel: 'Tlak a cholesterol se během programu většinou výrazně zlepší. Chci vědět, odkud startujeme.', label: 'Máte zvýšený krevní tlak nebo cholesterol?', opts: ['Žádné problémy', 'Zvýšený tlak', 'Zvýšený cholesterol', 'Obojí', 'Nevím'], rows: true },
   pohyb: { marcel: 'Teď už jen dvě otázky na životní styl.', label: 'Jak byste popsal/a svoji pohybovou aktivitu?', opts: ['Téměř žádná', '1–2× týdně', '3–4× týdně', '5× týdně a více'], rows: true },
@@ -882,7 +896,7 @@ const Q = {
 const SEC = {
   basics:    { lbl: 'Základ',       eyebrow: 'Krok 01 — Základ',       ids: ['gender', 'region', 'age', 'hw', 'target'] },
   goal:      { lbl: 'Cíl',          eyebrow: 'Krok 02 — Cíl',          ids: ['goal', 'glp1', 'glp1drug', 'glp1sat'] },
-  safety:    { lbl: 'Bezpečnost',   eyebrow: 'Krok 03 — Bezpečnost',   ids: ['pank', 'men2', 'diab', 'zluc', 'led', 'ppp', 'pppType', 'pppStav', 'stit', 'kard'] },
+  safety:    { lbl: 'Bezpečnost',   eyebrow: 'Krok 03 — Bezpečnost',   ids: ['pank', 'men2', 'diab', 'zluc', 'led', 'ppp', 'pppType', 'pppStav', 'onko', 'tehot', 'stit', 'kard'] },
   lifestyle: { lbl: 'Životní styl', eyebrow: 'Krok 04 — Životní styl', ids: ['pohyb', 'spanek'] }
 };
 const SECS = ['basics', 'goal', 'safety', 'lifestyle'];
@@ -1001,6 +1015,12 @@ function hardContra(d) {
   if (d.ppp === 'Ano' && d.pppType !== 'Záchvatovité přejídání' && d.pppStav !== 'V minulosti, je to v remisi') {
     return 'probíhající léčby poruchy příjmu potravy';
   }
+  /* Těhotenství, kojení i plánování je u GLP-1 stopka podle příbalové
+     informace, bez výjimky. Probíhající onkologická léčba taky: redukce váhy
+     je plánovaný zákrok, který do ní nepatří — po doléčení rozhodne lékař. */
+  if (d.tehot === 'Ano, jsem těhotná nebo kojím') return 'těhotenství nebo kojení';
+  if (d.tehot === 'Plánuji do šesti měsíců') return 'plánovaného těhotenství v nejbližších měsících';
+  if (d.onko === 'Ano, léčba probíhá') return 'probíhající onkologické léčby';
   if (bmi != null && bmi < BMI_FLOOR) return `nízkého BMI (${dec(bmi)})`;
   return null;
 }
@@ -2408,7 +2428,7 @@ function payload() {
     gender: S.a.gender, region: S.a.region || '', age: num(S.a.age), height: num(S.a.height), weight: num(S.a.weight),
     targetWeight: num(S.a.targetWeight), bmi: R.bmi, bmiCategory: bmiCategory(R.bmi),
     goal: S.a.goal, glp1: S.a.glp1, glp1drug: S.a.glp1drug || '', glp1sat: S.a.glp1sat || '',
-    answers: { pank: S.a.pank, men2: S.a.men2, diab: S.a.diab, zluc: S.a.zluc, led: S.a.led, ppp: S.a.ppp, pppType: S.a.pppType || '', pppStav: S.a.pppStav || '', stit: S.a.stit, kard: S.a.kard, pohyb: S.a.pohyb, spanek: S.a.spanek },
+    answers: { pank: S.a.pank, men2: S.a.men2, diab: S.a.diab, zluc: S.a.zluc, led: S.a.led, ppp: S.a.ppp, pppType: S.a.pppType || '', pppStav: S.a.pppStav || '', onko: S.a.onko || '', tehot: S.a.tehot || '', stit: S.a.stit, kard: S.a.kard, pohyb: S.a.pohyb, spanek: S.a.spanek },
     score: R.score.score, scoreLabel: R.score.label, contraindication: R.contra || '', doctorNote: R.caution || '',
     reservationIntent: S.booking.intent || '', bookingType: S.booking.type || '',
     recommendation: R.rec ? R.rec.drug.name : '', recommendationWhy: R.rec ? R.rec.why : '',
@@ -2442,6 +2462,7 @@ function fillDemo() {
     gender: 'Žena', region: 'Jinde v České republice', age: 42, height: 168, weight: 92, targetWeight: 78,
     goal: 'Zbavit se neustálých chutí a myšlenek na jídlo', glp1: 'Nemám zkušenosti',
     pank: 'Ne', men2: 'Ne', diab: 'Prediabetes', zluc: 'Ne', led: 'Ne', ppp: 'Ne',
+    onko: 'Ne', tehot: 'Ne',
     stit: 'Bez problémů', kard: 'Zvýšený tlak', pohyb: '1–2× týdně', spanek: '6–7h'
   });
   S.cur = 'result';
