@@ -802,10 +802,10 @@ const pad2 = n => String(n).padStart(2, '0');
 
 /* ---------- stav ---------- */
 const newSid = () => (self.crypto && crypto.randomUUID) ? crypto.randomUUID() : Array.from({ length: 32 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
-/* Souhlas s oslovením je předzaškrtnutý na Marcelovu žádost z 10. 11. 2026.
-   Klient ho může odškrtnout. Bez něj nejde nabídnout nic lidem, které jsme
-   odmítli, a těch je většina z listu Potenciál. */
-const blank = () => ({ cur: 'intro', sid: newSid(), a: { marketing: true }, booking: { type: null, slot: null }, startedAt: new Date().toISOString() });
+/* Oba souhlasy jsou předzaškrtnuté na Marcelovu žádost z 10. 11. 2026.
+   Klient je může odškrtnout; bez toho prvního ho dál nepustíme ani tady
+   (viz validace níž), ani na serveru. */
+const blank = () => ({ cur: 'intro', sid: newSid(), a: { gdpr: true, marketing: true }, booking: { type: null, slot: null }, startedAt: new Date().toISOString() });
 let S = blank();
 function save() { try { sessionStorage.setItem(CFG.storageKey, JSON.stringify(S)); } catch (e) {} }
 function load() { try { const raw = sessionStorage.getItem(CFG.storageKey); if (raw) S = Object.assign(blank(), JSON.parse(raw)); } catch (e) {} }
@@ -1290,7 +1290,7 @@ function render() {
           ${ufHTML('email', 'E-mail', { type: 'email', placeholder: 'jana@email.cz', autocomplete: 'email' })}
         </div>
         <div class="consents">
-          ${cboxHTML('c-gdpr', S.a.gdpr, 'Souhlasím se zpracováním osobních údajů, včetně údajů o zdravotním stavu, za účelem vyhodnocení screeningu a jeho zaslání na můj e-mail. Více v <a href="' + CFG.gdprUrl + '" target="_blank" rel="noopener" style="color:var(--ink)">zásadách zpracování osobních údajů</a>.', 'gdpr')}
+          ${cboxHTML('c-gdpr', S.a.gdpr !== false, 'Souhlasím se zpracováním osobních údajů, včetně údajů o zdravotním stavu, za účelem vyhodnocení screeningu a jeho zaslání na můj e-mail. Více v <a href="' + CFG.gdprUrl + '" target="_blank" rel="noopener" style="color:var(--ink)">zásadách zpracování osobních údajů</a>.', 'gdpr')}
           ${cboxHTML('c-news', S.a.marketing !== false, 'Můžete se mi ozvat s novinkami a s nabídkou, která by se mi hodila — nejvýš jednou měsíčně, odhlásit se dá jedním kliknutím.', 'marketing')}
           <details class="legal"><summary>Celé znění souhlasu</summary>
             <p>Souhlasím se zpracováním svých osobních údajů, včetně údajů o zdravotním stavu, které jsem ve screeningu uvedl/a, společností My Design Creatives s.r.o., IČO 07162235, se sídlem Chlumčanského 497/5, 180 00 Praha 8, provozující Aeternum Clinic, za účelem vyhodnocení screeningu a jeho zaslání na můj e-mail. Souhlas mohu kdykoli odvolat na info@aeternumclinic.cz.</p></details>
