@@ -372,9 +372,10 @@ input:autofill{background:transparent;color:var(--ink)}
 .feats li{display:flex;align-items:flex-start;gap:8px;font-size:clamp(11.5px,calc(.78*var(--u)),calc(14px*var(--k)));line-height:1.45;color:var(--muted)}
 .feats .fi{flex:none;font-size:1.05em;line-height:1.3}
 .feats li.ok .fi{color:#2E9E6B}
-/* Křížek ani jeho text nejsou varování, jen informace, co v ceně není.
-   Proto stejná barva jako zbytek seznamu. */
-.feats li.no,.feats li.no .fi{color:var(--muted)}
+/* Text v barvě zbytku seznamu, ale křížek červený — ať je na první pohled
+   vidět, že tahle položka v ceně není. */
+.feats li.no{color:var(--muted)}
+.feats li.no .fi{color:#C8372A}
 .var{cursor:pointer;width:100%;font:inherit;color:inherit;transition:border-color .18s,box-shadow .18s,transform .1s}
 /* Tlačítko si obsah samo centruje svisle, takže karta s delším seznamem
    posunula emoji, název i cenu výš než sousedi. Srovnáno nahoru, ať se
@@ -1859,14 +1860,15 @@ function renderResult() {
 
   <section class="rsec" id="detail"><div class="split">
     <div class="ctr"><span class="eyebrow">Vaše čísla</span><h2 class="h-l">Odkud<br>startujeme</h2>
-      <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))">Odhad vychází z průměrného tempa úbytku v klinických studiích. Skutečný průběh doladíme na kontrolách.</p></div>
+      <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))">Odhad vychází z průměrného tempa úbytku v klinických studiích. Skutečný průběh doladíme na kontrolách.</p>
+      <p class="lead mensi" style="margin-top:clamp(12px,calc(1*var(--u)),calc(18px*var(--k)))">Doporučená délka počítá s dvěma měsíci navíc oproti výpočtu — jsou rezerva na individuální odezvu a na udržovací fázi, která chrání před jo-jo efektem. Není to závazek: program lze kdykoli ukončit i prodloužit, bez poplatku.</p></div>
     <div>
       <div class="vals">
         <div class="val"><small>BMI</small><b>${dec(R.bmi)}</b><span style="color:var(--muted)">${esc(bmiCategory(R.bmi))}</span></div>
-        <div class="val"><small>Odhad programu</small><b>${R.months}<em>měsíců</em></b></div>
+        <div class="val"><small>Doporučená délka</small><b>${recMonths(R)}<em>měsíců</em></b></div>
         <div class="val"><small>Cíl redukce</small><b>−${R.lose}<em>kg</em></b></div>
       </div>
-      <div class="chart"><div class="cl">Předpokládaný průběh hmotnosti</div>${chartSVG(R.weight, R.target, R.months, num(S.a.height))}
+      <div class="chart"><div class="cl">Předpokládaný průběh hmotnosti — cílovou váhu čekáme kolem ${R.months}. měsíce, zbytek doporučené délky je udržovací fáze</div>${chartSVG(R.weight, R.target, R.months, num(S.a.height))}
         <div class="cf"><span>Dnes</span><span>${Math.round(R.months / 2)} měs.</span><span>${R.months} měs.</span></div></div>
     </div>
   </div></section>
@@ -1927,7 +1929,7 @@ const PLANS = {
       [1, 'Průběžný screening zdravotního stavu'],
       [1, 'Podpora odborného koordinátora'],
       [1, 'Flexibilní program bez vázanosti'],
-      [0, 'Medikace není zahrnuta v programu']
+      [0, 'Medikace není zahrnuta v ceně programu*']
     ],
     desc: 'Lékařský dohled, e-recepty a průběžný screening zdravotního stavu. Bez tréninkového plánu a jídelníčku.',
     tiles: [
@@ -1947,7 +1949,7 @@ const PLANS = {
       [1, 'Jídelníček a doporučení doplňků stravy'],
       [1, 'Podpora odborného koordinátora'],
       [1, 'Flexibilní program bez vázanosti'],
-      [0, 'Medikace není zahrnuta v programu']
+      [0, 'Medikace není zahrnuta v ceně programu*']
     ],
     desc: 'Všechno z Lightu a k tomu Aeternum Lifestyle Protocol — tréninkový plán od trenéra a jídelníček s doplňky.',
     tiles: [
@@ -1969,7 +1971,7 @@ const PLANS = {
       [1, 'Konzultace s výživovým specialistou (1× měsíčně)'],
       [1, 'Konzultace s psychologem (1× za tři měsíce)'],
       [1, 'Flexibilní program bez vázanosti'],
-      [0, 'Medikace není zahrnuta v programu']
+      [0, 'Medikace není zahrnuta v ceně programu*']
     ],
     desc: 'Všechno ze Standardu a k tomu prioritní konzultace, vlastní tým a péče o metabolické zdraví a dlouhověkost.',
     tiles: [
@@ -2080,22 +2082,15 @@ function featsHTML(v) {
 /* Pod kartami vysvětlíme, co cena obsahuje a co ne. U telemedicíny si klient
    lék platí sám, takže mu rovnou řekneme, na kolik ho vyjde — jinak by si to
    spočítal až v lékárně a bral by to jako skryté náklady. */
+/* Bublina pod kartami je vysvětlivka k hvězdičce u medikace — nic víc.
+   Odhad délky programu se přesunul nahoru mezi čísla, popis programu říká
+   seznam v kartě. */
 function varInfoHTML(R) {
   const v = VAR_LIST[VAR_PICK]; if (!v) return '';
-  const m = recMonths(R);
-  /* Popis programu z bubliny zmizel — to samé teď říká seznam v kartě. */
-  let h = '';
-  if (!v.drugIncluded) {
-    const key = (R.rec && R.rec.key) || 'mounjaro';
-    const pack = DRUG_PACKS[key] || DRUG_PACKS.mounjaro;
-    const band = (Number(R.bmi) || 0) >= 35 ? pack.all : pack.start;
-    const name = R.rec && R.rec.drug ? R.rec.drug.name : 'Léčivo';
-    h += `<p class="vi-main">V ceně programu <b>není léčivo</b>. ${esc(name)} si koupíte sám na náš e-recept — podle dávky vyjde na ${fmt(band[0])} až ${fmt(band[1])} Kč za měsíční balení. Dávku určuje lékař a během terapie se může měnit, proto je to rozmezí. <a href="${PRICELIST_URL}" target="_blank" rel="noopener">Ceník lékárny</a>.</p>`;
-  } else {
-    h += `<p class="vi-main">Léčivo je <b>v ceně programu</b>. V lékárně už neplatíte nic.</p>`;
+  if (v.drugIncluded) {
+    return `<p class="vi-main">Léčivo je <b>v ceně programu</b>. V lékárně už neplatíte nic.</p>`;
   }
-  h += `<p class="vi-main" style="margin-top:10px">Podle Vašich čísel odhadujeme <b>${mesice(R.months)}</b>. Doporučujeme počítat s ${mesice(m)} — dva měsíce navíc jsou rezerva na individuální odezvu a na udržovací fázi, která chrání před jo-jo efektem. Není to závazek: program lze <b>kdykoli ukončit i prodloužit, bez poplatku</b>.</p>`;
-  return h;
+  return `<p class="vi-main"><b>*</b> Léčivo si hradíte sami, v režimu samoplátce — my vydáme e-recept. Dávku určuje lékař a během terapie se může měnit. Na aktuální ceny se můžete podívat například <a href="${PRICELIST_URL}" target="_blank" rel="noopener">zde</a>.</p>`;
 }
 
 function selectVariant(i) {
