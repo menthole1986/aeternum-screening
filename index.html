@@ -764,6 +764,15 @@ const CFG = {
      místo něj dozví e-mail a telefon. Kód zůstává: přepnout na true stačí,
      kdyby se ukázalo, že chybí. */
   askEnabled: false,
+  /* Aeternum Lifestyle Protokol — nabídka pro toho, komu GLP-1 nedáme.
+     Komu se ukáže, řeší protokolVhodny(); nabízí se jen tam, kde protokol
+     opravdu patří, a u poruchy příjmu potravy, těhotenství, onkologie ani
+     u BMI pod 20 se neukáže. */
+  protocolPrice: 4970,
+  /* Nabídka je odložená, dokud nestojí platební cesta (Synlab, InBody, kdo
+     protokol píše). Kód je hotový — přepnout na true a zapnout na serveru
+     vlastnost FEATURE_PROTOCOL = 1. */
+  protocolEnabled: false,
   bookingFallback: 'https://calendar.app.google/GA7v3J2WymtP1Hix9',
   mapUrl: 'https://maps.google.com/?q=Bulovka+Medical+%26+Business+Centre+Praha+8',
   storageKey: 'aeternum-screening-v1',
@@ -790,7 +799,10 @@ const pad2 = n => String(n).padStart(2, '0');
 
 /* ---------- stav ---------- */
 const newSid = () => (self.crypto && crypto.randomUUID) ? crypto.randomUUID() : Array.from({ length: 32 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
-const blank = () => ({ cur: 'intro', sid: newSid(), a: {}, booking: { type: null, slot: null }, startedAt: new Date().toISOString() });
+/* Souhlas s oslovením je předzaškrtnutý na Marcelovu žádost z 10. 11. 2026.
+   Klient ho může odškrtnout. Bez něj nejde nabídnout nic lidem, které jsme
+   odmítli, a těch je většina z listu Potenciál. */
+const blank = () => ({ cur: 'intro', sid: newSid(), a: { marketing: true }, booking: { type: null, slot: null }, startedAt: new Date().toISOString() });
 let S = blank();
 function save() { try { sessionStorage.setItem(CFG.storageKey, JSON.stringify(S)); } catch (e) {} }
 function load() { try { const raw = sessionStorage.getItem(CFG.storageKey); if (raw) S = Object.assign(blank(), JSON.parse(raw)); } catch (e) {} }
@@ -1049,9 +1061,13 @@ function programMonths(d) {
   const perMonth = 2.5;                       // sjednoceno s kalkulátorem GLP-1
   return Math.max(1, Math.min(24, Math.round((start - target) / perMonth)));
 }
-// Pod touto hranicí terapii nenabízíme vůbec. Mezi BMI_FLOOR a 25 rozhoduje lékař,
-// může jít o nízké dávkování na chutě a stres, ne primárně na hubnutí.
-const BMI_FLOOR = 22;
+/* Pod touto hranicí terapii nenabízíme vůbec. Od 10. 11. 2026 je to 25:
+   dřív bylo 22 a mezi 22 a 25 rozhodoval lékař, ale to pásmo Marcel zrušil.
+   Kdo spadne mezi 20 a 25, není pro nás klient na GLP-1, ale server si ho
+   odloží do listu Potenciál — jsou to lidé pro jinou nabídku. */
+const BMI_FLOOR = 25;
+// Pod touhle hranicí už nejde o „málo nadváhy“, ale o skutečně nízkou váhu.
+const BMI_LOW = 20;
 
 function hardContra(d) {
   const bmi = num(d.bmi);
@@ -1068,9 +1084,27 @@ function hardContra(d) {
   if (d.tehot === 'Ano, jsem těhotná nebo kojím') return 'těhotenství nebo kojení';
   if (d.tehot === 'Plánuji do šesti měsíců') return 'plánovaného těhotenství v nejbližších měsících';
   if (d.onko === 'Ano, léčba probíhá') return 'probíhající onkologické léčby';
-  if (bmi != null && bmi < BMI_FLOOR) return `nízkého BMI (${dec(bmi)})`;
+  /* Člověku s BMI 24 by věta o „nízkém BMI“ nesedla — není hubený, jen pod
+     naší hranicí. Pod 20 už je to ale skutečně nízká váha. */
+  if (bmi != null && bmi < BMI_LOW) return `nízkého BMI (${dec(bmi)})`;
+  if (bmi != null && bmi < BMI_FLOOR) return `BMI pod hranicí 25 (${dec(bmi)})`;
   return null;
 }
+/* Komu protokol nabídnout. Pořadí vylučujících podmínek je závazné a nesmí
+   se obrátit: jídelníčky a práce s tělesnou kompozicí u člověka v léčbě
+   poruchy příjmu potravy, v těhotenství, na onkologické léčbě nebo s BMI
+   pod 20 nepatří. Zůstává BMI 20–24,9, pankreatitida a MEN 1/2. */
+function protokolVhodny(contra, bmi) {
+  if (!CFG.protocolEnabled) return false;
+  if (!contra) return false;
+  const b = num(bmi);
+  if (/příjmu potravy/i.test(contra)) return false;
+  if (/těhotenství|kojení/i.test(contra)) return false;
+  if (/onkologick/i.test(contra)) return false;
+  if (/BMI/i.test(contra)) return b != null && b >= BMI_LOW;
+  return true;                      // pankreatitida, MEN 1/2
+}
+
 function calcScore(d) {
   let p = 0;
   if (d.pank === 'Ne') p++;
@@ -1078,9 +1112,13 @@ function calcScore(d) {
   if (['Ne', 'Prediabetes', 'Inzulinová rezistence'].includes(d.diab)) p++;
   if (d.zluc === 'Ne') p++;
   if (d.led === 'Ne') p++;
-  if (d.ppp === 'Ne' || d.pppType === 'Záchvatovité přejídání' || d.pppStav === 'V minulosti, je to v remisi') p++;
+  /* Záchvatovité přejídání terapii nebrání — GLP-1 na ně naopak zabírá —
+     ale bod za čistou anamnézu to není. Takový člověk se proto zastaví
+     na devítce. Remise si bod drží, tam o vhodnosti rozhodne lékař. */
+  if (d.ppp === 'Ne' || d.pppStav === 'V minulosti, je to v remisi') p++;
   const bmi = num(d.bmi) || 0;
-  if (bmi >= 25) p += 2; else if (bmi >= BMI_FLOOR) p += 1;
+  // Jediné pásmo, které bere body: pod 25 se sem nikdo nedostane, zastaví ho hardContra.
+  if (bmi >= 25) p += 2;
   const diff = (num(d.weight) || 0) - (num(d.targetWeight) || 0);
   if (diff >= 10) p += 2; else if (diff >= 5) p += 1;
   const score = Math.min(p, 10);
@@ -1184,6 +1222,30 @@ function compute() {
     weight: w, target: tw, ownTarget: own, retargeted: own > 0 && tw > 0 && tw < own };
 }
 
+/* Nabídka protokolu na obrazovce s kontraindikací. Nemluví o hubnutí a
+   neslibuje terapii — je to jiný produkt pro člověka, kterému jsme právě
+   řekli ne. Proto je i vizuálně oddělená a není to hlavní tlačítko. */
+function protocolHTML(R) {
+  if (!protokolVhodny(R.contra, R.bmi)) return '';
+  if (S.protocol === 'sent') {
+    return `<div class="callback"><p class="small-caps">Děkujeme</p>
+      <p class="lead" style="margin-top:10px">Ozveme se Vám na e-mail do dvou pracovních dnů a probereme, co protokol obsahuje a jak probíhá.</p></div>`;
+  }
+  const b = ['30–40 stran manuálu životního stylu',
+             'čtyři varianty jídelníčku',
+             'suplementace na míru',
+             'tréninkový plán ve variantách'];
+  return `<div class="callback">
+    <p class="small-caps">Mohlo by Vám pomoct něco jiného</p>
+    <h3 class="grad" style="margin-top:10px">Aeternum Lifestyle Protokol</h3>
+    <p class="lead" style="margin-top:10px">Není to léčba a není to na předpis. Je to plán, který Vám postaví výživový specialista, trenér a odborník na longevity — na základě komplexních krevních testů, měření InBody a vstupní konzultace.</p>
+    <div style="margin-top:14px">${b.map(x => `<div class="ben hl">${icon('i-check')}<span>${esc(x)}</span></div>`).join('')}</div>
+    <div class="price" style="margin-top:16px"><b>${fmt(CFG.protocolPrice)} Kč</b><span class="small-caps">jednorázově</span></div>
+    <button type="button" class="btn ghost" id="protoBtn" style="margin-top:clamp(14px,calc(1.2*var(--u)),calc(22px*var(--k)))">Mám zájem, ozvěte se mi</button>
+    <span class="err" id="protoErr" role="alert"></span>
+    <p class="fine" style="margin-top:10px">Nic se teď neplatí. Ozveme se Vám a řekneme si, jestli to pro Vás má smysl.</p></div>`;
+}
+
 /* ---------- render ---------- */
 let autoT = null;
 function render() {
@@ -1226,7 +1288,7 @@ function render() {
         </div>
         <div class="consents">
           ${cboxHTML('c-gdpr', S.a.gdpr, 'Souhlasím se zpracováním osobních údajů, včetně údajů o zdravotním stavu, za účelem vyhodnocení screeningu a jeho zaslání na můj e-mail. Více v <a href="' + CFG.gdprUrl + '" target="_blank" rel="noopener" style="color:var(--ink)">zásadách zpracování osobních údajů</a>.', 'gdpr')}
-          ${cboxHTML('c-news', S.a.marketing, 'Posílejte mi novinky o programu — nejvýš jednou měsíčně, odhlásit se dá jedním kliknutím.', 'marketing')}
+          ${cboxHTML('c-news', S.a.marketing !== false, 'Můžete se mi ozvat s novinkami a s nabídkou, která by se mi hodila — nejvýš jednou měsíčně, odhlásit se dá jedním kliknutím.', 'marketing')}
           <details class="legal"><summary>Celé znění souhlasu</summary>
             <p>Souhlasím se zpracováním svých osobních údajů, včetně údajů o zdravotním stavu, které jsem ve screeningu uvedl/a, společností My Design Creatives s.r.o., IČO 07162235, se sídlem Chlumčanského 497/5, 180 00 Praha 8, provozující Aeternum Clinic, za účelem vyhodnocení screeningu a jeho zaslání na můj e-mail. Souhlas mohu kdykoli odvolat na info@aeternumclinic.cz.</p></details>
         </div></div></div>`;
@@ -1719,6 +1781,7 @@ function renderResult() {
           <span>Na základě Vašich odpovědí Vám GLP-1 program nedoporučujeme, a to z důvodu <b>${esc(R.contra)}</b>.</span></div></div>
         <p class="lead summary">Doporučujeme konzultaci s Vaším ošetřujícím lékařem, který posoudí Vaše možnosti individuálně. Souhrn Vám posíláme na e-mail.</p>
         ${sendStatusHTML()}
+        ${protocolHTML(R)}
         <p class="lead" style="margin-top:clamp(20px,calc(2*var(--u)),calc(36px*var(--k)))">Děkujeme za Váš čas a přejeme Vám pevné zdraví.<br><b style="color:var(--ink)">Aeternum Clinic</b></p></div>
       ${marcelCol('Mrzí mě to, ale tohle je hranice, kterou nepřekračujeme. Bezpečnost je vždycky na prvním místě.', '', 'keep')}
     </div></section>${DISCLAIMER}`;
@@ -2274,6 +2337,23 @@ document.addEventListener('click', async e => {
   if (b.id === 'bookBtn') { await submitBooking(b); return; }
   if (b.id === 'intakeBtn') { await submitIntake(b); return; }
   if (b.dataset.act === 'showterm') { S.booking.skipData = true; rerenderPanel(); return; }
+  if (b.id === 'protoBtn') {
+    const err = m => { const el = $('#protoErr'); if (el) el.textContent = m; };
+    b.disabled = true; b.textContent = 'Odesíláme…';
+    try {
+      if (CFG.apiUrl && !CFG.demo) {
+        const id = S.recordId || await ensureSubmitted();
+        if (!id) throw new Error('no_record');
+        await api('protocolInterest', { id }, 20000);
+      }
+      S.protocol = 'sent';
+      render();                     // obrazovku s kontraindikací staví renderResult()
+    } catch (x) {
+      b.disabled = false; b.textContent = 'Mám zájem, ozvěte se mi';
+      err('Odeslání se nepodařilo. Zkuste to prosím znovu, nebo napište na ' + CFG.email + '.');
+    }
+    return;
+  }
   if (b.id === 'qBtn') {
     const ta = document.querySelector('#qText');
     const text = (ta && ta.value || '').trim();
