@@ -83,6 +83,10 @@ main > .screen{width:100%}
 .light{font-weight:400;background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
 .h-xl{margin:clamp(10px,calc(1*var(--u)),calc(18px*var(--k))) 0 0;font-size:clamp(34px,calc(5.2*var(--u)),calc(104px*var(--k)));font-weight:700;line-height:1;letter-spacing:-.02em}
 .h-l{margin:clamp(10px,calc(1*var(--u)),calc(18px*var(--k))) 0 0;font-size:clamp(30px,calc(3.75*var(--u)),calc(72px*var(--k)));font-weight:700;line-height:1.12;letter-spacing:-.012em}
+/* Nadpis, který se má vejít na jeden řádek. Menší a nezalamuje se —
+   pod 760 px zalomení povolíme, jinak by přetekl z obrazovky. */
+.h-l.radek{font-size:clamp(24px,calc(2.5*var(--u)),calc(48px*var(--k)));white-space:nowrap}
+@media (max-width:760px){.h-l.radek{white-space:normal}}
 .body-wide{font-size:clamp(15px,calc(1.35*var(--u)),calc(26px*var(--k)));font-weight:500;letter-spacing:.14em;line-height:1.62;color:rgba(244,244,246,.92);max-width:31em}
 .lead{font-size:clamp(15px,calc(1.15*var(--u)),calc(22px*var(--k)));font-weight:500;letter-spacing:.04em;line-height:1.62;color:var(--muted);max-width:30em}
 /* O tři pixely menší odstavec — pro text, který doplňuje hlavní sdělení
@@ -358,7 +362,23 @@ input:autofill{background:transparent;color:var(--ink)}
 .var .mo{font-size:clamp(22px,calc(1.8*var(--u)),calc(36px*var(--k)));font-weight:700;line-height:1.35;white-space:nowrap;padding-bottom:2px;margin-top:8px;background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
 .var .pr{font-size:clamp(15px,calc(1.15*var(--u)),calc(22px*var(--k)));font-weight:700;margin-top:6px}
 .var .ds{font-size:clamp(12px,calc(.8*var(--u)),calc(15px*var(--k)));color:var(--muted);line-height:1.5;margin-top:10px}
+/* Název programu na dvou řádcích: „Telehealth" nahoře, stupeň pod ním.
+   Pevná výška drží ceny na všech třech kartách ve stejné lince. */
+.var .nm1,.var .nm2{display:block}
+.var .nm2{color:var(--ink)}
+/* Co program obsahuje a co ne. Zarovnáno vlevo schválně — zbytek karty je
+   na střed, ale seznam se na střed čte mizerně. */
+.feats{list-style:none;margin:clamp(14px,calc(1.2*var(--u)),calc(22px*var(--k))) 0 0;padding:0;text-align:left;display:grid;gap:clamp(7px,calc(.6*var(--u)),calc(11px*var(--k)))}
+.feats li{display:flex;align-items:flex-start;gap:8px;font-size:clamp(11.5px,calc(.78*var(--u)),calc(14px*var(--k)));line-height:1.45;color:var(--muted)}
+.feats .fi{flex:none;font-size:1.05em;line-height:1.3}
+.feats li.ok .fi{color:#2E9E6B}
+.feats li.no{color:var(--dim)}
+.feats li.no .fi{color:#C8372A}
 .var{cursor:pointer;width:100%;font:inherit;color:inherit;transition:border-color .18s,box-shadow .18s,transform .1s}
+/* Tlačítko si obsah samo centruje svisle, takže karta s delším seznamem
+   posunula emoji, název i cenu výš než sousedi. Srovnáno nahoru, ať se
+   dají ceny porovnat v jedné lince. */
+.var{display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start}
 .var:hover{border-color:rgba(255,255,255,.42)}
 .var:active{transform:scale(.995)}
 .var.sel{border-color:#4FA3E0;box-shadow:0 0 0 1px rgba(79,163,224,.55),0 12px 44px rgba(47,134,204,.16)}
@@ -1863,19 +1883,19 @@ function renderResult() {
   </div></section>
 
   <section class="rsec"><div class="split">
-    <div class="ctr"><span class="eyebrow">Váš program</span><h2 class="h-l">Jak povedeme<br>Vaši péči</h2>
+    <div class="ctr"><span class="eyebrow">Váš program</span><h2 class="h-l radek">Jak povedeme Vaši péči</h2>
       <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))">${isPrague()
         ? 'Jste v dosahu naší ordinace, takže si můžete vybrat ze všech programů — tři na dálku a jeden s osobní péčí a léky v ceně.'
         : 'Péči lze ve Vašem případě vést i na dálku: konzultace i vstupní lékařské vyšetření online a lék na e-recept si vyzvednete v lékárně.'}</p>
       ${isPrague() ? '' : `<p class="lead mensi" style="margin-top:clamp(12px,calc(1*var(--u)),calc(18px*var(--k)))">Chceme Vás ale upozornit na jednu důležitou věc: <b>minimálně jednou za celou terapii Vás potřebujeme vidět osobně.</b> A tady máte na výběr: buď přijedete rovnou na vstupní lékařské vyšetření, nebo si ho uděláte online a přijedete osobně až na kontrolní vyšetření na konci třetího měsíce po zahájení terapie.</p>
       <p class="lead mensi" style="margin-top:clamp(14px,calc(1.2*var(--u)),calc(22px*var(--k)))">Aktuálně máme ordinaci pro osobní návštěvy jenom v Praze, ale v novém roce přibude ještě možnost vyšetření v Brně, v Olomouci nebo ve Zlíně.</p>
       <p class="lead mensi" style="margin-top:clamp(14px,calc(1.2*var(--u)),calc(22px*var(--k)))">V případě, že byste měli zájem, aby za Vámi lékař dorazil domů nebo do kanceláře, zmiňte se o tom na vstupní konzultaci.</p>`}
-      <p class="fine" style="margin-top:clamp(12px,calc(1*var(--u)),calc(18px*var(--k)))">Klikněte na program a porovnejte si je. Cena je za měsíc péče a je u všech délek stejná — program lze kdykoli ukončit i prodloužit, bez storno poplatku.</p></div>
-    <div>${variantsHTML(R)}</div>
+      </div>
+    <div><p class="fine" style="margin:0 0 clamp(4px,calc(.4*var(--u)),calc(8px*var(--k)))">Klikněte na program a porovnejte si je. Cena je za měsíc péče a je u všech délek stejná — program lze kdykoli ukončit i prodloužit, bez storno poplatku.</p>${variantsHTML(R)}</div>
   </div></section>
 
   <section class="rsec ctr"><span class="eyebrow">Benefity programu</span>
-    <h2 class="h-l">Co je v ceně<br>programu</h2>
+    <h2 class="h-l radek">Co je v ceně programu</h2>
     <div class="tiles" id="plantiles">${planTilesHTML()}</div>
   </section>
 
@@ -1904,6 +1924,14 @@ const PLANS = {
      zdravotního stavu. Nic kolem životního stylu — ten je od Standardu výš. */
   light: {
     key: 'light', name: 'Telehealth Light', emoji: '🪶', price: 4970, drugIncluded: false,
+    /* Co program obsahuje a co ne. Křížek je tam schválně: klient má na první
+       pohled vědět, že lék v ceně není, ne to zjistit až v lékárně. */
+    feats: [
+      [1, 'Lékařský dohled a e-recepty'],
+      [1, 'Průběžný screening zdravotního stavu'],
+      [1, 'Podpora odborného koordinátora'],
+      [0, 'Medikace není zahrnuta v programu']
+    ],
     desc: 'Lékařský dohled, e-recepty a průběžný screening zdravotního stavu. Bez tréninkového plánu a jídelníčku.',
     tiles: [
       ['👨‍⚕️', 'Lékařský dohled', 'E-recepty a pravidelné online konzultace s lékařem.'],
@@ -1914,6 +1942,15 @@ const PLANS = {
   },
   standard: {
     key: 'standard', name: 'Telehealth Standard', emoji: '🩺', price: 6970, drugIncluded: false,
+    feats: [
+      [1, 'Lékařský dohled a e-recepty'],
+      [1, 'Průběžný screening zdravotního stavu'],
+      [1, 'Aeternum Lifestyle Protocol'],
+      [1, 'Tréninkový plán od fitness trenéra'],
+      [1, 'Jídelníček a doporučení doplňků stravy'],
+      [1, 'Podpora odborného koordinátora'],
+      [0, 'Medikace není zahrnuta v programu']
+    ],
     desc: 'Všechno z Lightu a k tomu Aeternum Lifestyle Protocol — tréninkový plán od trenéra a jídelníček s doplňky.',
     tiles: [
       ['👨‍⚕️', 'Lékařský dohled', 'E-recepty a pravidelné online konzultace s lékařem.'],
@@ -1925,6 +1962,16 @@ const PLANS = {
   },
   premium: {
     key: 'premium', name: 'Telehealth Premium', emoji: '⭐', price: 9970, drugIncluded: false,
+    feats: [
+      [1, 'Všechno ze Standardu'],
+      [1, 'Prioritní konzultace bez čekání'],
+      [1, 'Pokročilý Aeternum Lifestyle Protocol'],
+      [1, 'Optimalizace metabolického zdraví a longevity'],
+      [1, 'Konzultace s fitness trenérem (1× měsíčně)'],
+      [1, 'Konzultace s výživovým specialistou (1× měsíčně)'],
+      [1, 'Konzultace s psychologem (1× za tři měsíce)'],
+      [0, 'Medikace není zahrnuta v programu']
+    ],
     desc: 'Všechno ze Standardu a k tomu prioritní konzultace, vlastní tým a péče o metabolické zdraví a dlouhověkost.',
     tiles: [
       ['⚡', 'Prioritní konzultace', 'Bez čekání, kdykoli potřebujete.'],
@@ -1936,6 +1983,13 @@ const PLANS = {
   },
   praha: {
     key: 'praha', name: 'All-inclusive', emoji: '💉', price: null, drugIncluded: true,
+    feats: [
+      [1, 'Medikace je v ceně programu'],
+      [1, 'Osobní i online konzultace na klinice v Praze'],
+      [1, 'Pravidelné krevní testy'],
+      [1, 'Aeternum Longevity Protokol'],
+      [1, 'Podpora odborného koordinátora']
+    ],
     desc: 'Kombinace osobních a online konzultací na klinice v Praze. Medikace je v ceně programu.',
     tiles: [
       ['💉', 'Léky v ceně programu', 'All-inclusive — žádné skryté poplatky a žádné placení v lékárně.'],
@@ -1997,10 +2051,27 @@ function variantsHTML(R) {
   VAR_PICK = rec < 0 ? 0 : rec;
   const cols = VAR_LIST.length === 2 ? ' two' : VAR_LIST.length === 4 ? ' four' : '';
   return `<div class="vars${cols}">${VAR_LIST.map((v, i) => `<button type="button" class="var${v.rec ? ' rec' : ''}${i === VAR_PICK ? ' sel' : ''}" data-var="${i}" aria-pressed="${i === VAR_PICK}">${v.rec ? '<span class="badge">★ Doporučujeme</span>' : ''}
-      <div class="emoji">${v.emoji}</div><div class="nm">${esc(v.name)}</div>
+      <div class="emoji">${v.emoji}</div><div class="nm">${nameHTML(v.name)}</div>
       <div class="mo" data-nonbsp>${fmt(v.price)} Kč</div><div class="pr">měsíčně</div>
-      <div class="ds">${esc(v.desc)}</div></button>`).join('')}</div>
+      ${featsHTML(v)}</button>`).join('')}</div>
     <div class="varinfo" id="varinfo">${varInfoHTML(R)}</div>`;
+}
+
+/* „Telehealth" a stupeň pod sebe, ať mají všechny tři karty nadpis stejně
+   vysoký. Programy bez toho prefixu (All-inclusive) zůstávají na jednom řádku. */
+function nameHTML(name) {
+  const m = String(name).match(/^(Telehealth)\s+(.+)$/i);
+  return m ? `<span class="nm1">${esc(m[1])}</span><span class="nm2">${esc(m[2])}</span>` : esc(name);
+}
+
+/* Co program obsahuje, zelenou fajfkou, a co ne, červeným křížkem. Nahradilo
+   to popisný odstavec — ten se klientovi ukáže v panelu pod kartami, takže
+   se neztratil, a karty jdou konečně porovnat očima. */
+function featsHTML(v) {
+  if (!v.feats || !v.feats.length) return `<div class="ds">${esc(v.desc)}</div>`;
+  return `<ul class="feats">${v.feats.map(f =>
+    `<li class="${f[0] ? 'ok' : 'no'}"><span class="fi" aria-hidden="true">${f[0] ? '✔' : '✕'}</span><span>${esc(f[1])}</span></li>`
+  ).join('')}</ul>`;
 }
 
 /* Pod kartami vysvětlíme, co cena obsahuje a co ne. U telemedicíny si klient
