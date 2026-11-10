@@ -217,7 +217,10 @@ body.fixed main{min-height:0;overflow:hidden}
 .rowopt{width:100%;display:flex;align-items:center;gap:clamp(16px,calc(1.45*var(--u)),calc(28px*var(--k)));min-height:clamp(56px,calc(3.9*var(--u)),calc(76px*var(--k)));padding:10px 0;border:0;border-top:1px solid rgba(255,255,255,.12);background:transparent;text-align:left;font-size:clamp(16px,calc(1.35*var(--u)),calc(26px*var(--k)));font-weight:500;color:var(--muted);cursor:pointer;transition:color .15s}
 .rowopt:hover{color:var(--ink)}
 .rowopt .mark{width:clamp(24px,calc(1.56*var(--u)),calc(30px*var(--k)));height:clamp(24px,calc(1.56*var(--u)),calc(30px*var(--k)));border-radius:50%;border:2px solid rgba(255,255,255,.35);flex:none;display:flex;align-items:center;justify-content:center}
-.rowopt[aria-pressed="true"]{color:#fff;font-weight:600}
+.rowopt[aria-pressed="true"]{font-weight:600}
+/* Vybraná volba má text ve firemním gradientu. Kreslí se na .lbl, ne na
+   celé tlačítko — background-clip:text by jinak odřízl i kolečko vlevo. */
+.rowopt[aria-pressed="true"] .lbl{background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
 .rowopt[aria-pressed="true"] .mark{border-color:transparent;background:var(--grad)}
 .rowopt[aria-pressed="true"] .mark::after{content:"";width:34%;height:34%;border-radius:50%;background:#fff}
 
@@ -1417,7 +1420,7 @@ function questionHTML(id) {
   const v = S.a[id];
   const rows = q.rows || q.opts.some(o => o.length > 14);
   if (rows) {
-    h += `<div class="rows" role="group" aria-labelledby="qtext">${q.opts.map((o, i) => `<button type="button" class="rowopt" data-single="${id}" data-i="${i}" aria-pressed="${v === o}"><span class="mark"></span>${esc(o)}</button>`).join('')}</div>`;
+    h += `<div class="rows" role="group" aria-labelledby="qtext">${q.opts.map((o, i) => `<button type="button" class="rowopt" data-single="${id}" data-i="${i}" aria-pressed="${v === o}"><span class="mark"></span><span class="lbl">${esc(o)}</span></button>`).join('')}</div>`;
   } else {
     h += `<div class="opts" role="group" aria-labelledby="qtext">${q.opts.map((o, i) => `<button type="button" class="opt" data-single="${id}" data-i="${i}" aria-pressed="${v === o}">${esc(o)}</button>`).join('')}</div>`;
   }
