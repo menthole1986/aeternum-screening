@@ -85,6 +85,9 @@ main > .screen{width:100%}
 .h-l{margin:clamp(10px,calc(1*var(--u)),calc(18px*var(--k))) 0 0;font-size:clamp(30px,calc(3.75*var(--u)),calc(72px*var(--k)));font-weight:700;line-height:1.12;letter-spacing:-.012em}
 .body-wide{font-size:clamp(15px,calc(1.35*var(--u)),calc(26px*var(--k)));font-weight:500;letter-spacing:.14em;line-height:1.62;color:rgba(244,244,246,.92);max-width:31em}
 .lead{font-size:clamp(15px,calc(1.15*var(--u)),calc(22px*var(--k)));font-weight:500;letter-spacing:.04em;line-height:1.62;color:var(--muted);max-width:30em}
+/* O tři pixely menší odstavec — pro text, který doplňuje hlavní sdělení
+   a nemá s ním soupeřit. Posouvá se celý rozsah, ne jen jedna mez. */
+.lead.mensi{font-size:clamp(12px,calc(1.15*var(--u) - 3px),calc(19px*var(--k)))}
 .small-caps{font-size:clamp(11px,calc(.8*var(--u)),calc(15px*var(--k)));letter-spacing:.3em;font-weight:600;color:var(--dim);text-transform:uppercase}
 @media (max-width:760px){.body-wide{letter-spacing:.05em}}
 
@@ -1863,8 +1866,10 @@ function renderResult() {
     <div class="ctr"><span class="eyebrow">Váš program</span><h2 class="h-l">Jak povedeme<br>Vaši péči</h2>
       <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))">${isPrague()
         ? 'Jste v dosahu naší ordinace, takže si můžete vybrat ze všech programů — tři na dálku a jeden s osobní péčí a léky v ceně.'
-        : 'Péči povedeme na dálku: konzultace i vstupní lékařské vyšetření online a lék na e-recept do Vaší lékárny.'}</p>
-      ${isPrague() ? '' : `<p class="lead" style="margin-top:clamp(12px,calc(1*var(--u)),calc(18px*var(--k)))"><b>Jednou za celou terapii se ale potřebujeme vidět osobně.</b> Máte na výběr: buď přijedete rovnou na vstupní lékařské vyšetření, nebo si ho uděláte online a přijedete až na kontrolní vyšetření tři měsíce po zahájení terapie. Tak jako tak je to jedna návštěva za celou terapii, ne cesta ke každé kontrole — a v novém roce k Praze chystáme ordinace v Brně a v Olomouci, ať to nemáte daleko.</p>`}
+        : 'Péči lze ve Vašem případě vést i na dálku: konzultace i vstupní lékařské vyšetření online a lék na e-recept si vyzvednete v lékárně.'}</p>
+      ${isPrague() ? '' : `<p class="lead mensi" style="margin-top:clamp(12px,calc(1*var(--u)),calc(18px*var(--k)))">Chceme Vás ale upozornit na jednu důležitou věc: <b>minimálně jednou za celou terapii Vás potřebujeme vidět osobně.</b> A tady máte na výběr: buď přijedete rovnou na vstupní lékařské vyšetření, nebo si ho uděláte online a přijedete osobně až na kontrolní vyšetření na konci třetího měsíce po zahájení terapie.</p>
+      <p class="lead mensi" style="margin-top:clamp(14px,calc(1.2*var(--u)),calc(22px*var(--k)))">Aktuálně máme ordinaci pro osobní návštěvy jenom v Praze, ale v novém roce přibude ještě možnost vyšetření v Brně, v Olomouci nebo ve Zlíně.</p>
+      <p class="lead mensi" style="margin-top:clamp(14px,calc(1.2*var(--u)),calc(22px*var(--k)))">V případě, že byste měli zájem, aby za Vámi lékař dorazil domů nebo do kanceláře, zmiňte se o tom na vstupní konzultaci.</p>`}
       <p class="fine" style="margin-top:clamp(12px,calc(1*var(--u)),calc(18px*var(--k)))">Klikněte na program a porovnejte si je. Cena je za měsíc péče a je u všech délek stejná — program lze kdykoli ukončit i prodloužit, bez storno poplatku.</p></div>
     <div>${variantsHTML(R)}</div>
   </div></section>
