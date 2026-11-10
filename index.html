@@ -283,7 +283,7 @@ input:autofill{background:transparent;color:var(--ink)}
 .checks .cur{color:var(--ink)}
 .checks .cur .ic::after{width:calc(14px*var(--k));height:calc(14px*var(--k));background:var(--grad);box-shadow:0 0 0 6px rgba(79,163,224,.2)}
 .ringwrap{position:relative;display:flex;justify-content:center;align-items:center}
-.ringwrap::before{content:"";position:absolute;width:58%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.16),rgba(255,255,255,0) 70%);animation:breathe 3.2s ease-in-out infinite}
+.ringwrap::before{content:"";position:absolute;width:58%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(122,62,158,.10),rgba(122,62,158,0) 70%);animation:breathe 3.2s ease-in-out infinite}
 .ringwrap svg{position:relative;width:min(100%,520px);height:auto}
 .ringwrap .orbit{transform-origin:260px 260px;animation:orbit 2.8s linear infinite}
 #arc{transition:stroke-dashoffset .14s linear}
@@ -1307,11 +1307,14 @@ function render() {
         <p class="lead gen-status" id="genStatus" aria-live="polite" style="margin-top:clamp(14px,calc(1.4*var(--u)),calc(26px*var(--k)))">${GEN_MESSAGES[0]}</p>
         <div class="genbar" aria-hidden="true"><i id="genBar"></i></div>
         <div class="checks" id="checks">${GEN_CHECKS.map((c, i) => `<div data-i="${i}"><span class="ic">${icon('i-check')}</span>${c}</div>`).join('')}</div></div>
-      <div class="ringwrap"><svg viewBox="0 0 520 520" aria-hidden="true"><circle cx="260" cy="260" r="236" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="10"/>
-        <circle id="arc" cx="260" cy="260" r="236" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-dasharray="1482.8" stroke-dashoffset="1482.8" transform="rotate(-90 260 260)"/>
-        <g class="orbit"><circle cx="260" cy="24" r="6" fill="#fff"/></g>
-        <text id="ringTxt" x="260" y="286" text-anchor="middle" font-family="Montserrat, system-ui, sans-serif" font-size="104" font-weight="200" fill="#fff">0 %</text>
-        <text x="260" y="340" text-anchor="middle" font-family="Montserrat, system-ui, sans-serif" font-size="17" font-weight="600" letter-spacing="5" fill="rgba(255,255,255,.75)">HOTOVO</text></svg></div></div>`;
+      <div class="ringwrap"><svg viewBox="0 0 520 520" aria-hidden="true">
+        <defs><linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#7A3E9E"/><stop offset="1" stop-color="#2F86CC"/></linearGradient></defs>
+        <circle cx="260" cy="260" r="236" fill="none" stroke="rgba(20,20,20,.10)" stroke-width="10"/>
+        <circle id="arc" cx="260" cy="260" r="236" fill="none" stroke="url(#ringGrad)" stroke-width="10" stroke-linecap="round" stroke-dasharray="1482.8" stroke-dashoffset="1482.8" transform="rotate(-90 260 260)"/>
+        <g class="orbit"><circle cx="260" cy="24" r="6" fill="#7A3E9E"/></g>
+        <text id="ringTxt" x="260" y="286" text-anchor="middle" font-family="Montserrat, system-ui, sans-serif" font-size="104" font-weight="200" fill="url(#ringGrad)">0 %</text>
+        <text x="260" y="340" text-anchor="middle" font-family="Montserrat, system-ui, sans-serif" font-size="17" font-weight="600" letter-spacing="5" fill="rgba(20,20,20,.5)">HOTOVO</text></svg></div></div>`;
   } else if (st.key === 'result') {
     setBg('result');
     T = LOGO() + `<div class="top-actions"><button class="linkbtn" type="button" data-act="restart">Nový screening</button></div>`;
@@ -1647,6 +1650,21 @@ function validate(st) {
 }
 
 /* ---------- události ---------- */
+
+/* Enter v textovém poli posune dál, stejně jako tlačítko Pokračovat. Doteď
+   se klávesnice neodchytávala vůbec, takže kdo vyplňoval volný text a zmáčkl
+   Enter, nestalo se nic. Textarea („Mám otázku“) si Enter nechává pro nový
+   řádek — tam se odesílá vlastním tlačítkem. */
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter' || e.isComposing) return;
+  const t = e.target;
+  if (!t || t.tagName !== 'INPUT') return;
+  if (t.type === 'checkbox' || t.type === 'radio') return;
+  e.preventDefault();
+  t.blur();                       // ať se na mobilu schová klávesnice
+  go(1);
+});
+
 document.addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
   const act = b.dataset.act;
