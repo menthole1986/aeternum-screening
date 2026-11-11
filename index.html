@@ -431,6 +431,8 @@ input:autofill{background:transparent;color:var(--ink)}
 /* Tři podoby konzultace vedle sebe. Cena patří přímo na tlačítko — jinak by
    si klient musel pamatovat, co stojí co, než na něco klikne. */
 .seg3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:clamp(18px,calc(1.5*var(--u)),calc(28px*var(--k)))}
+/* Bez Marcela AI zbydou dvě volby — ať se neroztáhnou do tří sloupců. */
+.seg3.dva{grid-template-columns:repeat(2,1fr)}
 .seg3 button{min-height:clamp(62px,calc(4*var(--u)),calc(78px*var(--k)));padding:10px 8px;border-radius:16px;border:1.5px solid rgba(255,255,255,.22);background:transparent;cursor:pointer;color:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;line-height:1.25}
 .seg3 button b{font-size:clamp(12px,calc(.8*var(--u)),calc(15px*var(--k)));font-weight:600;color:var(--ink)}
 .seg3 button i{font-style:normal;font-size:clamp(11px,calc(.7*var(--u)),calc(13px*var(--k)));font-weight:600;letter-spacing:.04em}
@@ -832,6 +834,12 @@ const CFG = {
      za program stejně jako konzultace s člověkem. Termín nepotřebuje, takže
      se na volné sloty neptáme. Adresu, kde konzultant běží, stránka nezná —
      dá ji server po zaplacení. */
+  /* Nabízíme vstupní konzultaci s Marcelem AI? Když je tohle false, volba
+     se klientovi vůbec neukáže a nabídka má jen koordinátora — online nebo
+     osobně. Vypnout to jde ještě podruhé a jinde: vlastnost ADVISOR_OFF
+     ve skriptu konzultaci přestane i prodávat, kdyby někdo poslal
+     požadavek mimo stránku. Jedno bez druhého stačí, obojí je jistota. */
+  advisorEnabled: false,
   advisorName: 'Marcel AI',                     // 1. pád
   advisorWith: 'Marcelem AI',                   // 7. pád — „s Marcelem AI"; samotné AI se neskloňuje
   advisorPrice: 121,                            // 100 Kč + 21 % DPH
@@ -2307,8 +2315,8 @@ function bookingHTML() {
   const type = B.type;
   return `<h3 class="grad" style="margin-top:0">Vstupní konzultace</h3>
     ${priceHTML(type)}
-    <div class="seg3" role="group" aria-label="Podoba konzultace">
-      <button type="button" data-btype="advisor" aria-pressed="${type === 'advisor'}"><b>AI konzultant</b><i>${fmt(CFG.advisorPrice)} Kč</i></button>
+    <div class="seg3${CFG.advisorEnabled ? '' : ' dva'}" role="group" aria-label="Podoba konzultace">
+      ${CFG.advisorEnabled ? `<button type="button" data-btype="advisor" aria-pressed="${type === 'advisor'}"><b>AI konzultant</b><i>${fmt(CFG.advisorPrice)} Kč</i></button>` : ''}
       <button type="button" data-btype="online" aria-pressed="${type === 'online'}"><b>Konzultant online</b><i>${fmt(CFG.price)} Kč</i></button>
       <button type="button" data-btype="osobne" aria-pressed="${type === 'osobne'}"><b>Konzultant v Praze</b><i>${fmt(CFG.price)} Kč</i></button>
     </div>
