@@ -2280,7 +2280,7 @@ function bookingHTML() {
       <p class="lead" style="margin-top:14px">${esc(DOW[d.getDay()])} ${d.getDate()}. ${esc(MON[d.getMonth()])}, ${pad2(d.getHours())}:${pad2(d.getMinutes())} — ${B.type === 'online' ? 'online' : 'osobně v Praze'}.</p>
       <p class="lead" style="margin-top:12px">Potvrzení a pozvánku do kalendáře jsme poslali na <b style="color:var(--ink)">${esc(S.a.email)}</b>. Den před konzultací Vám přijde SMS připomínka.</p>
       ${B.manageUrl ? `<a class="btn ghost" href="${esc(B.manageUrl)}" style="margin-top:clamp(18px,calc(1.5*var(--u)),calc(28px*var(--k)))">Přesunout nebo zrušit termín</a>` : ''}
-      <p class="fine" style="margin-top:14px">Termín si můžete přesunout nebo zrušit až do hodiny před začátkem. Poplatek propadá jen tehdy, když se bez omluvy nedostavíte.</p></div>`;
+      <p class="fine" style="margin-top:14px">Termín si můžete přesunout nebo zrušit sami, až do ${B.minHours || 12} hodin před začátkem. Poplatek propadá jen tehdy, když se bez omluvy nedostavíte. Potřebujete-li to později, napište nám a termín posuneme.</p></div>`;
   }
   if (S.verifying && B.hold) return verifyHTML();
   if (B.hold) return paymentHTML();
