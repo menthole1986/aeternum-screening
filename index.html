@@ -623,11 +623,12 @@ h3.grad,.h3grad{display:block;width:fit-content;align-self:flex-start;background
   .ctr .bar{margin-left:auto;margin-right:auto}
   .ctr .index-row{justify-content:center}
   .ctr .index-side{align-items:center}
-  .ctr .send-status{justify-content:center}
+  .ctr .send-status{justify-content:center;width:fit-content;max-width:100%;margin-left:auto;margin-right:auto}
   .panel > h3,.panel > .eyebrow{text-align:center}
   .panel > h3.grad{margin-left:auto;margin-right:auto}
   .panel > .price{justify-content:center}
   .panel > .price-note{text-align:center}
+  .panel > .fine{text-align:center}
   /* plochy na dotek: odkazy v hlavičce a patičce a políčka formuláře měly pod 30 px */
   .linkbtn{padding:12px 0;margin:-6px 0}
   .disclaimer a{display:inline-block;padding:8px 0}
@@ -636,6 +637,70 @@ h3.grad,.h3grad{display:block;width:fit-content;align-self:flex-start;background
   .decline .btn{font-size:11px;letter-spacing:.06em;white-space:nowrap;padding:14px 20px}
 }
 @media (max-width:380px){.decline .btn{font-size:10px}}
+/* ── telefon: střed a vzduch ──────────────────────────────────────────────
+   Seznamy se centrují jako blok (`width:fit-content` a automatické okraje),
+   ne po řádcích. Řádky uvnitř zůstávají zleva, jinak by fajfky a odrážky
+   stály každá jinde a seznam by se přestal dát přečíst očima shora dolů. */
+@media (max-width:760px){
+  .rsec{padding-top:46px;padding-bottom:46px}
+  .rsec.first{padding-top:20px}
+  .split{gap:30px}
+
+  /* odstavce drží střed a nelepí se na okraje */
+  .ctr .lead,.ctr .reassure,.ctr .summary{margin-left:auto;margin-right:auto}
+  .ctr .fine{text-align:center}
+
+  /* seznamy: blok na střed, obsah zleva */
+  .ctr .bens,.ctr .bul,.ctr .alerts{
+    width:fit-content;max-width:100%;margin-left:auto;margin-right:auto}
+  .ctr .bens{justify-items:start}
+
+  /* karta s preparátem drží střed jako zbytek sekce */
+  .drug{text-align:center}
+  .drug .bul{width:fit-content;max-width:100%;margin-left:auto;margin-right:auto}
+
+  /* výčet v kartě programu na střed, fajfky pod sebou */
+  .feats{width:fit-content;max-width:100%;margin-left:auto;margin-right:auto}
+
+  /* pruh o samoplátecké péči a popisek nad kartami */
+  .selfpay{text-align:center}
+  .plans > .fine{text-align:center;margin-bottom:14px}
+
+  /* výstraha s emoji zůstává zleva — ikona a text patří na jeden řádek */
+  .ctr .notice{text-align:left}
+
+  /* dlouhý popisek grafu se v kapitálkách s velkým prokladem nedal přečíst */
+  .chart{padding:20px 16px}
+  .chart .cl{letter-spacing:.12em;line-height:1.5;text-align:center}
+  .chart .cf{margin-top:14px}
+
+  /* tři čísla pod sebou a na střed. Ve dvou sloupcích zůstávalo třetí samo
+     na druhém řádku a celý blok se rozpadl. */
+  .vals{grid-template-columns:1fr;gap:22px}
+  .val{align-items:center;text-align:center;padding-top:16px}
+  .val b em{margin-left:4px}
+
+  /* dotazník: na střed jde nadpis otázky, počítadlo a tlačítka s krátkou
+     odpovědí. Dlouhý výklad a řádky s kolečkem zůstávají zleva — vycentrovaný
+     odstavec se čte hůř a kolečka by nestála pod sebou. */
+  .qcount{justify-content:center}
+  .qtext{text-align:center}
+  /* vysvetlivka pod otazkou bývá i na osm řádků — vycentrovaná by se četla
+     hůř, takže na střed jde celý blok, ne jednotlivé řádky */
+  .qhint{max-width:34em;margin-left:auto;margin-right:auto}
+  .opts{justify-content:center}
+  .mhead .tx{text-align:left}
+  .strip{justify-content:center;text-align:center}
+  /* živé BMI pod posuvníky je výsledek, ne formulář — patří na střed */
+  .qlive{justify-content:center}
+  .qlive .lv{align-items:center;text-align:center}
+
+  /* víc vzduchu mezi nadpisem sekce a tím, co pod ním stojí */
+  .eyebrow{letter-spacing:.26em}
+  .vars{row-gap:26px}
+  .var{padding:26px 20px}
+}
+
 /* slova s pomlčkou (e-mail, GLP-1) se nelámou na konci řádku */
 .nb{white-space:nowrap}
 .lead,.qtext,.mhead,.fine,.summary,.tile span,.panel p{word-break:keep-all;overflow-wrap:break-word}
@@ -1893,11 +1958,11 @@ function renderResult() {
       ${isPrague() ? '' : `<p class="lead mensi" style="margin-top:clamp(12px,calc(1*var(--u)),calc(18px*var(--k)))">Chceme Vás ale upozornit na jednu důležitou věc: <b>minimálně jednou za celou terapii Vás potřebujeme vidět osobně.</b> A tady máte na výběr: buď přijedete rovnou na vstupní lékařské vyšetření, nebo si ho uděláte online a přijedete osobně až na kontrolní vyšetření na konci třetího měsíce po zahájení terapie.</p>
       <p class="lead mensi" style="margin-top:clamp(14px,calc(1.2*var(--u)),calc(22px*var(--k)))">Aktuálně máme ordinaci pro osobní návštěvy jenom v Praze, ale v novém roce přibude ještě možnost vyšetření v Brně, v Olomouci nebo ve Zlíně.</p>`}
       </div>
-    <div><p class="selfpay">Aeternum Clinic je <b>privátní klinika bez smlouvy se zdravotními pojišťovnami</b> — vstupní screening, program i léčivo si hradíte sami, v režimu samoplátce.</p><p class="fine" style="margin:0 0 clamp(4px,calc(.4*var(--u)),calc(8px*var(--k)))">Vyberte si z následujících programů péče.</p>${variantsHTML(R)}</div>
+    <div class="ctr plans"><p class="selfpay">Aeternum Clinic je <b>privátní klinika bez smlouvy se zdravotními pojišťovnami</b> — vstupní screening, program i léčivo si hradíte sami, v režimu samoplátce.</p><p class="fine" style="margin:0 0 clamp(4px,calc(.4*var(--u)),calc(8px*var(--k)))">Vyberte si z následujících programů péče.</p>${variantsHTML(R)}</div>
   </div></section>
 
   <section class="rsec" id="cta"><div class="split">
-    <div><span class="eyebrow">První krok</span><h2 class="h-l">Vstupní<br><span class="light">konzultace</span></h2>
+    <div class="ctr"><span class="eyebrow">První krok</span><h2 class="h-l">Vstupní<br><span class="light">konzultace</span></h2>
       <div class="bul"><div>Seznámení s terapií redukce hmotnosti</div><div>Zodpovězení nejčastějších dotazů</div></div>
       <span class="eyebrow" style="margin-top:clamp(38px,calc(3.2*var(--u)),calc(58px*var(--k)))">Druhý krok</span>
           <p class="notice" style="margin-top:clamp(10px,calc(0.8*var(--u)),calc(14px*var(--k)))"><span>⚠️</span><span>Pro posouzení vhodnosti terapie Vás čeká krevní screening a lékařské vyšetření (4 970 Kč). Hradí se až po vstupní konzultaci, teď neplatíte nic navíc.</span></p>
