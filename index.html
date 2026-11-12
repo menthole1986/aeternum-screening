@@ -275,6 +275,7 @@ input:autofill{background:transparent;color:var(--ink)}
 .cbox input:checked + .box svg{opacity:1}
 .cbox input:focus-visible + .box{outline:2px solid #4FA3E0;outline-offset:3px}
 .cbox em{font-style:normal;color:var(--dim)}
+.cbox.invalid .box{border-color:var(--crit)}
 .consents{display:flex;flex-direction:column;gap:18px;margin-top:clamp(24px,calc(2.6*var(--u)),calc(48px*var(--k)))}
 .tip{font-size:clamp(13px,calc(.85*var(--u)),calc(16px*var(--k)));color:var(--dim);line-height:1.6;margin-top:clamp(14px,calc(1.2*var(--u)),calc(22px*var(--k)));max-width:36em}
 
@@ -534,6 +535,8 @@ h3.grad,.h3grad{display:block;width:fit-content;align-self:flex-start;background
 .send-status.sending .dot{background:#4FA3E0;animation:breathe 1.2s ease-in-out infinite}
 .send-status.sent .dot{background:var(--good)}
 .send-status.failed .dot{background:var(--crit)}
+.send-status.noconsent .dot{background:var(--warn)}
+.send-status .again{margin-left:12px;padding:0}
 .disclaimer{padding:clamp(22px,calc(2.3*var(--u)),calc(44px*var(--k))) var(--gut) clamp(30px,calc(3*var(--u)),calc(60px*var(--k)));font-size:clamp(10px,calc(.62*var(--u)),calc(12px*var(--k)));color:var(--dim);line-height:1.7;border-top:1px solid rgba(255,255,255,.08);position:relative;z-index:1;text-align:center;max-width:96em;margin:0 auto}
 .demo-tag{position:fixed;right:12px;bottom:12px;z-index:60;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;background:var(--warn);color:#1a1300;padding:5px 9px;border-radius:6px}
 
@@ -1713,6 +1716,14 @@ function go(dir) {
 }
 function showErr(err) {
   const el = $('#err'); if (el) el.textContent = err.msg;
+  /* Souhlas není políčko formuláře, je to zaškrtávátko — tak ho taky musíme
+     umět ukázat. Dřív se hláška jen vypsala dolů pod text a kdo ji měl mimo
+     obrazovku, mačkal Pokračovat a nechápal, proč se nic neděje. */
+  if (err.cbox) {
+    const c = document.getElementById(err.cbox), w = c && c.closest('.cbox');
+    if (w) { w.classList.add('invalid'); w.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+    if (c) c.focus({ preventScroll: true });
+  }
   if (err.focus) { const w = document.getElementById('w-' + err.focus), f = document.getElementById('f-' + err.focus);
     if (w) w.classList.add('invalid');
     if (f) { f.scrollIntoView({ behavior: 'smooth', block: 'center' }); f.focus({ preventScroll: true }); } }
@@ -1742,7 +1753,7 @@ function validate(st) {
     if (!nm) return { msg: 'Vyplňte prosím jméno a příjmení.', focus: 'firstName' };
     if (!/\s/.test(nm)) return { msg: 'Doplňte prosím i příjmení.', focus: 'firstName' };
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test((S.a.email || '').trim())) return { msg: 'Zadejte prosím platný e-mail.', focus: 'email' };
-    if (!S.a.gdpr) return { msg: 'Pro pokračování je potřeba souhlas se zpracováním údajů.' };
+    if (!S.a.gdpr) return { msg: 'Pro pokračování je potřeba souhlas se zpracováním údajů.', cbox: 'c-gdpr' };
   }
   return null;
 }
@@ -1769,6 +1780,13 @@ document.addEventListener('click', e => {
   if (act === 'next') return go(1);
   if (act === 'back') return go(-1);
   if (act === 'restart') { if (confirm('Opravdu začít znovu? Vyplněné odpovědi se smažou.')) resetAll(); return; }
+  if (act === 'resend') { ensureSubmitted(true).catch(() => {}); return; }
+  if (act === 'toconsent') {
+    S.cur = 'contact'; S.send = null; render(); window.scrollTo(0, 0);
+    const c = document.getElementById('c-gdpr'), w = c && c.closest('.cbox');
+    if (w) { w.classList.add('invalid'); w.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+    return;
+  }
   if (b.dataset.single != null) return pickSingle(b.dataset.single, +b.dataset.i);
 });
 function pickSingle(id, i) {
@@ -1793,7 +1811,12 @@ document.addEventListener('input', e => {
 });
 document.addEventListener('change', e => {
   const t = e.target;
-  if (t.dataset.consent) { S.a[t.dataset.consent] = t.checked; const err = $('#err'); if (err) err.textContent = ''; save(); }
+  if (t.dataset.consent) {
+    S.a[t.dataset.consent] = t.checked;
+    const w = t.closest('.cbox'); if (w && t.checked) w.classList.remove('invalid');
+    const err = $('#err'); if (err) err.textContent = '';
+    save();
+  }
 });
 function clearInvalid(t) {
   const w = t.closest('.uf'); if (w) w.classList.remove('invalid');
@@ -2743,11 +2766,15 @@ function sendStatusHTML() {
   const st = S.send;
   if (!CFG.apiUrl || !st) return '<p class="send-status" id="sendStatus" hidden></p>';
   const email = `<b style="color:var(--ink)">${esc(S.a.email)}</b>`;
+  if (st === 'noconsent') {
+    return `<p class="send-status noconsent" id="sendStatus" role="status"><span class="dot"></span><span>Bez souhlasu se zpracováním údajů Váš výsledek neuložíme ani nepošleme.<button type="button" class="linkbtn again" data-act="toconsent">Doplnit souhlas</button></span></p>`;
+  }
+  const again = st === 'failed' ? `<button type="button" class="linkbtn again" data-act="resend">Zkusit znovu</button>` : '';
   const text = st === 'sending' ? `Posílám Váš výsledek na ${email}…`
     : st === 'sent' ? `Výsledek jsme poslali na ${email}.`
     : st === 'saved' ? `Výsledek je uložený, ale e-mail se nepodařilo odeslat. Ozveme se Vám.`
     : `Výsledek se nepodařilo odeslat. Zkuste to prosím znovu, nebo nám zavolejte na ${tel(CFG.phone)}.`;
-  return `<p class="send-status ${st}" id="sendStatus" role="status"><span class="dot"></span><span>${text}</span></p>`;
+  return `<p class="send-status ${st}" id="sendStatus" role="status"><span class="dot"></span><span>${text}${again}</span></p>`;
 }
 function setSend(state) {
   S.send = state; save();
@@ -2770,11 +2797,19 @@ function payload() {
     alternative: '', programMonths: R.months, lose: R.lose
   };
 }
-function ensureSubmitted() {
+function ensureSubmitted(force) {
   if (!CFG.apiUrl || CFG.demo) return Promise.resolve(null);   // ukázková data se nikam neodesílají
   if (S.recordId) return Promise.resolve(S.recordId);
   // Prázdný stav (návrat z platby v jiném prohlížeči) nemá co odesílat.
   if (!hasScreening()) return Promise.resolve(null);
+  /* Bez souhlasu se neodesílá nic. Server to stejně odmítne a hlavně na to
+     nemáme právo — a nemá smysl to zkoušet znovu, dokud se člověk nevrátí
+     a souhlas nedoplní. */
+  if (!S.a.gdpr) { setSend('noconsent'); return Promise.resolve(null); }
+  /* Po neúspěchu se čeká na tlačítko. Dřív se o odeslání pokoušelo každé
+     překreslení stránky, takže z jednoho člověka byla desítka stejných
+     pokusů a stejně z toho nebyl ani jeden řádek. */
+  if (!force && S.send === 'failed') return Promise.resolve(null);
   if (submitPromise) return submitPromise;
   setSend('sending');
   submitPromise = api('submitScreening', { screening: payload() }, 60000)
