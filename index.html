@@ -909,7 +909,9 @@ const newSid = () => (self.crypto && crypto.randomUUID) ? crypto.randomUUID() : 
    o zdravotním stavu, u kterých GDPR žádá výslovný souhlas, a předvyplněné
    políčko za výslovný souhlas neplatí. Bez něj klient dál neprojde ani tady
    (viz validace níž), ani na serveru. */
-const blank = () => ({ cur: 'intro', sid: newSid(), a: { marketing: true }, booking: { type: null, slot: null }, startedAt: new Date().toISOString() });
+/* Souhlas s obchodním sdělením se nepředzaškrtává. Předem odkliknutý souhlas
+   není podle § 7 zákona 480/2004 Sb. souhlas — musí to být vlastní úkon. */
+const blank = () => ({ cur: 'intro', sid: newSid(), a: {}, booking: { type: null, slot: null }, startedAt: new Date().toISOString() });
 let S = blank();
 function save() { try { sessionStorage.setItem(CFG.storageKey, JSON.stringify(S)); } catch (e) {} }
 function load() { try { const raw = sessionStorage.getItem(CFG.storageKey); if (raw) S = Object.assign(blank(), JSON.parse(raw)); } catch (e) {} }
@@ -1395,10 +1397,10 @@ function render() {
         </div>
         <div class="consents">
           ${cboxHTML('c-gdpr', S.a.gdpr, 'Souhlasím se zpracováním osobních údajů, včetně údajů o zdravotním stavu, za účelem vyhodnocení screeningu a jeho zaslání na můj e-mail. Více v <a href="' + CFG.gdprUrl + '" target="_blank" rel="noopener" style="color:var(--ink)">zásadách zpracování osobních údajů</a>.', 'gdpr')}
-          ${cboxHTML('c-news', S.a.marketing !== false, 'Chci vědět, co je nového na klinice — v léčbě, v programech, a občas nabídku nebo slevu. Nejvýš jednou měsíčně, odhlásit se dá jedním kliknutím.', 'marketing')}
+          ${cboxHTML('c-news', S.a.marketing === true, 'Chci vědět o slevách, novinkách ze světa kliniky a GLP-1. Nejvýš jednou měsíčně, odhlásit se dá jedním kliknutím.', 'marketing')}
           <details class="legal"><summary>Celé znění souhlasu</summary>
             <p>Souhlasím se zpracováním svých osobních údajů, včetně údajů o zdravotním stavu, které jsem ve screeningu uvedl/a, společností My Design Creatives s.r.o., IČO 07162235, se sídlem Chlumčanského 497/5, 180 00 Praha 8, provozující Aeternum Clinic, za účelem vyhodnocení screeningu a jeho zaslání na můj e-mail. Souhlas mohu kdykoli odvolat na info@aeternumclinic.cz.</p>
-            <p>Zaškrtnutím druhého políčka souhlasím, aby mi tatáž společnost posílala na uvedený e-mail obchodní sdělení — novinky z kliniky, z léčby a z programů a občas nabídku nebo slevu, nejvýš jednou měsíčně. Tento souhlas mohu kdykoli odvolat odkazem v každém e-mailu nebo na info@aeternumclinic.cz.</p></details>
+            <p>Zaškrtnutím druhého políčka souhlasím, aby mi tatáž společnost posílala na uvedený e-mail obchodní sdělení — slevy a novinky ze světa kliniky a GLP-1, nejvýš jednou měsíčně. Tento souhlas mohu kdykoli odvolat odkazem v každém e-mailu nebo na info@aeternumclinic.cz.</p></details>
         </div></div></div>`;
     F = navHTML(true);
   } else if (st.key === 'generating') {
