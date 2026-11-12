@@ -207,7 +207,7 @@ body.fixed main{min-height:0;overflow:hidden}
   main{align-items:flex-start}
 }
 .qcount.mob{display:none}
-@media (max-width:1000px){.qcount.desk{display:none}.qcount.mob{display:flex;margin-top:16px}.qcount.mob + .qtext{margin-top:14px}}
+@media (max-width:1000px){.qcount.desk{display:none}.qcount.mob{display:flex;margin-top:16px}.qcount.mob + .qtext{margin-top:14px}.mhead + .qtext{margin-top:20px}}
 
 /* ---------- otázky ---------- */
 .qcount{display:flex;align-items:center;gap:18px;margin-top:clamp(20px,calc(2.9*var(--u)),calc(56px*var(--k)))}
@@ -1395,9 +1395,10 @@ function render() {
         </div>
         <div class="consents">
           ${cboxHTML('c-gdpr', S.a.gdpr, 'Souhlasím se zpracováním osobních údajů, včetně údajů o zdravotním stavu, za účelem vyhodnocení screeningu a jeho zaslání na můj e-mail. Více v <a href="' + CFG.gdprUrl + '" target="_blank" rel="noopener" style="color:var(--ink)">zásadách zpracování osobních údajů</a>.', 'gdpr')}
-          ${cboxHTML('c-news', S.a.marketing !== false, 'Můžete se mi ozvat s novinkami a s nabídkou, která by se mi hodila — nejvýš jednou měsíčně, odhlásit se dá jedním kliknutím.', 'marketing')}
+          ${cboxHTML('c-news', S.a.marketing !== false, 'Chci vědět o důležitých novinkách — nový preparát, změna ceny programu nebo volné termíny na konzultaci. Nejvýš jednou měsíčně, odhlásit se dá jedním kliknutím.', 'marketing')}
           <details class="legal"><summary>Celé znění souhlasu</summary>
-            <p>Souhlasím se zpracováním svých osobních údajů, včetně údajů o zdravotním stavu, které jsem ve screeningu uvedl/a, společností My Design Creatives s.r.o., IČO 07162235, se sídlem Chlumčanského 497/5, 180 00 Praha 8, provozující Aeternum Clinic, za účelem vyhodnocení screeningu a jeho zaslání na můj e-mail. Souhlas mohu kdykoli odvolat na info@aeternumclinic.cz.</p></details>
+            <p>Souhlasím se zpracováním svých osobních údajů, včetně údajů o zdravotním stavu, které jsem ve screeningu uvedl/a, společností My Design Creatives s.r.o., IČO 07162235, se sídlem Chlumčanského 497/5, 180 00 Praha 8, provozující Aeternum Clinic, za účelem vyhodnocení screeningu a jeho zaslání na můj e-mail. Souhlas mohu kdykoli odvolat na info@aeternumclinic.cz.</p>
+            <p>Zaškrtnutím druhého políčka souhlasím, aby mi tatáž společnost posílala na uvedený e-mail obchodní sdělení — novinky o léčbě, nabídku programů a volné termíny na konzultaci, nejvýš jednou měsíčně. Tento souhlas mohu kdykoli odvolat odkazem v každém e-mailu nebo na info@aeternumclinic.cz.</p></details>
         </div></div></div>`;
     F = navHTML(true);
   } else if (st.key === 'generating') {
