@@ -439,6 +439,9 @@ input:autofill{background:transparent;color:var(--ink)}
 .seg3 button i{font-style:normal;font-size:clamp(11px,calc(.7*var(--u)),calc(13px*var(--k)));font-weight:600;letter-spacing:.04em}
 .seg3 button[aria-pressed="true"]{background:var(--grad);border-color:transparent;color:#fff}
 .seg3 button[aria-pressed="true"] b,.seg3 button[aria-pressed="true"] i{color:#fff}
+.seg3 button[disabled]{cursor:default;opacity:.5}
+.seg3 button[disabled]:hover{border-color:rgba(255,255,255,.22)}
+.seg3 .soon{font-size:9px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--warn)}
 .twin{margin-top:clamp(16px,calc(1.3*var(--u)),calc(24px*var(--k)))}
 .twin p{font-size:clamp(13px,calc(.9*var(--u)),calc(17px*var(--k)));color:var(--muted);line-height:1.62;margin:0 0 10px}
 .twin p b{color:var(--ink);font-weight:600}
@@ -842,7 +845,12 @@ const CFG = {
      osobně. Vypnout to jde ještě podruhé a jinde: vlastnost ADVISOR_OFF
      ve skriptu konzultaci přestane i prodávat, kdyby někdo poslal
      požadavek mimo stránku. Jedno bez druhého stačí, obojí je jistota. */
-  advisorEnabled: true,
+  advisorEnabled: false,
+  /* Mezistupeň mezi schovat a prodávat: karta se ukáže i s cenou, ale je
+     nepřístupná a nese odznak „připravujeme". Lidé o Marcelovi AI vědí dřív,
+     než na něj můžou kliknout, a nikdo se neodrazí od tlačítka, které nic
+     neudělá. Jakmile je advisorEnabled true, tohle se přestane uplatňovat. */
+  advisorSoon: true,
   advisorName: 'Marcel AI',                     // 1. pád
   advisorWith: 'Marcelem AI',                   // 7. pád — „s Marcelem AI"; samotné AI se neskloňuje
   advisorPrice: 121,                            // 100 Kč + 21 % DPH
@@ -2341,8 +2349,11 @@ function bookingHTML() {
   const type = B.type;
   return `<h3 class="grad" style="margin-top:0">Vstupní konzultace</h3>
     ${priceHTML(type)}
-    <div class="seg3${CFG.advisorEnabled ? '' : ' dva'}" role="group" aria-label="Podoba konzultace">
-      ${CFG.advisorEnabled ? `<button type="button" data-btype="advisor" aria-pressed="${type === 'advisor'}"><b>AI konzultant</b><i>${fmt(CFG.advisorPrice)} Kč</i></button>` : ''}
+    <div class="seg3${(CFG.advisorEnabled || CFG.advisorSoon) ? '' : ' dva'}" role="group" aria-label="Podoba konzultace">
+      ${(CFG.advisorEnabled || CFG.advisorSoon) ? `<button type="button" data-btype="advisor" 
+        ${CFG.advisorEnabled ? `aria-pressed="${type === 'advisor'}"` : 'disabled aria-disabled="true" title="Již brzy"'}>
+        <b>AI konzultant</b><i>${fmt(CFG.advisorPrice)} Kč</i>
+        ${CFG.advisorEnabled ? '' : '<span class="soon">připravujeme</span>'}</button>` : ''}
       <button type="button" data-btype="online" aria-pressed="${type === 'online'}"><b>Konzultant online</b><i>${fmt(CFG.price)} Kč</i></button>
       <button type="button" data-btype="osobne" aria-pressed="${type === 'osobne'}"><b>Konzultant v Praze</b><i>${fmt(CFG.price)} Kč</i></button>
     </div>
