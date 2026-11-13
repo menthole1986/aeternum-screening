@@ -2222,7 +2222,7 @@ function planTilesHTML() {
   return v.tiles.map(([e, t, d]) => `<div class="tile"><div class="emoji">${e}</div><b>${esc(t)}</b><span>${esc(d)}</span></div>`).join('');
 }
 
-const DISCLAIMER = `<div class="disclaimer">Aeternum GLP-1 Screening je orientační vyhodnocení na základě Vašich odpovědí, není lékařským vyšetřením ani diagnózou a nenahrazuje konzultaci s lékařem, který jediný rozhoduje o vhodnosti léků Wegovy® a Mounjaro® vázaných na lékařský předpis.<br>Aeternum Clinic, My Design Creatives s.r.o., IČO 07162235, Chlumčanského 497/5, 180 00 Praha 8 · info@aeternumclinic.cz · <a href="${CFG.gdprUrl}" target="_blank" rel="noopener" style="color:var(--dim)">Zásady zpracování osobních údajů</a></div>`;
+const DISCLAIMER = `<div class="disclaimer">Aeternum GLP-1 Screening je orientační vyhodnocení na základě Vašich odpovědí, není lékařským vyšetřením ani diagnózou a nenahrazuje konzultaci s lékařem, který jediný rozhoduje o vhodnosti léčby a o předpisu léčivých přípravků vázaných na lékařský předpis.<br>Aeternum Clinic, My Design Creatives s.r.o., IČO 07162235, Chlumčanského 497/5, 180 00 Praha 8 · info@aeternumclinic.cz · <a href="${CFG.gdprUrl}" target="_blank" rel="noopener" style="color:var(--dim)">Zásady zpracování osobních údajů</a></div>`;
 
 function chartSVG(startW, endW, months, height) {
   const W = 620, H = 200, pad = { t: 22, r: 64, b: 26, l: 56 };
