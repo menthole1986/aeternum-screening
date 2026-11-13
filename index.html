@@ -1253,8 +1253,8 @@ function calcScore(d) {
    Pozor: v `name` musí zůstat účinná látka, podle ní si server spáruje
    balení (drugKey_ hledá „semaglutid" a „tirzepatid"). */
 const DRUGS = {
-  wegovy:   { name: 'Agonista GLP-1 (semaglutid)', inn: 'semaglutid' },
-  mounjaro: { name: 'Duální agonista GLP-1/GIP (tirzepatid)', inn: 'tirzepatid' }
+  wegovy:   { name: 'Agonista GLP-1', inn: 'semaglutid' },
+  mounjaro: { name: 'Duální agonista GLP-1/GIP', inn: 'tirzepatid' }
 };
 function recommend(d) {
   const bmi = num(d.bmi) || 0;
@@ -1993,6 +1993,7 @@ function renderResult() {
     <div class="drug">
       <span class="eyebrow">Pro Váš cíl vychází nejlépe</span>
       <h3>${esc(rec.drug.name)}</h3>
+      <p class="fine" style="margin-top:6px">účinná látka ${esc(rec.drug.inn)}</p>
       <p class="lead" style="margin-top:clamp(14px,calc(1.2*var(--u)),calc(22px*var(--k)))">${esc(rec.why)}</p>
       <p class="fine" style="margin-top:clamp(18px,calc(1.5*var(--u)),calc(28px*var(--k)));font-size:clamp(10.5px,calc(.68*var(--u)),calc(13px*var(--k)))">Jde o orientační doporučení ze screeningu. <b style="color:var(--ink)">Finální volbu preparátu i dávkování potvrdí lékař</b> na vstupním vyšetření, kde posoudí Vaši kompletní anamnézu.</p>
     </div>
@@ -2813,7 +2814,8 @@ function payload() {
       pohybTyp: S.a.pohybTyp || '', odpocaty: S.a.odpocaty || '', odkud: S.a.odkud || '', stit: S.a.stit, kard: S.a.kard, pohyb: S.a.pohyb, spanek: S.a.spanek },
     score: R.score.score, scoreLabel: R.score.label, contraindication: R.contra || '', doctorNote: R.caution || '',
     reservationIntent: S.booking.intent || '', bookingType: S.booking.type || '',
-    recommendation: R.rec ? R.rec.drug.name : '', recommendationWhy: R.rec ? R.rec.why : '',
+    // Obojí pohromadě schválně: podle účinné látky si server páruje balení.
+    recommendation: R.rec ? R.rec.drug.name + ' (' + R.rec.drug.inn + ')' : '', recommendationWhy: R.rec ? R.rec.why : '',
     alternative: '', programMonths: R.months, lose: R.lose
   };
 }
