@@ -1246,9 +1246,15 @@ function calcScore(d) {
 
 /* Volba preparátu — rozhodovací strom odsouhlasený s klinikou.
    Pořadí podmínek je závazné, první splněná vyhrává. */
+/* Jméno, které uvidí klient. Obchodní název léku vázaného na předpis se
+   veřejnosti ukazovat nesmí — screening je zdarma, takže je veřejný celý,
+   včetně výsledku a e-mailu. Název třídy s účinnou látkou říká to samé
+   a SÚKL na něj nemá páku. Konkrétní přípravek padne až za platební bránou.
+   Pozor: v `name` musí zůstat účinná látka, podle ní si server spáruje
+   balení (drugKey_ hledá „semaglutid" a „tirzepatid"). */
 const DRUGS = {
-  wegovy:   { name: 'Wegovy®', inn: 'semaglutid' },
-  mounjaro: { name: 'Mounjaro®', inn: 'tirzepatid' }
+  wegovy:   { name: 'Agonista GLP-1 (semaglutid)', inn: 'semaglutid' },
+  mounjaro: { name: 'Duální agonista GLP-1/GIP (tirzepatid)', inn: 'tirzepatid' }
 };
 function recommend(d) {
   const bmi = num(d.bmi) || 0;
@@ -1273,7 +1279,7 @@ function recommend(d) {
   if (bmi >= 23 && bmi <= 27) {
     return {
       key: 'wegovy', drug: DRUGS.wegovy, altDrug: DRUGS.mounjaro, alt: null,
-      why: 'Mounjaro je z téhle třídy nejsilnější a míří hlavně na klienty s BMI nad 30, kde jde o velký úbytek. U Vás jde spíš o kosmetickou redukci a klid od jídla, a na to je Wegovy vhodnější: je mírnější, dávkuje se jemněji a drží tempo úbytku tak, aby šel dolů tuk a ne svaly.',
+      why: 'Duální agonista GLP-1/GIP je z téhle třídy nejsilnější a míří hlavně na klienty s BMI nad 30, kde jde o velký úbytek. U Vás jde spíš o kosmetickou redukci a klid od jídla, a na to je Wegovy vhodnější: je mírnější, dávkuje se jemněji a drží tempo úbytku tak, aby šel dolů tuk a ne svaly.',
       offLabel: bmi < 27
     };
   }
@@ -1281,7 +1287,7 @@ function recommend(d) {
   if (hadSema && sat === 'Dobrý efekt') {
     key = 'wegovy';
     why = 'Semaglutid u Vás už zabíral, takže není důvod ho měnit. Navážeme na to, co fungovalo, a doladíme dávkování.';
-    alt = 'Pokud se úbytek zastaví na plató, je Mounjaro® logickým dalším krokem.';
+    alt = 'Pokud se úbytek zastaví na plató, je duální agonista GLP-1/GIP logickým dalším krokem.';
   } else if (hadSema && sat === 'Slabý efekt') {
     key = 'mounjaro';
     why = 'Semaglutid u Vás nepřinesl očekávaný efekt. Tirzepatid působí přes dva receptory (GIP i GLP-1) a v přímém srovnání dosahuje výrazně vyššího úbytku.';
@@ -1291,7 +1297,7 @@ function recommend(d) {
   } else if (hadSema && sat === 'Špatně jsem ho snášel/a') {
     key = 'wegovy';
     why = 'Nesnášenlivost bývá nejčastěji z příliš rychlého navyšování dávky. Začneme od nejnižší dávky a budeme postupovat pomaleji.';
-    alt = 'Pokud potíže přetrvají, na kontrole zvážíme přechod na Mounjaro®.';
+    alt = 'Pokud potíže přetrvají, na kontrole zvážíme přechod na duálního agonistu GLP-1/GIP.';
   } else if (dysgly) {
     key = 'mounjaro';
     why = d.diab === 'PMOS (PCOS)'
@@ -1303,7 +1309,7 @@ function recommend(d) {
   } else if (d.goal === 'Zbavit se neustálých chutí a myšlenek na jídlo' && lossPct < 15) {
     key = 'wegovy';
     why = 'Vaším cílem je klid od jídla. Na „food noise“ semaglutid bohatě stačí a nemá smysl jít po nejsilnějším preparátu.';
-    alt = bmi >= 30 ? 'Při Vašem BMI by Mounjaro® přineslo rychlejší úbytek. Pokud budete chtít i výraznější zhubnutí, probereme ho na konzultaci.' : null;
+    alt = bmi >= 30 ? 'Při Vašem BMI by duální agonista GLP-1/GIP přinesl rychlejší úbytek. Pokud budete chtít i výraznější zhubnutí, probereme ho na konzultaci.' : null;
   } else if (d.goal === 'Výrazně zhubnout') {
     key = 'mounjaro';
     why = 'Pro výrazný úbytek je v této třídě nejúčinnější — ve studiích vedl k průměrnému poklesu okolo 20 % hmotnosti.';
@@ -1316,8 +1322,8 @@ function recommend(d) {
   }
 
   const other = key === 'wegovy' ? 'mounjaro' : 'wegovy';
-  if (!alt && bmi >= 27 && key === 'wegovy') alt = 'Kdyby úbytek nebyl dostatečný, Mounjaro® je připravené jako další krok.';
-  if (!alt && key === 'mounjaro' && d.goal !== 'Výrazně zhubnout') alt = 'Pokud byste chtěl/a začít mírněji, je Wegovy® plnohodnotnou alternativou.';
+  if (!alt && bmi >= 27 && key === 'wegovy') alt = 'Kdyby úbytek nebyl dostatečný, duální agonista GLP-1/GIP je připravený jako další krok.';
+  if (!alt && key === 'mounjaro' && d.goal !== 'Výrazně zhubnout') alt = 'Pokud byste chtěl/a začít mírněji, je agonista GLP-1 plnohodnotnou alternativou.';
 
   return { key, drug: DRUGS[key], why, alt, altDrug: DRUGS[other], offLabel: bmi < 27 };
 }
