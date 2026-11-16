@@ -2030,29 +2030,31 @@ function renderResult() {
    drží CONFIG.PROGRAM v aeternum_screening_apps_script.gs; když se mění ceník,
    mění se na obou místech. */
 const PLANS = {
-  /* Light je nejlevnější vstup do programu: lékař, e-recepty, krevní testy
-     a koordinátor. Nic kolem životního stylu — ten je od Standardu výš. */
+  /* Light je nejlevnější vstup do programu: lékař, e-recepty a koordinátor.
+     Krevní testy na začátku má každý ve vstupním screeningu, ale průběžné
+     si v Lightu klient platí sám. Nic kolem životního stylu — ten je od
+     Standardu výš. */
   light: {
-    key: 'light', name: 'Telehealth Light', emoji: '🪶', price: 4970, drugIncluded: false,
-    /* Co program obsahuje a co ne. Křížek je tam schválně: klient má na první
-       pohled vědět, že lék v ceně není, ne to zjistit až v lékárně. */
+    key: 'light', name: 'Telehealth Light', emoji: '🪶', price: 3970, drugIncluded: false,
+    /* Co program obsahuje a co ne. Křížky jsou tam schválně: klient má na
+       první pohled vědět, že lék ani průběžné krevní testy v ceně nejsou,
+       ne to zjistit až v lékárně nebo na odběru. */
     feats: [
       [1, 'Lékařský dohled a e-recepty'],
       [1, 'Podpora odborného koordinátora'],
       [1, 'Flexibilní program bez vázanosti'],
-      [1, 'Krevní testy zahrnuty v programu'],
-      [0, 'Medikace není zahrnuta v ceně programu*']
+      [0, 'Medikace není zahrnuta v ceně programu*'],
+      [0, 'Pravidelné krevní testy nejsou v ceně programu']
     ],
-    desc: 'Lékařský dohled, e-recepty, krevní testy a podpora koordinátora. Bez tréninkového plánu a jídelníčku.',
+    desc: 'Lékařský dohled, e-recepty a podpora koordinátora. Bez průběžných krevních testů, tréninkového plánu a jídelníčku.',
     tiles: [
       ['👨‍⚕️', 'Lékařský dohled', 'E-recepty a pravidelné online konzultace s lékařem.'],
-      ['📊', 'Krevní testy', 'Sledování metabolických parametrů a reakce organismu.'],
       ['🤝', 'Podpora koordinátora', 'Koordinátor péče po celou dobu programu.'],
       ['🔀', 'Flexibilní program', 'Bez vázanosti a storno poplatku. Kdykoli lze zkrátit i prodloužit.']
     ]
   },
   standard: {
-    key: 'standard', name: 'Telehealth Standard', emoji: '🩺', price: 5970, drugIncluded: false,
+    key: 'standard', name: 'Telehealth Standard', emoji: '🩺', price: 6970, drugIncluded: false,
     feats: [
       [1, 'Lékařský dohled a e-recepty'],
       [1, 'Pravidelná kontrola zdravotního stavu'],
@@ -2064,7 +2066,7 @@ const PLANS = {
       [1, 'Flexibilní program bez vázanosti'],
       [0, 'Medikace není zahrnuta v ceně programu*']
     ],
-    desc: 'Všechno z Lightu a k tomu Aeternum Lifestyle Protocol — tréninkový plán od trenéra a jídelníček s doplňky.',
+    desc: 'Všechno z Lightu a k tomu pravidelné krevní testy a Aeternum Lifestyle Protocol — tréninkový plán od trenéra a jídelníček s doplňky.',
     tiles: [
       ['👨‍⚕️', 'Lékařský dohled', 'E-recepty a pravidelné online konzultace s lékařem.'],
       ['📊', 'Pravidelné krevní testy a screening', 'Sledování metabolických parametrů a reakce organismu.'],
@@ -2074,7 +2076,7 @@ const PLANS = {
     ]
   },
   premium: {
-    key: 'premium', name: 'Telehealth Premium', emoji: '💎', price: 6970, drugIncluded: false,
+    key: 'premium', name: 'Telehealth Premium', emoji: '💎', price: 8970, drugIncluded: false,
     feats: [
       [1, 'Prioritní konzultace bez čekání'],
       [1, 'Pokročilý Aeternum Lifestyle Protocol'],
