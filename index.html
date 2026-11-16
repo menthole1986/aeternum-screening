@@ -2031,22 +2031,23 @@ function renderResult() {
    mění se na obou místech. */
 const PLANS = {
   /* Light je nejlevnější vstup do programu: lékař, e-recepty a koordinátor.
-     Krevní testy na začátku má každý ve vstupním screeningu, ale průběžné
-     si v Lightu klient platí sám. Nic kolem životního stylu — ten je od
-     Standardu výš. */
+     Krevní testy klient dostává jako u ostatních programů, jen je má mimo
+     cenu — každé třetí období mu na faktuře přibude řádek na odběr. Proto je
+     u nich křížek a hned u něj cena: kdo neví, že bude platit, platit nechce.
+     Nic kolem životního stylu — ten je od Standardu výš. */
   light: {
     key: 'light', name: 'Telehealth Light', emoji: '🪶', price: 3970, drugIncluded: false,
     /* Co program obsahuje a co ne. Křížky jsou tam schválně: klient má na
        první pohled vědět, že lék ani průběžné krevní testy v ceně nejsou,
-       ne to zjistit až v lékárně nebo na odběru. */
+       ne to zjistit až v lékárně nebo na faktuře. */
     feats: [
       [1, 'Lékařský dohled a e-recepty'],
       [1, 'Podpora odborného koordinátora'],
       [1, 'Flexibilní program bez vázanosti'],
       [0, 'Medikace není zahrnuta v ceně programu*'],
-      [0, 'Pravidelné krevní testy nejsou v ceně programu']
+      [0, 'Pravidelné krevní testy za příplatek 2 490 Kč']
     ],
-    desc: 'Lékařský dohled, e-recepty a podpora koordinátora. Bez průběžných krevních testů, tréninkového plánu a jídelníčku.',
+    desc: 'Lékařský dohled, e-recepty a podpora koordinátora. Krevní testy za příplatek, bez tréninkového plánu a jídelníčku.',
     tiles: [
       ['👨‍⚕️', 'Lékařský dohled', 'E-recepty a pravidelné online konzultace s lékařem.'],
       ['🤝', 'Podpora koordinátora', 'Koordinátor péče po celou dobu programu.'],
