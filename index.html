@@ -877,7 +877,7 @@ const CFG = {
      místo něj dozví e-mail a telefon. Kód zůstává: přepnout na true stačí,
      kdyby se ukázalo, že chybí. */
   askEnabled: false,
-  /* Aeternum Lifestyle Protokol — nabídka pro toho, komu GLP-1 nedáme.
+  /* Aeternum Lifestyle Protocol — nabídka pro toho, komu GLP-1 nedáme.
      Komu se ukáže, řeší protokolVhodny(); nabízí se jen tam, kde protokol
      opravdu patří, a u poruchy příjmu potravy, těhotenství, onkologie ani
      u BMI pod 20 se neukáže. */
@@ -1360,7 +1360,7 @@ function protocolHTML(R) {
              'tréninkový plán ve variantách'];
   return `<div class="callback">
     <p class="small-caps">Mohlo by Vám pomoct něco jiného</p>
-    <h3 class="grad" style="margin-top:10px">Aeternum Lifestyle Protokol</h3>
+    <h3 class="grad" style="margin-top:10px">Aeternum Lifestyle Protocol</h3>
     <p class="lead" style="margin-top:10px">Není to léčba a není to na předpis. Je to plán, který Vám postaví výživový specialista, trenér a odborník na longevity — na základě komplexních krevních testů, měření InBody a vstupní konzultace.</p>
     <div style="margin-top:14px">${b.map(x => `<div class="ben hl">${icon('i-check')}<span>${esc(x)}</span></div>`).join('')}</div>
     <div class="price" style="margin-top:16px"><b>${fmt(CFG.protocolPrice)} Kč</b><span class="small-caps">jednorázově</span></div>
@@ -2030,24 +2030,23 @@ function renderResult() {
    drží CONFIG.PROGRAM v aeternum_screening_apps_script.gs; když se mění ceník,
    mění se na obou místech. */
 const PLANS = {
-  /* Light je nejlevnější vstup do programu: lékař, e-recepty a koordinátor.
-     Od 16. 11. 2026 v něm nejsou ani krevní testy — ty jsou od Standardu výš,
-     stejně jako všechno kolem životního stylu. */
+  /* Light je nejlevnější vstup do programu: lékař, e-recepty, krevní testy
+     a koordinátor. Nic kolem životního stylu — ten je od Standardu výš. */
   light: {
-    key: 'light', name: 'Telehealth Light', emoji: '🪶', price: 2970, drugIncluded: false,
-    /* Co program obsahuje a co ne. Křížky jsou tam schválně: klient má na
-       první pohled vědět, že lék ani krevní testy v ceně nejsou, ne to
-       zjistit až v lékárně nebo na odběru. */
+    key: 'light', name: 'Telehealth Light', emoji: '🪶', price: 4970, drugIncluded: false,
+    /* Co program obsahuje a co ne. Křížek je tam schválně: klient má na první
+       pohled vědět, že lék v ceně není, ne to zjistit až v lékárně. */
     feats: [
       [1, 'Lékařský dohled a e-recepty'],
       [1, 'Podpora odborného koordinátora'],
       [1, 'Flexibilní program bez vázanosti'],
-      [0, 'Medikace není zahrnuta v ceně programu*'],
-      [0, 'Krevní testy nejsou zahrnuty v programu']
+      [1, 'Krevní testy zahrnuty v programu'],
+      [0, 'Medikace není zahrnuta v ceně programu*']
     ],
-    desc: 'Lékařský dohled, e-recepty a podpora koordinátora. Bez krevních testů, tréninkového plánu a jídelníčku.',
+    desc: 'Lékařský dohled, e-recepty, krevní testy a podpora koordinátora. Bez tréninkového plánu a jídelníčku.',
     tiles: [
       ['👨‍⚕️', 'Lékařský dohled', 'E-recepty a pravidelné online konzultace s lékařem.'],
+      ['📊', 'Krevní testy', 'Sledování metabolických parametrů a reakce organismu.'],
       ['🤝', 'Podpora koordinátora', 'Koordinátor péče po celou dobu programu.'],
       ['🔀', 'Flexibilní program', 'Bez vázanosti a storno poplatku. Kdykoli lze zkrátit i prodloužit.']
     ]
@@ -2065,7 +2064,7 @@ const PLANS = {
       [1, 'Flexibilní program bez vázanosti'],
       [0, 'Medikace není zahrnuta v ceně programu*']
     ],
-    desc: 'Pravidelné kontroly a krevní testy a k tomu Aeternum Lifestyle Protocol — tréninkový plán od trenéra a jídelníček s doplňky.',
+    desc: 'Všechno z Lightu a k tomu Aeternum Lifestyle Protocol — tréninkový plán od trenéra a jídelníček s doplňky.',
     tiles: [
       ['👨‍⚕️', 'Lékařský dohled', 'E-recepty a pravidelné online konzultace s lékařem.'],
       ['📊', 'Pravidelné krevní testy a screening', 'Sledování metabolických parametrů a reakce organismu.'],
@@ -2103,7 +2102,7 @@ const PLANS = {
       [1, 'Medikace je v ceně programu'],
       [1, 'Osobní i online konzultace na klinice v Praze'],
       [1, 'Pravidelné krevní testy'],
-      [1, 'Aeternum Longevity Protokol'],
+      [1, 'Aeternum Lifestyle Protocol'],
       [1, 'Podpora odborného koordinátora'],
       [1, 'Flexibilní program bez vázanosti']
     ],
@@ -2112,7 +2111,7 @@ const PLANS = {
       ['💉', 'Léky v ceně programu', 'All-inclusive — žádné skryté poplatky a žádné placení v lékárně.'],
       ['👨‍⚕️', 'Lékařský dohled', 'Osobní i online konzultace na klinice v Praze.'],
       ['📊', 'Pravidelné krevní testy', 'Sledování metabolických parametrů a reakce organismu.'],
-      ['📘', 'Aeternum Longevity Protokol', 'Individuální nutriční, suplementační, tréninkový a regenerační plán.'],
+      ['📘', 'Aeternum Lifestyle Protocol', 'Individuální nutriční, suplementační, tréninkový a regenerační plán.'],
       ['🔀', 'Flexibilní program', 'Bez vázanosti a storno poplatku. Kdykoli lze zkrátit i prodloužit.']
     ]
   }
@@ -2442,8 +2441,8 @@ function bookFormHTML() {
     <p class="fine">${ai ? 'Adresu potřebujeme na daňový doklad, telefon kdybychom se nemohli spojit e-mailem.' : 'Telefon potřebujeme na SMS připomínku 24 hodin před konzultací, adresu na daňový doklad.'}</p>
     ${cboxHTML('c-book', S.a.bookConsent, 'Souhlasím, aby mě Aeternum Clinic kontaktovala ohledně rezervované konzultace.', 'bookConsent')}
     ${cboxHTML('c-now', S.a.startNow, ai
-      ? 'Chci konzultaci spustit hned po zaplacení. Vím, že až ji budu mít, nebudu ji už moct do 14 dnů bezdůvodně zrušit a chtít peníze zpátky.'
-      : 'Chci, aby konzultace proběhla ve vybraném termínu. Vím, že až proběhne, nebudu ji už moct do 14 dnů bezdůvodně zrušit a chtít peníze zpátky.', 'startNow')}
+      ? 'Chci konzultaci spustit hned po zaplacení. Beru na vědomí, že jakmile proběhne, peníze se už nevrací.'
+      : 'Chci, aby konzultace proběhla ve vybraném termínu. Beru na vědomí, že jakmile proběhne, peníze se už nevrací.', 'startNow')}
     <button type="button" class="btn pri" id="bookBtn"${ai || slot ? '' : ' disabled'}>${ai ? `Objednat za ${fmt(CFG.advisorPrice)} Kč` : 'Rezervovat termín'}</button>
     <span class="err" id="bookErr" role="alert"></span></div>`;
 }
