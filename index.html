@@ -2030,32 +2030,34 @@ function renderResult() {
    drží CONFIG.PROGRAM v aeternum_screening_apps_script.gs; když se mění ceník,
    mění se na obou místech. */
 const PLANS = {
-  /* Light je nejlevnější vstup do programu: lékař, e-recepty a sledování
-     zdravotního stavu. Nic kolem životního stylu — ten je od Standardu výš. */
+  /* Light je nejlevnější vstup do programu: lékař, e-recepty a koordinátor.
+     Od 16. 11. 2026 v něm nejsou ani krevní testy — ty jsou od Standardu výš,
+     stejně jako všechno kolem životního stylu. */
   light: {
-    key: 'light', name: 'Telehealth Light', emoji: '🪶', price: 4970, drugIncluded: false,
-    /* Co program obsahuje a co ne. Křížek je tam schválně: klient má na první
-       pohled vědět, že lék v ceně není, ne to zjistit až v lékárně. */
+    key: 'light', name: 'Telehealth Light', emoji: '🪶', price: 2970, drugIncluded: false,
+    /* Co program obsahuje a co ne. Křížky jsou tam schválně: klient má na
+       první pohled vědět, že lék ani krevní testy v ceně nejsou, ne to
+       zjistit až v lékárně nebo na odběru. */
     feats: [
       [1, 'Lékařský dohled a e-recepty'],
-      [1, 'Průběžný screening zdravotního stavu'],
       [1, 'Podpora odborného koordinátora'],
       [1, 'Flexibilní program bez vázanosti'],
-      [0, 'Medikace není zahrnuta v ceně programu*']
+      [0, 'Medikace není zahrnuta v ceně programu*'],
+      [0, 'Krevní testy nejsou zahrnuty v programu']
     ],
-    desc: 'Lékařský dohled, e-recepty a průběžný screening zdravotního stavu. Bez tréninkového plánu a jídelníčku.',
+    desc: 'Lékařský dohled, e-recepty a podpora koordinátora. Bez krevních testů, tréninkového plánu a jídelníčku.',
     tiles: [
       ['👨‍⚕️', 'Lékařský dohled', 'E-recepty a pravidelné online konzultace s lékařem.'],
-      ['📊', 'Průběžný screening', 'Sledování metabolických parametrů a reakce organismu.'],
       ['🤝', 'Podpora koordinátora', 'Koordinátor péče po celou dobu programu.'],
       ['🔀', 'Flexibilní program', 'Bez vázanosti a storno poplatku. Kdykoli lze zkrátit i prodloužit.']
     ]
   },
   standard: {
-    key: 'standard', name: 'Telehealth Standard', emoji: '🩺', price: 6970, drugIncluded: false,
+    key: 'standard', name: 'Telehealth Standard', emoji: '🩺', price: 5970, drugIncluded: false,
     feats: [
       [1, 'Lékařský dohled a e-recepty'],
-      [1, 'Průběžný screening zdravotního stavu'],
+      [1, 'Pravidelná kontrola zdravotního stavu'],
+      [1, 'Pravidelné krevní testy a screening'],
       [1, 'Aeternum Lifestyle Protocol'],
       [1, 'Tréninkový plán od fitness trenéra'],
       [1, 'Jídelníček a doporučení doplňků stravy'],
@@ -2063,24 +2065,25 @@ const PLANS = {
       [1, 'Flexibilní program bez vázanosti'],
       [0, 'Medikace není zahrnuta v ceně programu*']
     ],
-    desc: 'Všechno z Lightu a k tomu Aeternum Lifestyle Protocol — tréninkový plán od trenéra a jídelníček s doplňky.',
+    desc: 'Pravidelné kontroly a krevní testy a k tomu Aeternum Lifestyle Protocol — tréninkový plán od trenéra a jídelníček s doplňky.',
     tiles: [
       ['👨‍⚕️', 'Lékařský dohled', 'E-recepty a pravidelné online konzultace s lékařem.'],
-      ['📊', 'Vstupní a průběžný screening', 'Sledování metabolických parametrů a reakce organismu.'],
+      ['📊', 'Pravidelné krevní testy a screening', 'Sledování metabolických parametrů a reakce organismu.'],
       ['📘', 'Aeternum Lifestyle Protocol', 'Tréninkový plán od trenéra, jídelníček a suplementace od nutričního terapeuta.'],
       ['🤝', 'Podpora koordinátora', 'Koordinátor péče a program manager po celou dobu programu.'],
       ['🔀', 'Flexibilní program', 'Bez vázanosti a storno poplatku. Kdykoli lze zkrátit i prodloužit.']
     ]
   },
   premium: {
-    key: 'premium', name: 'Telehealth Premium', emoji: '💎', price: 9970, drugIncluded: false,
+    key: 'premium', name: 'Telehealth Premium', emoji: '💎', price: 6970, drugIncluded: false,
     feats: [
-      [1, 'Všechno ze Standardu'],
       [1, 'Prioritní konzultace bez čekání'],
       [1, 'Pokročilý Aeternum Lifestyle Protocol'],
       [1, 'Optimalizace metabolického zdraví a longevity'],
       [1, 'Konzultace s fitness trenérem (1× měsíčně)'],
+      [1, 'Tréninkový plán s detailním rozpisem'],
       [1, 'Konzultace s výživovým specialistou (1× měsíčně)'],
+      [1, 'Jídelníček na míru a přesný plán suplementace'],
       [1, 'Konzultace s psychologem (1× za tři měsíce)'],
       [1, 'Flexibilní program bez vázanosti'],
       [0, 'Medikace není zahrnuta v ceně programu*']
