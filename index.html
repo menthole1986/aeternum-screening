@@ -2030,32 +2030,34 @@ function renderResult() {
    drží CONFIG.PROGRAM v aeternum_screening_apps_script.gs; když se mění ceník,
    mění se na obou místech. */
 const PLANS = {
-  /* Light je nejlevnější vstup do programu: lékař, e-recepty a koordinátor.
-     Krevní testy klient dostává jako u ostatních programů, jen je má mimo
-     cenu — každé třetí období mu na faktuře přibude řádek na odběr. Proto je
-     u nich křížek a hned u něj cena: kdo neví, že bude platit, platit nechce.
-     Nic kolem životního stylu — ten je od Standardu výš. */
+  /* Light je nejlevnější vstup do programu: lékař, e-recepty a kontrolní
+     krevní testy. Koordinátora péče nemá — ten je od Standardu výš a je to
+     hlavní rozdíl mezi oběma programy. Nic kolem životního stylu tu taky není.
+
+     Do 17. 11. 2026 to bylo obráceně: koordinátora Light měl a krevní testy
+     si připlácel. Marcel ten příplatek zrušil, testy jsou od té doby v ceně
+     všech programů. Zrcadlí `labIncluded` v CONFIG.PROGRAM.PLANS na serveru. */
   light: {
     key: 'light', name: 'Telehealth Light', emoji: '🪶', price: 3970, drugIncluded: false,
     /* Co program obsahuje a co ne. Křížky jsou tam schválně: klient má na
-       první pohled vědět, že lék ani průběžné krevní testy v ceně nejsou,
-       ne to zjistit až v lékárně nebo na faktuře. */
+       první pohled vědět, že lék v ceně není a že koordinátora péče tenhle
+       program nemá, ne to zjistit až v lékárně nebo za pochodu. */
     feats: [
       [1, 'Lékařský dohled a e-recepty'],
-      [1, 'Podpora odborného koordinátora'],
+      [1, 'Pravidelné kontrolní krevní testy v ceně'],
       [1, 'Flexibilní program bez vázanosti'],
       [0, 'Medikace není zahrnuta v ceně programu*'],
-      [0, 'Pravidelné krevní testy za příplatek 2 490 Kč']
+      [0, 'Bez podpory odborného koordinátora']
     ],
-    desc: 'Lékařský dohled, e-recepty a podpora koordinátora. Krevní testy za příplatek, bez tréninkového plánu a jídelníčku.',
+    desc: 'Lékařský dohled, e-recepty a pravidelné kontrolní krevní testy. Bez koordinátora péče, bez tréninkového plánu a jídelníčku.',
     tiles: [
       ['👨‍⚕️', 'Lékařský dohled', 'E-recepty a pravidelné online konzultace s lékařem.'],
-      ['🤝', 'Podpora koordinátora', 'Koordinátor péče po celou dobu programu.'],
+      ['📊', 'Kontrolní krevní testy', 'V ceně programu, bez doplatku. Sledujeme, jak tělo na terapii reaguje.'],
       ['🔀', 'Flexibilní program', 'Bez vázanosti a storno poplatku. Kdykoli lze zkrátit i prodloužit.']
     ]
   },
   standard: {
-    key: 'standard', name: 'Telehealth Standard', emoji: '🩺', price: 6970, drugIncluded: false,
+    key: 'standard', name: 'Telehealth Standard', emoji: '🩺', price: 5970, drugIncluded: false,
     feats: [
       [1, 'Lékařský dohled a e-recepty'],
       [1, 'Pravidelná kontrola zdravotního stavu'],
@@ -2067,7 +2069,7 @@ const PLANS = {
       [1, 'Flexibilní program bez vázanosti'],
       [0, 'Medikace není zahrnuta v ceně programu*']
     ],
-    desc: 'Všechno z Lightu a k tomu pravidelné krevní testy a Aeternum Lifestyle Protocol — tréninkový plán od trenéra a jídelníček s doplňky.',
+    desc: 'Všechno z Lightu a k tomu podpora koordinátora péče a Aeternum Lifestyle Protocol — tréninkový plán od trenéra a jídelníček s doplňky.',
     tiles: [
       ['👨‍⚕️', 'Lékařský dohled', 'E-recepty a pravidelné online konzultace s lékařem.'],
       ['📊', 'Pravidelné krevní testy a screening', 'Sledování metabolických parametrů a reakce organismu.'],
