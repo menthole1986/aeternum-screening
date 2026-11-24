@@ -363,10 +363,6 @@ input:autofill{background:transparent;color:var(--ink)}
 .var .mo{font-size:clamp(22px,calc(1.8*var(--u)),calc(36px*var(--k)));font-weight:700;line-height:1.35;white-space:nowrap;padding-bottom:2px;margin-top:8px;background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
 .var .pr{font-size:clamp(15px,calc(1.15*var(--u)),calc(22px*var(--k)));font-weight:700;margin-top:6px}
 .var .ds{font-size:clamp(12px,calc(.8*var(--u)),calc(15px*var(--k)));color:var(--muted);line-height:1.5;margin-top:10px}
-/* Název programu na dvou řádcích: „Telehealth" nahoře, stupeň pod ním.
-   Pevná výška drží ceny na všech třech kartách ve stejné lince. */
-.var .nm1,.var .nm2{display:block}
-.var .nm2{color:var(--ink)}
 /* Co program obsahuje a co ne. Zarovnáno vlevo schválně — zbytek karty je
    na střed, ale seznam se na střed čte mizerně. */
 .feats{list-style:none;margin:clamp(14px,calc(1.2*var(--u)),calc(22px*var(--k))) 0 0;padding:0;text-align:left;display:grid;gap:clamp(7px,calc(.6*var(--u)),calc(11px*var(--k)))}
@@ -881,7 +877,7 @@ const CFG = {
      Komu se ukáže, řeší protokolVhodny(); nabízí se jen tam, kde protokol
      opravdu patří, a u poruchy příjmu potravy, těhotenství, onkologie ani
      u BMI pod 20 se neukáže. */
-  protocolPrice: 4970,
+  protocolPrice: 3970,
   /* Nabídka je odložená, dokud nestojí platební cesta (Synlab, InBody, kdo
      protokol píše). Kód je hotový — přepnout na true a zapnout na serveru
      vlastnost FEATURE_PROTOCOL = 1. */
@@ -2001,11 +1997,9 @@ function renderResult() {
 
   <section class="rsec"><div class="split">
     <div class="ctr"><span class="eyebrow">Váš program</span><h2 class="h-l radek">Jak povedeme Vaši péči</h2>
-      <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))">${isPrague()
-        ? 'Jste v dosahu naší ordinace, takže si můžete vybrat ze všech programů — tři na dálku a jeden s osobní péčí a léky v ceně.'
-        : 'Péči lze ve Vašem případě vést i na dálku: konzultace i vstupní lékařské vyšetření online a lék na e-recept si vyzvednete v lékárně.'}</p>
-      ${isPrague() ? '' : `<p class="lead mensi" style="margin-top:clamp(12px,calc(1*var(--u)),calc(18px*var(--k)))">Chceme Vás ale upozornit na jednu důležitou věc: <b>minimálně jednou za celou terapii Vás potřebujeme vidět osobně.</b> A tady máte na výběr: buď přijedete rovnou na vstupní lékařské vyšetření, nebo si ho uděláte online a přijedete osobně až na kontrolní vyšetření na konci třetího měsíce po zahájení terapie.</p>
-      <p class="lead mensi" style="margin-top:clamp(14px,calc(1.2*var(--u)),calc(22px*var(--k)))">Aktuálně máme ordinaci pro osobní návštěvy jenom v Praze, ale v novém roce přibude ještě možnost vyšetření v Brně, v Olomouci nebo ve Zlíně.</p>`}
+      <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))">Péči vedeme na dálku: konzultace i vstupní lékařské vyšetření online a lék na e-recept si vyzvednete v kterékoli lékárně.</p>
+      <p class="lead mensi" style="margin-top:clamp(12px,calc(1*var(--u)),calc(18px*var(--k)))">Chceme Vás ale upozornit na jednu důležitou věc: <b>minimálně jednou za celou terapii Vás potřebujeme vidět osobně.</b> A tady máte na výběr: buď přijedete rovnou na vstupní lékařské vyšetření, nebo si ho uděláte online a přijedete osobně až na kontrolní vyšetření na konci třetího měsíce po zahájení terapie.</p>
+      <p class="lead mensi" style="margin-top:clamp(14px,calc(1.2*var(--u)),calc(22px*var(--k)))">Aktuálně máme ordinaci pro osobní návštěvy jenom v Praze, ale v novém roce přibude ještě možnost vyšetření v Brně, v Olomouci nebo ve Zlíně.</p>
       </div>
     <div class="ctr plans"><p class="selfpay">Aeternum Clinic je <b>privátní klinika bez smlouvy se zdravotními pojišťovnami</b> — vstupní screening, program i léčivo si hradíte sami, v režimu samoplátce.</p><p class="fine" style="margin:0 0 clamp(4px,calc(.4*var(--u)),calc(8px*var(--k)))">Vyberte si z následujících programů péče.</p>${variantsHTML(R)}</div>
   </div></section>
@@ -2014,7 +2008,7 @@ function renderResult() {
     <div class="ctr"><span class="eyebrow">První krok</span><h2 class="h-l">Vstupní<br><span class="light">konzultace</span></h2>
       <div class="bul"><div>Seznámení s terapií redukce hmotnosti</div><div>Zodpovězení nejčastějších dotazů</div></div>
       <span class="eyebrow" style="margin-top:clamp(38px,calc(3.2*var(--u)),calc(58px*var(--k)))">Druhý krok</span>
-          <p class="notice" style="margin-top:clamp(10px,calc(0.8*var(--u)),calc(14px*var(--k)))"><span>⚠️</span><span>Pro posouzení vhodnosti terapie Vás čeká krevní screening a lékařské vyšetření (4 970 Kč). Hradí se až po vstupní konzultaci, teď neplatíte nic navíc.</span></p>
+          <p class="notice" style="margin-top:clamp(10px,calc(0.8*var(--u)),calc(14px*var(--k)))"><span>⚠️</span><span>Pro posouzení vhodnosti terapie Vás čeká krevní screening a lékařské vyšetření (${fmt(CFG.protocolPrice)} Kč). Hradí se až po vstupní konzultaci, teď neplatíte nic navíc.</span></p>
           <p class="reassure" style="margin-top:12px"><b>Ze screeningu nemusíte mít žádné obavy.</b> Ověřujeme jím, že je pro Vás terapie bezpečná a v jaké dávce začít. Dotazník, který jste právě vyplnil(a), už to podstatné vyloučil; krevní testy a lékař to jen potvrdí a nastaví.</p></div>
     <div class="panel" id="panel">${bookingHTML()}</div>
   </div></section>
@@ -2030,94 +2024,57 @@ function renderResult() {
    drží CONFIG.PROGRAM v aeternum_screening_apps_script.gs; když se mění ceník,
    mění se na obou místech. */
 const PLANS = {
-  /* Light je nejlevnější vstup do programu: lékař, e-recepty a kontrolní
-     krevní testy. Koordinátora péče nemá — ten je od Standardu výš a je to
-     hlavní rozdíl mezi oběma programy. Nic kolem životního stylu tu taky není.
+  /* Dva programy, oba na e-recept a pro celou republiku stejné. Léčivo není
+     v ceně ani u jednoho — klient si ho vyzvedne v kterékoli lékárně a platí
+     ho tam sám. Křížek u medikace je v kartě schválně: má to být vidět hned,
+     ne až v lékárně.
 
-     Do 17. 11. 2026 to bylo obráceně: koordinátora Light měl a krevní testy
-     si připlácel. Marcel ten příplatek zrušil, testy jsou od té doby v ceně
-     všech programů. Zrcadlí `labIncluded` v CONFIG.PROGRAM.PLANS na serveru. */
-  light: {
-    key: 'light', name: 'Telehealth Light', emoji: '🪶', price: 3970, drugIncluded: false,
-    /* Co program obsahuje a co ne. Křížky jsou tam schválně: klient má na
-       první pohled vědět, že lék v ceně není a že koordinátora péče tenhle
-       program nemá, ne to zjistit až v lékárně nebo za pochodu. */
-    feats: [
-      [1, 'Lékařský dohled a e-recepty'],
-      [1, 'Pravidelné kontrolní krevní testy v ceně'],
-      [1, 'Flexibilní program bez vázanosti'],
-      [0, 'Medikace není zahrnuta v ceně programu*'],
-      [0, 'Bez podpory odborného koordinátora']
-    ],
-    desc: 'Lékařský dohled, e-recepty a pravidelné kontrolní krevní testy. Bez koordinátora péče, bez tréninkového plánu a jídelníčku.',
-    tiles: [
-      ['👨‍⚕️', 'Lékařský dohled', 'E-recepty a pravidelné online konzultace s lékařem.'],
-      ['📊', 'Kontrolní krevní testy', 'V ceně programu, bez doplatku. Sledujeme, jak tělo na terapii reaguje.'],
-      ['🔀', 'Flexibilní program', 'Bez vázanosti a storno poplatku. Kdykoli lze zkrátit i prodloužit.']
-    ]
-  },
+     Do 24. 11. 2026 byly programy čtyři: Light, Standard, Premium a pražský
+     All-inclusive, který měl léčivo v ceně a proto se jeho cena řídila BMI.
+     Mimopražský viděl tři, Pražák všechny čtyři. */
   standard: {
-    key: 'standard', name: 'Telehealth Standard', emoji: '🩺', price: 5970, drugIncluded: false,
+    key: 'standard', name: 'Standard', emoji: '🩺', price: 5970, drugIncluded: false,
     feats: [
-      [1, 'Lékařský dohled a e-recepty'],
-      [1, 'Pravidelná kontrola zdravotního stavu'],
+      [1, 'Lékařský dohled a e-recept každý měsíc'],
+      [1, 'Kontrola u lékaře každé tři měsíce (30 minut)'],
       [1, 'Pravidelné krevní testy a screening'],
+      [1, 'Podpora odborného koordinátora'],
       [1, 'Aeternum Lifestyle Protocol'],
       [1, 'Tréninkový plán od fitness trenéra'],
       [1, 'Jídelníček a doporučení doplňků stravy'],
-      [1, 'Podpora odborného koordinátora'],
       [1, 'Flexibilní program bez vázanosti'],
       [0, 'Medikace není zahrnuta v ceně programu*']
     ],
-    desc: 'Všechno z Lightu a k tomu podpora koordinátora péče a Aeternum Lifestyle Protocol — tréninkový plán od trenéra a jídelníček s doplňky.',
+    desc: 'Lékařský dohled, e-recept každý měsíc, kontrolní krevní testy a kontrola u lékaře každé tři měsíce, koordinátor péče a Aeternum Lifestyle Protocol.',
     tiles: [
-      ['👨‍⚕️', 'Lékařský dohled', 'E-recepty a pravidelné online konzultace s lékařem.'],
-      ['📊', 'Pravidelné krevní testy a screening', 'Sledování metabolických parametrů a reakce organismu.'],
+      ['👨‍⚕️', 'Lékařský dohled', 'E-recept na každý měsíc a kontrola u lékaře jednou za tři měsíce.'],
+      ['📊', 'Pravidelné krevní testy a screening', 'V ceně programu, bez doplatku. Sledujeme, jak tělo na terapii reaguje.'],
       ['📘', 'Aeternum Lifestyle Protocol', 'Tréninkový plán od trenéra, jídelníček a suplementace od nutričního terapeuta.'],
       ['🤝', 'Podpora koordinátora', 'Koordinátor péče a program manager po celou dobu programu.'],
       ['🔀', 'Flexibilní program', 'Bez vázanosti a storno poplatku. Kdykoli lze zkrátit i prodloužit.']
     ]
   },
   premium: {
-    key: 'premium', name: 'Telehealth Premium', emoji: '💎', price: 8970, drugIncluded: false,
+    key: 'premium', name: 'Premium', emoji: '💎', price: 9970, drugIncluded: false,
     feats: [
-      [1, 'Prioritní konzultace bez čekání'],
-      [1, 'Pokročilý Aeternum Lifestyle Protocol'],
-      [1, 'Optimalizace metabolického zdraví a longevity'],
-      [1, 'Konzultace s fitness trenérem (1× měsíčně)'],
-      [1, 'Tréninkový plán s detailním rozpisem'],
+      [1, 'Všechno ze Standardu'],
+      [1, 'Kontrola u lékaře každý měsíc (20 minut)'],
       [1, 'Konzultace s výživovým specialistou (1× měsíčně)'],
       [1, 'Jídelníček na míru a přesný plán suplementace'],
-      [1, 'Konzultace s psychologem (1× za tři měsíce)'],
-      [1, 'Flexibilní program bez vázanosti'],
+      [1, 'Konzultace s fitness trenérem (1× měsíčně)'],
+      [1, 'Tréninkový plán s detailním rozpisem'],
+      [1, 'Pokročilý Aeternum Lifestyle Protocol'],
+      [1, 'Prioritní termíny bez čekání'],
+      [1, 'Psycholog na vyžádání'],
       [0, 'Medikace není zahrnuta v ceně programu*']
     ],
-    desc: 'Všechno ze Standardu a k tomu prioritní konzultace, vlastní tým a péče o metabolické zdraví a dlouhověkost.',
+    desc: 'Všechno ze Standardu a k tomu kontrola u lékaře každý měsíc, výživový specialista a fitness trenér jednou měsíčně a prioritní termíny.',
     tiles: [
-      ['⚡', 'Prioritní konzultace', 'Bez čekání, kdykoli potřebujete.'],
-      ['🏋️', 'Trenér každý měsíc', 'Konzultace 30 minut a individuální tréninkový plán s detailním rozpisem.'],
+      ['👨‍⚕️', 'Lékař každý měsíc', 'Kontrola 20 minut, úprava dávkování a e-recept na další období.'],
       ['🥗', 'Výživový specialista každý měsíc', 'Konzultace 30 minut, jídelníček na míru a přesný plán suplementace.'],
-      ['🧠', 'Psycholog jednou za tři měsíce', 'Konzultace 30 minut.'],
-      ['📘', 'Pokročilý Lifestyle Protocol', 'Cílený plán pro optimální metabolické zdraví a dlouhověkost.']
-    ]
-  },
-  praha: {
-    key: 'praha', name: 'All-inclusive', emoji: '💉', price: null, drugIncluded: true,
-    feats: [
-      [1, 'Medikace je v ceně programu'],
-      [1, 'Osobní i online konzultace na klinice v Praze'],
-      [1, 'Pravidelné krevní testy'],
-      [1, 'Aeternum Lifestyle Protocol'],
-      [1, 'Podpora odborného koordinátora'],
-      [1, 'Flexibilní program bez vázanosti']
-    ],
-    desc: 'Kombinace osobních a online konzultací na klinice v Praze. Medikace je v ceně programu.',
-    tiles: [
-      ['💉', 'Léky v ceně programu', 'All-inclusive — žádné skryté poplatky a žádné placení v lékárně.'],
-      ['👨‍⚕️', 'Lékařský dohled', 'Osobní i online konzultace na klinice v Praze.'],
-      ['📊', 'Pravidelné krevní testy', 'Sledování metabolických parametrů a reakce organismu.'],
-      ['📘', 'Aeternum Lifestyle Protocol', 'Individuální nutriční, suplementační, tréninkový a regenerační plán.'],
-      ['🔀', 'Flexibilní program', 'Bez vázanosti a storno poplatku. Kdykoli lze zkrátit i prodloužit.']
+      ['🏋️', 'Trenér každý měsíc', 'Konzultace 30 minut a individuální tréninkový plán s detailním rozpisem.'],
+      ['📘', 'Pokročilý Lifestyle Protocol', 'Cílený plán pro optimální metabolické zdraví a dlouhověkost.'],
+      ['⚡', 'Prioritní termíny', 'Bez čekání, kdykoli potřebujete.']
     ]
   }
 };
@@ -2133,41 +2090,26 @@ const DRUG_PACKS = {
 const PRICELIST_URL = 'https://www.benu.cz/ukazkovy-cenik-dalsich-leku-na-diabetes';
 
 // Praha je velká a dojezd do 20 km taky — kdo je blízko, uvidí všechno a vybere si sám.
-function isPrague() { return String(S.a.region || '').indexOf('Praha') === 0; }
-
-// All-inclusive má léčivo v ceně, takže cena roste s BMI: vyšší BMI znamená
-// vyšší dávku a dražší balení. Wegovy stojí ve všech našich dávkách stejně,
-// u něj proto BMI cenu nemění.
-function prahaPrice(bmi, drugKey) {
-  if (drugKey === 'wegovy') return 11970;
-  const b = Number(bmi) || 0;
-  return b < 25 ? 11970 : b < 30 ? 12970 : b < 35 ? 13970 : 14970;
-}
-
 /* Délka: spočítáme odhad a doporučíme dva měsíce navíc jako rezervu. Není to
    závazek ani cena — program jde kdykoli ukončit i prodloužit bez poplatku. */
 function recMonths(R) { return Math.max(1, Math.round(Number(R.months) || 6)) + 2; }
 
-function programPlans(R) {
-  const drugKey = R.rec && R.rec.key;
-  const praha = Object.assign({}, PLANS.praha, { price: prahaPrice(R.bmi, drugKey) });
-  // Doporučujeme to, co klientovi dává nejmenší starost: v Praze program
-  // s léky v ceně, na dálku Standard. Light je levnější vstup pro toho, kdo
-  // jde hlavně po ceně, Premium ukazuje, co víc jde — ani jedno není to,
-  // co bychom tlačili.
-  const tele = [
-    Object.assign({}, PLANS.light),
+/* Od 24. 11. 2026 jsou programy dva a nabídka je pro celou republiku stejná.
+   Léčivo si klient vyzvedne na e-recept kdekoli, takže na bydlišti nezáleží
+   a cena se neřídí BMI — to platilo jen u All-inclusive, kde bylo léčivo
+   v ceně. Doporučujeme Standard; Premium ukazuje, co jde navíc.
+   Zrcadlí programVariants_ v aeternum_screening_apps_script.gs. */
+function programPlans() {
+  return [
     Object.assign({}, PLANS.standard, { rec: true }),
     Object.assign({}, PLANS.premium)
   ];
-  if (!isPrague()) return tele;
-  return tele.map(v => Object.assign({}, v, { rec: false })).concat([Object.assign({}, praha, { rec: true })]);
 }
 
 // Programy si jde proklikat a porovnat; dlaždice pod nimi ukazují vybraný.
 let VAR_LIST = [], VAR_PICK = 0;
 function variantsHTML(R) {
-  VAR_LIST = programPlans(R);
+  VAR_LIST = programPlans();
   const rec = VAR_LIST.findIndex(v => v.rec);
   VAR_PICK = rec < 0 ? 0 : rec;
   const cols = VAR_LIST.length === 2 ? ' two' : VAR_LIST.length === 4 ? ' four' : '';
@@ -2181,12 +2123,10 @@ function variantsHTML(R) {
     <div class="varinfo" id="varinfo">${varInfoHTML(R)}</div>`;
 }
 
-/* „Telehealth" a stupeň pod sebe, ať mají všechny tři karty nadpis stejně
-   vysoký. Programy bez toho prefixu (All-inclusive) zůstávají na jednom řádku. */
-function nameHTML(name) {
-  const m = String(name).match(/^(Telehealth)\s+(.+)$/i);
-  return m ? `<span class="nm1">${esc(m[1])}</span><span class="nm2">${esc(m[2])}</span>` : esc(name);
-}
+/* Názvy programů jsou od 24. 11. 2026 jednoslovné, takže se nerozdělují.
+   Dokud se jmenovaly „Telehealth Standard", lámal se prefix na vlastní
+   řádek, aby měly všechny karty nadpis stejně vysoký. */
+function nameHTML(name) { return esc(name); }
 
 /* Co program obsahuje, zelenou fajfkou, a co ne, červeným křížkem. Nahradilo
    to popisný odstavec — ten se klientovi ukáže v panelu pod kartami, takže
