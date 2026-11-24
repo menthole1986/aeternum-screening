@@ -987,6 +987,36 @@ const Q = {
     marcel: 'Teď několik otázek na bezpečnost. Jsou krátké, ale důležité — rozhodují o tom, jestli je terapie vůbec možná.',
     label: 'Léčil/a jste se někdy se zánětem slinivky břišní (pankreatitida)?', opts: ['Ne', 'Ano']
   },
+  /* Zánět slinivky v anamnéze není absolutní kontraindikace. SPC Mounjara má
+     v bodě 4.3 jedinou — přecitlivělost na tirzepatid — a zánět slinivky je
+     až v bodě 4.4 mezi zvláštními upozorněními, tedy „používat s opatrností“.
+     Rozhoduje příčina, odstup a dnešní stav, proto se na ně doptáme.
+
+     Do 24. 11. 2026 dalo „Ano“ rovnou stopku a skóre 0/10, takže člověk
+     s doběhlou atakou před deseti lety skončil stejně jako chronik.
+     Změnu konzultoval Marcel s MUDr. Májovským. */
+  pankPricina: {
+    marcel: 'Děkuju. Zánět slinivky sám o sobě terapii nevylučuje — záleží na tom, co ho způsobilo.',
+    label: 'Co ho podle lékařů způsobilo?',
+    opts: ['Žlučové kameny', 'Dietní chyba nebo alkohol', 'Po vyšetření ERCP', 'Vysoké triglyceridy', 'Příčina se nezjistila', 'Jde o chronický zánět slinivky', 'Vznikl při léčbě lékem na hubnutí'],
+    rows: true, cond: d => d.pank === 'Ano'
+  },
+  pankZlucnik: {
+    marcel: 'A ještě k těm kamenům — po odebrání žlučníku příčina obvykle pomine.',
+    label: 'Máte ještě žlučník?', opts: ['Byl mi odebrán', 'Mám ho'], rows: true,
+    cond: d => d.pank === 'Ano' && d.pankPricina === 'Žlučové kameny'
+  },
+  pankKdy: {
+    marcel: 'Jak dlouho je to zpátky?',
+    label: 'Kdy to bylo?', opts: ['V posledních 12 měsících', 'Před 1 až 5 lety', 'Před více než 5 lety'], rows: true,
+    cond: d => d.pank === 'Ano' && pankDoptat(d)
+  },
+  pankTed: {
+    marcel: 'A poslední ke slinivce: jak jste na tom dnes?',
+    label: 'Jak jste na tom se slinivkou teď?',
+    opts: ['Bez potíží, poslední kontrola byla v pořádku', 'Občas mívám potíže', 'Léčím se s tím i teď'], rows: true,
+    cond: d => d.pank === 'Ano' && pankDoptat(d)
+  },
   men2: {
     marcel: 'Rodinná anamnéza. Když si nejste jistý/á, klidně zvolte „Nevím“.',
     label: 'Vyskytl se ve Vaší rodině medulární karcinom štítné žlázy nebo syndrom MEN 1/2?', opts: ['Ne', 'Ano', 'Nevím']
@@ -1011,7 +1041,7 @@ const Q = {
   },
   /* Dvě otázky, které terapii vylučují úplně. Ptáme se na ně tady, ne až
      u objednávky vyšetření: klienta, kterého stejně odmítneme, nemáme nechat
-     zaplatit 4 970 za screening, aby se to dozvěděl od lékaře. */
+     zaplatit 3 970 za screening, aby se to dozvěděl od lékaře. */
   onko: {
     marcel: 'Ještě dvě otázky, u kterých musím mít jistotu.',
     label: 'Léčíte se nebo jste se léčil/a s onkologickým onemocněním?',
@@ -1186,9 +1216,54 @@ const BMI_FLOOR = 25;
 // Pod touhle hranicí už nejde o „málo nadváhy“, ale o skutečně nízkou váhu.
 const BMI_LOW = 20;
 
+/* Když už víme, že to terapii vylučuje, nemá smysl se doptávat dál. */
+function pankDoptat(d) {
+  return !!d.pankPricina
+    && d.pankPricina !== 'Jde o chronický zánět slinivky'
+    && d.pankPricina !== 'Vznikl při léčbě lékem na hubnutí';
+}
+
+/* Kdy zánět slinivky terapii opravdu vylučuje. Všechno ostatní je věc lékaře
+   na vstupním vyšetření, ne screeningu — ten má jen rozřadit, ne rozhodnout. */
+function pankStopka(d) {
+  if (d.pank !== 'Ano') return null;
+  if (d.pankPricina === 'Jde o chronický zánět slinivky') return 'chronického zánětu slinivky břišní';
+  /* Zánět, který vznikl při léčbě GLP-1, je podle SPC jediný případ, kdy se
+     lék už nikdy nesmí nasadit znovu. */
+  if (d.pankPricina === 'Vznikl při léčbě lékem na hubnutí') return 'zánětu slinivky, který vznikl při léčbě přípravkem ze skupiny GLP-1';
+  if (d.pankTed === 'Léčím se s tím i teď') return 'probíhající léčby zánětu slinivky břišní';
+  return null;
+}
+
+/* Poznámka pro lékaře, ne stopka. Dva odstíny: u jasně doběhlé příhody stačí
+   potvrzení, u nezjištěné příčiny nebo čerstvé ataky se klientovi rovnou řekne,
+   že ho lékař může odmítnout. Platí za vyšetření dopředu a nemá se to
+   dozvědět až v ordinaci. */
+function cautionText(d) {
+  const out = [];
+  if (d.pank === 'Ano') {
+    const detail = [d.pankPricina, d.pankZlucnik === 'Byl mi odebrán' ? 'žlučník odebrán' : '', d.pankKdy, d.pankTed]
+      .filter(Boolean).map(x => String(x).toLowerCase()).join(', ');
+    const opatrne = !d.pankPricina
+      || d.pankPricina === 'Příčina se nezjistila'
+      || d.pankPricina === 'Vysoké triglyceridy'
+      || d.pankKdy === 'V posledních 12 měsících'
+      || d.pankTed === 'Občas mívám potíže';
+    out.push('V anamnéze máte zánět slinivky' + (detail ? ' (' + detail + ')' : '') + '. ' +
+      (opatrne
+        ? 'Terapii to nevylučuje, ale rozhoduje o ní lékař na vstupním vyšetření — zaměří se na slinivku a může terapii nedoporučit.'
+        : 'Není to překážka, která by terapii vylučovala, ale posoudí ji lékař na vstupním vyšetření.'));
+  }
+  if (d.ppp === 'Ano' && d.pppType !== 'Záchvatovité přejídání') {
+    out.push('Vzhledem k anamnéze poruchy příjmu potravy posoudí vhodnost terapie lékař na vstupním vyšetření.');
+  }
+  return out.join(' ');
+}
+
 function hardContra(d) {
   const bmi = num(d.bmi);
-  if (d.pank === 'Ano') return 'anamnézy zánětu slinivky břišní (pankreatitida)';
+  const pank = pankStopka(d);
+  if (pank) return pank;
   if (d.men2 === 'Ano') return 'výskytu syndromu MEN 1/2 nebo medulárního karcinomu štítné žlázy v rodinné anamnéze';
   // Záchvatovité přejídání stopka není — GLP-1 na ně naopak zabírá.
   // Anorexie a bulimie jsou stopka, dokud léčba probíhá; v remisi rozhodne lékař.
@@ -1337,9 +1412,8 @@ function compute() {
   // nesvítí 9/10 u klienta, kterému program nedoporučujeme.
   const sc = contra ? { score: 0, label: 'Nevhodná — kontraindikace', cls: 'crit' } : calcScore(d);
   const rec = contra ? null : recommend(d);
-  // Remise poruchy příjmu potravy terapii nebrání, ale lékař o ní má vědět.
-  const caution = (!contra && d.ppp === 'Ano' && d.pppType !== 'Záchvatovité přejídání')
-    ? 'Vzhledem k anamnéze poruchy příjmu potravy posoudí vhodnost terapie lékař na vstupním vyšetření.' : '';
+  // Co terapii nebrání, ale lékař o tom má vědět.
+  const caution = contra ? '' : cautionText(d);
   const w = num(d.weight) || 0, own = num(d.targetWeight) || 0, tw = num(clinicalTarget(d)) || own;
   return { bmi: d.bmi, months, contra, caution, score: sc, rec, lose: Math.max(0, Math.round(w - tw)),
     weight: w, target: tw, ownTarget: own, retargeted: own > 0 && tw > 0 && tw < own };
@@ -2782,7 +2856,7 @@ function payload() {
     gender: S.a.gender, region: S.a.region || '', age: num(S.a.age), height: num(S.a.height), weight: num(S.a.weight),
     targetWeight: num(S.a.targetWeight), bmi: R.bmi, bmiCategory: bmiCategory(R.bmi),
     goal: S.a.goal, glp1: S.a.glp1, glp1drug: S.a.glp1drug || '', glp1sat: S.a.glp1sat || '',
-    answers: { pank: S.a.pank, men2: S.a.men2, diab: S.a.diab, zluc: S.a.zluc, led: S.a.led, ppp: S.a.ppp, pppType: S.a.pppType || '', pppStav: S.a.pppStav || '', onko: S.a.onko || '', tehot: S.a.tehot || '', leky: S.a.leky || '', alergie: S.a.alergie || '',
+    answers: { pank: S.a.pank, pankPricina: S.a.pankPricina || '', pankZlucnik: S.a.pankZlucnik || '', pankKdy: S.a.pankKdy || '', pankTed: S.a.pankTed || '', men2: S.a.men2, diab: S.a.diab, zluc: S.a.zluc, led: S.a.led, ppp: S.a.ppp, pppType: S.a.pppType || '', pppStav: S.a.pppStav || '', onko: S.a.onko || '', tehot: S.a.tehot || '', leky: S.a.leky || '', alergie: S.a.alergie || '',
       pohybTyp: S.a.pohybTyp || '', odpocaty: S.a.odpocaty || '', odkud: S.a.odkud || '', stit: S.a.stit, kard: S.a.kard, pohyb: S.a.pohyb, spanek: S.a.spanek },
     score: R.score.score, scoreLabel: R.score.label, contraindication: R.contra || '', doctorNote: R.caution || '',
     reservationIntent: S.booking.intent || '', bookingType: S.booking.type || '',
