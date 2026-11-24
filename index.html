@@ -877,7 +877,11 @@ const CFG = {
      Komu se ukáže, řeší protokolVhodny(); nabízí se jen tam, kde protokol
      opravdu patří, a u poruchy příjmu potravy, těhotenství, onkologie ani
      u BMI pod 20 se neukáže. */
-  protocolPrice: 3970,
+  protocolPrice: 4970,
+  /* Vstupní screening a lékařské vyšetření. Vlastní číslo, ne protocolPrice —
+     to je cena Lifestyle Protocolu, jiného produktu pro jiné lidi. Zrcadlí
+     CONFIG.ENTRY_SCREENING_PRICE v aeternum_screening_apps_script.gs. */
+  examPrice: 3970,
   /* Nabídka je odložená, dokud nestojí platební cesta (Synlab, InBody, kdo
      protokol píše). Kód je hotový — přepnout na true a zapnout na serveru
      vlastnost FEATURE_PROTOCOL = 1. */
@@ -2008,7 +2012,7 @@ function renderResult() {
     <div class="ctr"><span class="eyebrow">První krok</span><h2 class="h-l">Vstupní<br><span class="light">konzultace</span></h2>
       <div class="bul"><div>Seznámení s terapií redukce hmotnosti</div><div>Zodpovězení nejčastějších dotazů</div></div>
       <span class="eyebrow" style="margin-top:clamp(38px,calc(3.2*var(--u)),calc(58px*var(--k)))">Druhý krok</span>
-          <p class="notice" style="margin-top:clamp(10px,calc(0.8*var(--u)),calc(14px*var(--k)))"><span>⚠️</span><span>Pro posouzení vhodnosti terapie Vás čeká krevní screening a lékařské vyšetření (${fmt(CFG.protocolPrice)} Kč). Hradí se až po vstupní konzultaci, teď neplatíte nic navíc.</span></p>
+          <p class="notice" style="margin-top:clamp(10px,calc(0.8*var(--u)),calc(14px*var(--k)))"><span>⚠️</span><span>Pro posouzení vhodnosti terapie Vás čeká krevní screening a lékařské vyšetření (${fmt(CFG.examPrice)} Kč). Hradí se až po vstupní konzultaci, teď neplatíte nic navíc.</span></p>
           <p class="reassure" style="margin-top:12px"><b>Ze screeningu nemusíte mít žádné obavy.</b> Ověřujeme jím, že je pro Vás terapie bezpečná a v jaké dávce začít. Dotazník, který jste právě vyplnil(a), už to podstatné vyloučil; krevní testy a lékař to jen potvrdí a nastaví.</p></div>
     <div class="panel" id="panel">${bookingHTML()}</div>
   </div></section>
