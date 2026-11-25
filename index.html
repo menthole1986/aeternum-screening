@@ -984,9 +984,13 @@ const Q = {
     opts: ['Nemám zkušenosti', 'Vím o nich, nezkoušel/a jsem', 'Zkoušel/a jsem v minulosti', 'Aktuálně užívám'],
     rows: true
   },
+  /* Dřív si klient vybíral z nabídky značek. Jenže screening je volně
+     přístupný a vyjmenovat léky na předpis znamená je nabízet — proto si
+     je napíše sám. Když je neví, napíše to; lékař se doptá. */
   glp1drug: {
     marcel: 'A který preparát to byl?',
-    label: 'Jaký lék jste užíval/a?', opts: ['Wegovy®', 'Ozempic®', 'Mounjaro®', 'Jiný'], cond: d => d.glp1 === 'Zkoušel/a jsem v minulosti' || d.glp1 === 'Aktuálně užívám'
+    label: 'Jaký lék jste užíval/a?', type: 'text', placeholder: 'Název léku / nevím',
+    cond: d => d.glp1 === 'Zkoušel/a jsem v minulosti' || d.glp1 === 'Aktuálně užívám'
   },
   glp1sat: {
     marcel: 'A jak jste s ním byl/a spokojený/á? Tohle nám hodně napoví.',
@@ -1354,8 +1358,11 @@ function recommend(d) {
   const lossPct = w > 0 ? ((w - tw) / w) * 100 : 0;
   const prev = d.glp1drug || '';
   const sat = d.glp1sat || '';
-  const hadSema = prev === 'Wegovy®' || prev === 'Ozempic®';
-  const hadTirz = prev === 'Mounjaro®';
+  /* Klient si lék píše vlastními slovy, takže se hledá podřetězec a počítá
+     se s překlepy i s tím, že napíše účinnou látku místo názvu. */
+  const prevKey = prev.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const hadSema = /wegov|ozempi|rybelsus|semaglut/.test(prevKey);
+  const hadTirz = /mounjar|zepbound|tirzepat/.test(prevKey);
   const dysgly = ['Prediabetes', 'Inzulinová rezistence', 'PMOS (PCOS)', 'Diabetes 2. typu'].includes(d.diab);
 
   let key, why, alt = null;
@@ -1371,7 +1378,7 @@ function recommend(d) {
   if (bmi >= 23 && bmi <= 27) {
     return {
       key: 'wegovy', drug: DRUGS.wegovy, altDrug: DRUGS.mounjaro, alt: null,
-      why: 'Duální agonista GLP-1/GIP je z téhle třídy nejsilnější a míří hlavně na klienty s BMI nad 30, kde jde o velký úbytek. U Vás jde spíš o kosmetickou redukci a klid od jídla, a na to je Wegovy vhodnější: je mírnější, dávkuje se jemněji a drží tempo úbytku tak, aby šel dolů tuk a ne svaly.',
+      why: 'Duální agonista GLP-1/GIP je z téhle třídy nejsilnější a míří hlavně na klienty s BMI nad 30, kde jde o velký úbytek. U Vás jde spíš o kosmetickou redukci a klid od jídla, a na to je agonista GLP-1 vhodnější: je mírnější, dávkuje se jemněji a drží tempo úbytku tak, aby šel dolů tuk a ne svaly.',
       offLabel: bmi < 27
     };
   }
@@ -1755,7 +1762,7 @@ function intakeHTML() {
       <div class="ufrow one">${ufHTML('digestion', 'Zažívací potíže', { placeholder: 'Nadýmání, zácpa, pálení žáhy…' })}</div>
       <div class="ufrow one">${ufHTML('gyn', 'Gynekologické či hormonální potíže', { placeholder: 'PMOS (PCOS), inzulinová rezistence…' })}</div>
       <div class="ufrow one">${ufHTML('pastAttempts', 'Dřívější pokusy o hubnutí a výsledek', { placeholder: 'Co jste zkoušel(a) a jak to dopadlo' })}</div>
-      <div class="ufrow one">${ufHTML('pastDrugs', 'Užíval(a) jste léky na hubnutí?', { placeholder: 'Ne / Saxenda, Ozempic…' })}</div>
+      <div class="ufrow one">${ufHTML('pastDrugs', 'Užíval(a) jste léky na hubnutí?', { placeholder: 'Ne / název léku' })}</div>
       <div class="ufrow one">${ufHTML('diet', 'Typický jídelníček — snídaně, oběd, večeře, svačiny, sladké', { placeholder: 'Klidně upřímně a stručně' })}</div>
       <div class="ufrow one">${ufHTML('water', 'Kolik čisté vody denně', { placeholder: '1,5 l' })}</div>
       <div class="ufrow one">${ufHTML('alcohol', 'Vztah k alkoholu', { placeholder: 'Nepiji / příležitostně' })}</div>
