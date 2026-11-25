@@ -365,6 +365,9 @@ input:autofill{background:transparent;color:var(--ink)}
 .var .badge{position:absolute;top:0;left:50%;transform:translate(-50%,-50%);background:var(--grad);color:#fff;font-size:clamp(10px,calc(.68*var(--u)),calc(12px*var(--k)));font-weight:700;letter-spacing:.12em;padding:5px 12px;border-radius:999px;white-space:nowrap}
 .var .emoji{font-size:clamp(20px,calc(1.5*var(--u)),calc(26px*var(--k)));line-height:1}
 .var .nm{font-size:clamp(10px,calc(.72*var(--u)),calc(13px*var(--k)));letter-spacing:.24em;text-transform:uppercase;color:var(--dim);font-weight:700;margin-top:8px}
+/* Kde program funguje. All-inclusive je jen pro Prahu a okolí, protože si pro
+   léčivo klient chodí osobně — ostatní jedou po celé republice stejně. */
+.var .kde{font-size:clamp(9px,calc(.62*var(--u)),calc(11px*var(--k)));letter-spacing:.2em;text-transform:uppercase;color:var(--dim);opacity:.75;font-weight:700;margin-top:6px}
 .var .mo{font-size:clamp(22px,calc(1.8*var(--u)),calc(36px*var(--k)));font-weight:700;line-height:1.35;white-space:nowrap;padding-bottom:2px;margin-top:8px;background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
 .var .pr{font-size:clamp(15px,calc(1.15*var(--u)),calc(22px*var(--k)));font-weight:700;margin-top:6px}
 .var .ds{font-size:clamp(12px,calc(.8*var(--u)),calc(15px*var(--k)));color:var(--muted);line-height:1.5;margin-top:10px}
@@ -2142,7 +2145,7 @@ const PLANS = {
      All-inclusive, který měl léčivo v ceně a proto se jeho cena řídila BMI.
      Mimopražský viděl tři, Pražák všechny čtyři. */
   standard: {
-    key: 'standard', name: 'Standard', emoji: '🩺', price: 5970, drugIncluded: false,
+    key: 'standard', name: 'Standard', emoji: '🩺', price: 5970, drugIncluded: false, kde: 'Online / osobně',
     feats: [
       [1, 'Lékařský dohled a e-recept každý měsíc'],
       [1, 'Kontrola u lékaře každé tři měsíce (30 minut)'],
@@ -2152,9 +2155,9 @@ const PLANS = {
       [1, 'Tréninkový plán od fitness trenéra'],
       [1, 'Jídelníček a doporučení doplňků stravy'],
       [1, 'Flexibilní program bez vázanosti'],
-      [0, 'Medikace není zahrnuta v ceně programu*']
+      [0, 'Léčivo není součástí ceny programu*']
     ],
-    desc: 'Lékařský dohled, e-recept každý měsíc, kontrolní krevní testy a kontrola u lékaře každé tři měsíce, koordinátor péče a Aeternum Lifestyle Protocol.',
+    desc: 'Ideální volba pro klienty, kteří chtějí mít jistotu, pravidelné kontroly a profesionální vedení po celé ČR.',
     tiles: [
       ['👨‍⚕️', 'Lékařský dohled', 'E-recept na každý měsíc a kontrola u lékaře jednou za tři měsíce.'],
       ['📊', 'Pravidelné krevní testy a screening', 'V ceně programu, bez doplatku. Sledujeme, jak tělo na terapii reaguje.'],
@@ -2164,7 +2167,7 @@ const PLANS = {
     ]
   },
   premium: {
-    key: 'premium', name: 'Premium', emoji: '💎', price: 9970, drugIncluded: false,
+    key: 'premium', name: 'Premium', emoji: '💎', price: 9970, drugIncluded: false, kde: 'Online / osobně',
     feats: [
       [1, 'Všechno ze Standardu'],
       [1, 'Kontrola u lékaře každý měsíc (20 minut)'],
@@ -2174,16 +2177,45 @@ const PLANS = {
       [1, 'Tréninkový plán s detailním rozpisem'],
       [1, 'Pokročilý Aeternum Lifestyle Protocol'],
       [1, 'Prioritní termíny bez čekání'],
-      [1, 'Psycholog na vyžádání'],
-      [0, 'Medikace není zahrnuta v ceně programu*']
+      [1, 'Konzultace s psychoterapeutem (na vyžádání)'],
+      [0, 'Léčivo není součástí ceny programu*']
     ],
-    desc: 'Všechno ze Standardu a k tomu kontrola u lékaře každý měsíc, výživový specialista a fitness trenér jednou měsíčně a prioritní termíny.',
+    desc: 'Prémiová péče pro náročné — pravidelné kontroly a profesionální vedení na dálku po celé ČR.',
     tiles: [
       ['👨‍⚕️', 'Lékař každý měsíc', 'Kontrola 20 minut, úprava dávkování a e-recept na další období.'],
       ['🥗', 'Výživový specialista každý měsíc', 'Konzultace 30 minut, jídelníček na míru a přesný plán suplementace.'],
       ['🏋️', 'Trenér každý měsíc', 'Konzultace 30 minut a individuální tréninkový plán s detailním rozpisem.'],
       ['📘', 'Pokročilý Lifestyle Protocol', 'Cílený plán pro optimální metabolické zdraví a dlouhověkost.'],
       ['⚡', 'Prioritní termíny', 'Bez čekání, kdykoli potřebujete.']
+    ]
+  },
+  /* All-inclusive se 25. 11. 2026 vrátil do nabídky. Jako jediný má léčivo
+     v ceně, proto se jeho cena řídí BMI — vyšší BMI znamená vyšší dávku
+     a dražší balení — a proto `price: null`, dopočítá se až podle klienta.
+
+     Na kartě proto nestojí „od 11 970" jako na webu, ale konkrétní cena toho
+     klienta. „Od" by tady znamenalo „nejméně tolik", a to už by nebyla pravda.
+     Ukazuje se všem: říká o sobě, že je pro Prahu a okolí, a kdo si pro léčivo
+     dojede, vybere si sám. */
+  praha: {
+    key: 'praha', name: 'All-inclusive', emoji: '💉', price: null, drugIncluded: true,
+    kde: 'Praha a okolí',
+    feats: [
+      [1, 'Léčivo je součástí ceny programu'],
+      [1, 'Individuální program'],
+      [1, 'Osobní a online konzultace'],
+      [1, 'Kontrola u lékaře nejméně jednou měsíčně'],
+      [1, 'Kontrolní krevní testy v ceně programu'],
+      [1, 'Aeternum Lifestyle Protocol'],
+      [1, 'Flexibilní program bez vázanosti']
+    ],
+    desc: 'Individuální péče pro klienty, kteří chtějí full servis a léčivo v ceně programu. Objednáme ho za Vás a v lékárně BENU v Chlumčanského ulici na Vás čeká, dokud si ho osobně nevyzvednete.',
+    tiles: [
+      ['💉', 'Léčivo v ceně programu', 'Objednáme ho s předstihem a čeká na Vás v lékárně BENU, Chlumčanského 497/5, Praha 8. V lékárně už nic neplatíte. V ceně je léčivo v síle 2,5 až 5 mg. Když lékař dávku zvedne, změní se i cena programu — u Mounjara začíná od 7,5 mg na 15 970 Kč měsíčně. Celá tabulka je v ceníku a vždycky Vám to řekneme, než se dávka zvedne.'],
+      ['👨‍⚕️', 'Lékař nejméně jednou měsíčně', 'Osobně na klinice v Praze, nebo online — a další kontroly podle toho, jak je potřeba.'],
+      ['📊', 'Pravidelné krevní testy', 'V ceně programu, bez doplatku. Sledujeme, jak tělo na terapii reaguje.'],
+      ['📘', 'Aeternum Lifestyle Protocol', 'Individuální nutriční, suplementační, tréninkový a regenerační plán.'],
+      ['🔀', 'Flexibilní program', 'Bez vázanosti a storno poplatku. Kdykoli lze zkrátit i prodloužit.']
     ]
   }
 };
@@ -2203,22 +2235,36 @@ const PRICELIST_URL = 'https://www.benu.cz/ukazkovy-cenik-dalsich-leku-na-diabet
    závazek ani cena — program jde kdykoli ukončit i prodloužit bez poplatku. */
 function recMonths(R) { return Math.max(1, Math.round(Number(R.months) || 6)) + 2; }
 
-/* Od 24. 11. 2026 jsou programy dva a nabídka je pro celou republiku stejná.
-   Léčivo si klient vyzvedne na e-recept kdekoli, takže na bydlišti nezáleží
-   a cena se neřídí BMI — to platilo jen u All-inclusive, kde bylo léčivo
-   v ceně. Doporučujeme Standard; Premium ukazuje, co jde navíc.
-   Zrcadlí programVariants_ v aeternum_screening_apps_script.gs. */
-function programPlans() {
+/* All-inclusive má jako jediný léčivo v ceně, takže jeho cena roste s BMI:
+   vyšší BMI znamená vyšší dávku a dražší balení. Wegovy stojí ve všech
+   dávkách, které používáme, stejně — u něj proto BMI cenu nemění.
+   Zrcadlí prahaPrice_ v aeternum_screening_apps_script.gs. */
+function prahaPrice(bmi, drugKey) {
+  if (drugKey === 'wegovy') return 11970;
+  const b = Number(bmi) || 0;
+  return b < 25 ? 11970 : b < 30 ? 12970 : b < 35 ? 13970 : 14970;
+}
+
+/* Tři programy pro celou republiku. Standard a Premium jedou na e-recept,
+   takže na bydlišti nezáleží; All-inclusive má léčivo v ceně a vyzvedává se
+   osobně v Praze. Od 25. 11. 2026 se ukazuje všem — na kartě stojí, že je
+   pro Prahu a okolí, a kdo si pro léčivo dojede, vybere si sám. Dřív ho
+   mimopražský klient vůbec neviděl.
+   Zrcadlí NABIZENE_VARIANTY a programVariants_
+   v aeternum_screening_apps_script.gs — když se mění jedno, musí se obě. */
+function programPlans(R) {
+  const drugKey = R && R.rec && R.rec.key;
   return [
     Object.assign({}, PLANS.standard, { rec: true }),
-    Object.assign({}, PLANS.premium)
+    Object.assign({}, PLANS.premium),
+    Object.assign({}, PLANS.praha, { price: prahaPrice(R && R.bmi, drugKey) })
   ];
 }
 
 // Programy si jde proklikat a porovnat; dlaždice pod nimi ukazují vybraný.
 let VAR_LIST = [], VAR_PICK = 0;
 function variantsHTML(R) {
-  VAR_LIST = programPlans();
+  VAR_LIST = programPlans(R);
   const rec = VAR_LIST.findIndex(v => v.rec);
   VAR_PICK = rec < 0 ? 0 : rec;
   const cols = VAR_LIST.length === 2 ? ' two' : VAR_LIST.length === 4 ? ' four' : '';
@@ -2226,7 +2272,7 @@ function variantsHTML(R) {
      si kliká sám a svítí mu ten, na který klikl. Doporučení zůstává jen jako
      výchozí volba, aby na něco koukal hned. */
   return `<div class="vars${cols}">${VAR_LIST.map((v, i) => `<button type="button" class="var${i === VAR_PICK ? ' sel' : ''}" data-var="${i}" aria-pressed="${i === VAR_PICK}">
-      <div class="emoji">${v.emoji}</div><div class="nm">${nameHTML(v.name)}</div>
+      <div class="emoji">${v.emoji}</div>${v.kde ? `<div class="kde">${esc(v.kde)}</div>` : ''}<div class="nm">${nameHTML(v.name)}</div>
       <div class="mo" data-nonbsp>${fmt(v.price)} Kč</div><div class="pr">měsíčně</div>
       ${featsHTML(v)}</button>`).join('')}</div>
     <div class="varinfo" id="varinfo">${varInfoHTML(R)}</div>`;
