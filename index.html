@@ -211,7 +211,12 @@ body.fixed main{min-height:0;overflow:hidden}
 
 /* ---------- otázky ---------- */
 .qcount{display:flex;align-items:center;gap:18px;margin-top:clamp(20px,calc(2.9*var(--u)),calc(56px*var(--k)))}
-.qcount .segs i{width:clamp(22px,calc(2.3*var(--u)),calc(44px*var(--k)))}
+/* Segmentů je tolik, kolik má sekce otázek, a Bezpečnost jich má po doplnění
+   otázek na pankreatitidu patnáct. S pevnou šířkou řádek přetekl ze sloupce
+   s Marcelem až do textu otázky vpravo. Teď se o místo dělí: původní šířka
+   zůstává jako strop, ale když se jich tam tolik nevejde, zúží se. */
+.qcount .segs{flex:0 1 auto;min-width:0}
+.qcount .segs i{flex:1 1 0;width:auto;min-width:4px;max-width:clamp(22px,calc(2.3*var(--u)),calc(44px*var(--k)))}
 .qtext{font-size:clamp(23px,calc(2.6*var(--u)),calc(50px*var(--k)));font-weight:600;line-height:1.2;letter-spacing:-.005em;text-wrap:balance;margin:0}
 .qtext.long{font-size:clamp(21px,calc(2.1*var(--u)),calc(40px*var(--k)))}
 .qhint{margin-top:14px;font-size:clamp(14px,calc(.95*var(--u)),calc(18px*var(--k)));color:var(--muted);line-height:1.55}
@@ -551,6 +556,7 @@ h3.grad,.h3grad{display:block;width:fit-content;align-self:flex-start;background
   .logo.big .wm span{font-size:9px}
   .segs{gap:5px}
   .segs i,.qcount .segs i{width:14px}
+  .qcount .segs i{max-width:14px}
   .contacts{gap:12px}
   .contacts a{width:26px;height:26px}
   main{padding-top:20px;padding-bottom:18px}
@@ -1021,10 +1027,17 @@ const Q = {
     marcel: 'Rodinná anamnéza. Když si nejste jistý/á, klidně zvolte „Nevím“.',
     label: 'Vyskytl se ve Vaší rodině medulární karcinom štítné žlázy nebo syndrom MEN 1/2?', opts: ['Ne', 'Ano', 'Nevím']
   },
+  /* PMOS je ženská diagnóza, takže ji mužům nenabízíme — ani v otázce, ani
+     mezi odpověďmi. Proto jsou tady label i opts funkce. */
   diab: {
     marcel: 'Cukr a inzulin hrají při volbě preparátu velkou roli.',
-    label: 'Byl/a jste diagnostikován/a s poruchou cukru nebo PMOS?',
-    opts: ['Ne', 'Prediabetes', 'Inzulinová rezistence', 'PMOS (PCOS)', 'Diabetes 2. typu', 'Diabetes 1. typu'], rows: true
+    label: d => d.gender === 'Muž'
+      ? 'Byl jste diagnostikován s poruchou cukru?'
+      : 'Byl/a jste diagnostikován/a s poruchou cukru nebo PMOS?',
+    opts: d => d.gender === 'Muž'
+      ? ['Ne', 'Prediabetes', 'Inzulinová rezistence', 'Diabetes 2. typu', 'Diabetes 1. typu']
+      : ['Ne', 'Prediabetes', 'Inzulinová rezistence', 'PMOS (PCOS)', 'Diabetes 2. typu', 'Diabetes 1. typu'],
+    rows: true
   },
   zluc: { marcel: 'Pokračujeme. Tohle je kvůli sledování v průběhu programu.', label: 'Máte potíže se žlučníkem nebo žlučové kameny?', opts: ['Ne', 'Ano'] },
   led:  { marcel: 'Ledviny a játra ovlivňují dávkování.', label: 'Trpíte onemocněním ledvin nebo jater?', opts: ['Ne', 'Ano'] },
@@ -1598,9 +1611,15 @@ function needsNext(id) {
   return S.a[id] != null;                       // u voleb se tlačítko objeví až po odpovědi
 }
 
+/* Label i seznam odpovědí můžou být funkce předchozích odpovědí, ne jen
+   řetězec a pole — viz otázka na cukr, která se mužům ptá bez PMOS. */
+function qLabel(q) { return typeof q.label === 'function' ? q.label(S.a) : q.label; }
+function qOpts(q) { return typeof q.opts === 'function' ? q.opts(S.a) : q.opts; }
+
 function questionHTML(id) {
   const q = Q[id];
-  let h = `<p class="qtext${q.label.length > 68 ? ' long' : ''}" id="qtext">${esc(q.label)}</p>`;
+  const label = qLabel(q);
+  let h = `<p class="qtext${label.length > 68 ? ' long' : ''}" id="qtext">${esc(label)}</p>`;
   if (q.hint) h += `<p class="qhint">${esc(q.hint)}</p>`;
   if (q.type === 'num') {
     const fields = typeof q.fields === 'function' ? q.fields(S.a) : q.fields;
@@ -1616,11 +1635,12 @@ function questionHTML(id) {
     return h;
   }
   const v = S.a[id];
-  const rows = q.rows || q.opts.some(o => o.length > 14);
+  const opts = qOpts(q);
+  const rows = q.rows || opts.some(o => o.length > 14);
   if (rows) {
-    h += `<div class="rows" role="group" aria-labelledby="qtext">${q.opts.map((o, i) => `<button type="button" class="rowopt" data-single="${id}" data-i="${i}" aria-pressed="${v === o}"><span class="mark"></span><span class="lbl">${esc(o)}</span></button>`).join('')}</div>`;
+    h += `<div class="rows" role="group" aria-labelledby="qtext">${opts.map((o, i) => `<button type="button" class="rowopt" data-single="${id}" data-i="${i}" aria-pressed="${v === o}"><span class="mark"></span><span class="lbl">${esc(o)}</span></button>`).join('')}</div>`;
   } else {
-    h += `<div class="opts" role="group" aria-labelledby="qtext">${q.opts.map((o, i) => `<button type="button" class="opt" data-single="${id}" data-i="${i}" aria-pressed="${v === o}">${esc(o)}</button>`).join('')}</div>`;
+    h += `<div class="opts" role="group" aria-labelledby="qtext">${opts.map((o, i) => `<button type="button" class="opt" data-single="${id}" data-i="${i}" aria-pressed="${v === o}">${esc(o)}</button>`).join('')}</div>`;
   }
   return h;
 }
@@ -1834,7 +1854,7 @@ function validate(st) {
     }
     if (q.type === 'text') {
       // Prázdné pole neznamená „nic neberu“, ale „nepřečetl jsem to“.
-      if (!String(S.a[st.id] || '').trim()) return { msg: `Vyplňte prosím: ${q.label}`, focus: st.id };
+      if (!String(S.a[st.id] || '').trim()) return { msg: `Vyplňte prosím: ${qLabel(q)}`, focus: st.id };
       return null;
     }
     if (S.a[st.id] == null) return { msg: 'Vyberte prosím odpověď.' };
@@ -1881,7 +1901,7 @@ document.addEventListener('click', e => {
   if (b.dataset.single != null) return pickSingle(b.dataset.single, +b.dataset.i);
 });
 function pickSingle(id, i) {
-  const val = Q[id].opts[i];
+  const val = qOpts(Q[id])[i];
   S.a[id] = val; save();
   document.querySelectorAll(`[data-single="${id}"]`).forEach(c => c.setAttribute('aria-pressed', +c.dataset.i === i));
   const err = $('#err'); if (err) err.textContent = '';
