@@ -719,7 +719,6 @@ h3.grad,.h3grad{display:block;width:fit-content;align-self:flex-start;background
      hůř, takže na střed jde celý blok, ne jednotlivé řádky */
   .qhint{max-width:34em;margin-left:auto;margin-right:auto}
   .opts{justify-content:center}
-  .mhead .tx{text-align:left}
   .strip{justify-content:center;text-align:center}
   /* živé BMI pod posuvníky je výsledek, ne formulář — patří na střed */
   .qlive{justify-content:center}
@@ -750,6 +749,41 @@ h3.grad,.h3grad{display:block;width:fit-content;align-self:flex-start;background
   .eyebrow{letter-spacing:.26em}
   .vars{row-gap:26px}
   .var{padding:26px 20px}
+}
+
+/* ── telefon: Marcel na střed a typografie bez sirotků ──────────────
+   Marcel 26. 11. 2026: fotka na střed, pod ní jméno, pod ním text, všechno
+   vycentrované. Přepíná to dřívější pravidlo, že jeho text zůstává zleva.
+   `text-wrap` hlídá, aby na posledním řádku nezůstalo viset jedno slovo:
+   `balance` vyváží krátký nadpis do stejně dlouhých řádků, `pretty` nenechá
+   sirotka na konci odstavce. */
+@media (max-width:760px){
+  .mhead{flex-direction:column;align-items:center;text-align:center;gap:10px}
+  .mhead .av{width:56px;height:56px}
+  .mhead .av i{width:12px;height:12px;right:2px;bottom:2px}
+  .mhead .tx{flex:none;width:100%}
+  .mhead .tx b{font-size:10px;letter-spacing:.24em;margin-bottom:8px}
+  .mhead .tx p{font-size:14.5px;line-height:1.55;max-width:30em;margin-left:auto;margin-right:auto}
+
+  /* stejný blok na úvodu a na výsledkových stránkách. Gradientní linka
+     u levého okraje pod vycentrovaným textem nedává smysl, proto padá. */
+  .mcol.keep,.mcol.intro-portrait{flex-direction:column;align-items:center;text-align:center;gap:12px}
+  .mcol.keep .mini,.mcol.intro-portrait .mini{flex-direction:column;align-items:center;gap:8px}
+  .mcol.keep .mini .nm,.mcol.intro-portrait .mini .nm{align-items:center;gap:3px}
+  .mcol.keep .mline,.mcol.intro-portrait .mline{padding-left:0;border-left:0;border-image:none;
+    max-width:30em;margin-left:auto;margin-right:auto;font-size:14.5px;line-height:1.6}
+
+  .h-l,.qtext,.panel h3,h3.grad,.drug h4{text-wrap:balance}
+  /* „Redukce hmotnosti s GLP‑1/GIP“ má být na jednom řádku. Na širokém
+     telefonu se vešlo 24 px, na úzkém už ne, takže se písmo řídí šířkou. */
+  .h-l.radek{font-size:min(24px,6.4vw)}
+  /* Dlouhý výklad zůstává zleva, protože deset vycentrovaných řádků se čte
+     špatně. Aby mezi vycentrovaným okolím nepůsobil jako omyl, dostane linku
+     u levého okraje jako Marcelův vzkaz: čte se to jako vysvětlivka. */
+  .qhint.long{padding-left:14px;border-left:2px solid transparent;border-image:var(--grad-135) 1;
+    max-width:32em;margin-left:auto;margin-right:auto}
+  .lead,.fine,.qhint,.reassure,.mline,.mhead .tx p,.price-note,.summary,
+  .notice span,.selfpay,.bul div,.bens div{text-wrap:pretty}
 }
 
 /* slova s pomlčkou (e-mail, GLP-1) se nelámou na konci řádku */
