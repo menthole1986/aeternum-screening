@@ -2284,6 +2284,7 @@ function renderResult() {
           <span class="pill ${R.score.cls}">${R.score.label}</span>
           <span class="small-caps">Finální posouzení provádí lékař</span></div></div>
       <p class="lead summary fitline" style="max-width:none">Podle Vašich odpovědí nevidím nic, co by terapii bránilo.</p>
+      <p class="lead summary" style="margin-top:10px">Podle Vaší cílové váhy počítáme s programem zhruba na <b style="color:var(--ink)">${recMonths(R)} měsíců</b>. Někomu to jde rychleji, jinému pomaleji, výsledky terapie jsou individuální.</p>
       ${R.retargeted ? `<p class="lead summary" style="margin-top:10px;font-size:clamp(13px,calc(.98*var(--u)),calc(19px*var(--k)))">Konečný cíl si upřesníme na konzultaci.</p>` : ''}
       ${R.bmi < 25 ? `<p class="lead summary" style="margin-top:10px">Vaše BMI je pod 25, takže nejde o klasické hubnutí. O vhodnosti terapie rozhoduje lékař podle vstupního vyšetření.</p>` : ''}
       ${R.caution ? `<div class="alerts" style="margin-top:14px"><div class="alert"><span class="pill sm warn">Posoudí lékař</span>
@@ -2296,7 +2297,7 @@ function renderResult() {
 
   <section class="rsec" id="detail"><div class="split">
     <div class="ctr"><span class="eyebrow">Vaše čísla</span><h2 class="h-l">Odkud<br>startujeme</h2>
-      <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))">Odhad vychází z průměrného tempa úbytku v klinických studiích. Skutečný průběh doladíme na kontrolách.</p>
+      <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))">Odhad vychází z průměrného tempa úbytku v klinických studiích, tedy zhruba 2,5 kg za měsíc. Někdo hubne rychleji, někdo pomaleji, výsledky terapie jsou individuální a skutečný průběh doladíme na kontrolách.</p>
       <p class="lead mensi" style="margin-top:clamp(12px,calc(1*var(--u)),calc(18px*var(--k)))">Doporučená délka počítá s dvěma měsíci navíc oproti výpočtu, jsou rezerva na individuální odezvu a na udržovací fázi, která chrání před jo-jo efektem. Není to závazek: program lze kdykoli ukončit i prodloužit, bez poplatku.</p></div>
     <div>
       <div class="vals">
