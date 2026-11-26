@@ -387,7 +387,9 @@ input:autofill{background:transparent;color:var(--ink)}
    na střed, ale seznam se na střed čte mizerně. */
 .feats{list-style:none;margin:clamp(14px,calc(1.2*var(--u)),calc(22px*var(--k))) 0 0;padding:0;text-align:left;display:grid;gap:clamp(7px,calc(.6*var(--u)),calc(11px*var(--k)))}
 .feats li{display:flex;align-items:flex-start;gap:8px;font-size:clamp(11.5px,calc(.78*var(--u)),calc(14px*var(--k)));line-height:1.45;color:var(--muted)}
-.feats .fi{flex:none;font-size:1.05em;line-height:1.3}
+/* Křížek byl tenký a malý vedle tučné fajfky. ✔ a ✖ jsou pár ve stejné
+   kresbě, takže teď mají stejnou váhu i výšku. */
+.feats .fi{flex:none;font-size:1.18em;line-height:1.25}
 .feats li.ok .fi{color:#2E9E6B}
 /* Text v barvě zbytku seznamu, ale křížek červený — ať je na první pohled
    vidět, že tahle položka v ceně není. */
@@ -457,7 +459,7 @@ input:autofill{background:transparent;color:var(--ink)}
 .seg3 button[aria-pressed="true"] b,.seg3 button[aria-pressed="true"] i{color:#fff}
 .seg3 button[disabled]{cursor:default;opacity:.5}
 .seg3 button[disabled]:hover{border-color:rgba(255,255,255,.22)}
-.seg3 .soon{font-size:9px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--warn)}
+.seg3 .soon{font-size:8px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--warn)}
 .twin{margin-top:clamp(16px,calc(1.3*var(--u)),calc(24px*var(--k)))}
 /* O pixel míň než dřív: text v kartě je dlouhý a při původní velikosti
    přetěžoval zbytek stránky. Marcelovo zadání 26. 11. 2026. */
@@ -560,7 +562,7 @@ h3.grad,.h3grad{display:block;width:fit-content;align-self:flex-start;background
 .send-status.failed .dot{background:var(--crit)}
 .send-status.noconsent .dot{background:var(--warn)}
 .send-status .again{margin-left:12px;padding:0}
-.disclaimer{padding:clamp(22px,calc(2.3*var(--u)),calc(44px*var(--k))) var(--gut) clamp(30px,calc(3*var(--u)),calc(60px*var(--k)));font-size:clamp(10px,calc(.62*var(--u)),calc(12px*var(--k)));color:var(--dim);line-height:1.7;border-top:1px solid rgba(255,255,255,.08);position:relative;z-index:1;text-align:center;max-width:96em;margin:0 auto}
+.disclaimer{padding:clamp(22px,calc(2.3*var(--u)),calc(44px*var(--k))) var(--gut) clamp(30px,calc(3*var(--u)),calc(60px*var(--k)));font-size:clamp(9px,calc(.56*var(--u)),calc(11px*var(--k)));color:var(--dim);line-height:1.7;border-top:1px solid rgba(255,255,255,.08);position:relative;z-index:1;text-align:center;max-width:96em;margin:0 auto}
 .demo-tag{position:fixed;right:12px;bottom:12px;z-index:60;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;background:var(--warn);color:#1a1300;padding:5px 9px;border-radius:6px}
 
 @media (max-width:760px){
@@ -746,6 +748,19 @@ h3.grad,.h3grad{display:block;width:fit-content;align-self:flex-start;background
   .bform .uf label,.bform .uf input{text-align:left}
   /* rozbalovač „celé znění souhlasu“ je nadpis, ne text ke čtení */
   .legal summary{text-align:center}
+
+  /* název programu na kartě byl na telefonu desítka, menší než popisky pod ním */
+  .var .nm{font-size:13px;letter-spacing:.2em}
+  .var .kde{font-size:10.5px}
+
+  /* Řádek odrážky, který se zalomí, měl druhý řádek na středu a vypadal jako omyl */
+  .ctr .bul div,.ctr .bens div{text-align:left}
+
+  /* odstavce v téhle sekci potřebují mezi sebou víc místa */
+  .ctr .bul{row-gap:14px}
+  .ctr .bul + .fine{margin-top:26px}
+  .ctr .notice{margin-top:16px}
+  .ctr .reassure{margin-top:20px}
 
   /* víc vzduchu mezi nadpisem sekce a tím, co pod ním stojí */
   .eyebrow{letter-spacing:.26em}
@@ -1033,6 +1048,10 @@ const CFG = {
      protokol píše). Kód je hotový — přepnout na true a zapnout na serveru
      vlastnost FEATURE_PROTOCOL = 1. */
   protocolEnabled: false,
+  /* Zkratka rovnou k lékaři. Rezervační stránka pozná druh termínu z adresy
+     (`kind=exam`) a klienta si dohledá podle ID screeningu, takže nevyplňuje
+     znovu, co už vyplnil. */
+  bookingUrl: 'https://booking.aeternumclinic.cz/',
   bookingFallback: 'https://calendar.app.google/GA7v3J2WymtP1Hix9',
   mapUrl: 'https://maps.google.com/?q=Bulovka+Medical+%26+Business+Centre+Praha+8',
   storageKey: 'aeternum-screening-v1',
@@ -2335,7 +2354,6 @@ function renderResult() {
   <section class="rsec" id="cta"><div class="split">
     <div class="ctr"><span class="eyebrow">V případě, že si nejste jisti</span><h2 class="h-l">Vstupní<br><span class="light">konzultace</span></h2>
       <div class="bul"><div>Seznámení s terapií redukce hmotnosti</div><div>Zodpovězení nejčastějších dotazů</div><div>Měření InBody</div><div>Příprava podkladů a dokumentace pro lékařské vyšetření</div><div>Žádanka na odběr krve</div></div>
-      <p class="fine" style="margin-top:clamp(14px,calc(1.1*var(--u)),calc(22px*var(--k)))">Vstupní konzultaci můžete přeskočit a objednat se rovnou na vstupní screening a lékařskou konzultaci, kde se na vše důležité ještě doptáme.</p>
       <span class="eyebrow" style="margin-top:clamp(38px,calc(3.2*var(--u)),calc(58px*var(--k)))">Co Vás čeká pak</span>
           <p class="notice" style="margin-top:clamp(10px,calc(0.8*var(--u)),calc(14px*var(--k)))"><span>⚠️</span><span>Pro posouzení vhodnosti terapie je nutné vstupní vyšetření krve, jehož výsledky bude mít lékař k dispozici, až se s Vámi setká osobně nebo online. Cena za odběr i vyšetření je ${fmt(CFG.examPrice)} Kč. Když si vezmete vstupní konzultaci, hradí se tato částka až po ní. Když ji přeskočíte, platí se rovnou při objednání k lékaři.</span></p>
           <p class="reassure" style="margin-top:12px"><b>Ze screeningu nemusíte mít žádné obavy.</b> Ověřujeme jím, že je pro Vás terapie bezpečná a v jaké dávce začít. Dotazník, který jste právě vyplnil(a), už to podstatné vyloučil; krevní testy a lékař to jen potvrdí a nastaví.</p></div>
@@ -2510,7 +2528,7 @@ function nameHTML(name) { return esc(name); }
 function featsHTML(v) {
   if (!v.feats || !v.feats.length) return `<div class="ds">${esc(v.desc)}</div>`;
   return `<ul class="feats">${v.feats.map(f =>
-    `<li class="${f[0] ? 'ok' : 'no'}"><span class="fi" aria-hidden="true">${f[0] ? '✔' : '✕'}</span><span>${esc(f[1])}</span></li>`
+    `<li class="${f[0] ? 'ok' : 'no'}"><span class="fi" aria-hidden="true">${f[0] ? '✔' : '✖'}</span><span>${esc(f[1])}</span></li>`
   ).join('')}</ul>`;
 }
 
@@ -2546,7 +2564,7 @@ function planTilesHTML() {
   return v.tiles.map(([e, t, d]) => `<div class="tile"><div class="emoji">${e}</div><b>${esc(t)}</b><span>${esc(d)}</span></div>`).join('');
 }
 
-const DISCLAIMER = `<div class="disclaimer">Aeternum GLP‑1 Screening je orientační vyhodnocení na základě Vašich odpovědí, není lékařským vyšetřením ani diagnózou a nenahrazuje konzultaci s lékařem, který jediný rozhoduje o vhodnosti léčby a o předpisu léčivých přípravků vázaných na lékařský předpis.<br>Aeternum Clinic, My Design Creatives s.r.o., IČO 07162235, Chlumčanského 497/5, 180 00 Praha 8 · info@aeternumclinic.cz · <a href="${CFG.gdprUrl}" target="_blank" rel="noopener" style="color:var(--dim)">Zásady zpracování osobních údajů</a></div>`;
+const DISCLAIMER = `<div class="disclaimer">Aeternum GLP‑1 Screening je orientační vyhodnocení na základě Vašich odpovědí, není lékařským vyšetřením ani diagnózou a nenahrazuje konzultaci s lékařem, který jediný rozhoduje o vhodnosti léčby a o předpisu léčivých přípravků vázaných na lékařský předpis.<br><br>Aeternum Clinic, My Design Creatives s.r.o., IČO 07162235, Chlumčanského 497/5, 180 00 Praha 8 · info@aeternumclinic.cz · <a href="${CFG.gdprUrl}" target="_blank" rel="noopener" style="color:var(--dim)">Zásady zpracování osobních údajů</a></div>`;
 
 function chartSVG(startW, endW, months, height) {
   const W = 620, H = 200, pad = { t: 22, r: 64, b: 26, l: 56 };
@@ -2689,10 +2707,11 @@ function bookingHTML() {
     </div>
     ${type === 'advisor' ? advisorHTML() : type ? slotsHTML() : `<p class="fine" style="margin-top:16px">Vyberte si podobu konzultace a ukážu Vám, jak dál.</p>`}
     <div class="decline">
-      <p class="fine" style="margin-bottom:clamp(10px,calc(.9*var(--u)),calc(16px*var(--k)))">Nehodí se Vám to, nebo si ještě nejste jistí?</p>
+      <div class="declrow"><button type="button" class="btn ghost sm" data-act="bezkonzultace">Pokračovat bez vstupní konzultace</button></div>
+      <p class="fine" style="margin-top:clamp(10px,calc(.9*var(--u)),calc(16px*var(--k)))">Vstupní konzultaci můžete přeskočit a objednat se rovnou na vstupní screening a lékařskou konzultaci, kde se na vše důležité ještě doptáme. Budete rovnou přesměrováni na platbu vstupního screeningu a výběr termínu lékařského vyšetření.</p>
       ${CFG.askEnabled
-        ? `<div class="declrow"><button type="button" class="btn ghost sm" data-act="ask">Mám otázku</button></div>`
-        : `<p class="fine">Napište nám na <a href="mailto:${esc(CFG.email)}" style="color:var(--ink)">${esc(CFG.email)}</a> nebo zavolejte na ${esc(tel(CFG.phone))}.</p>`}
+        ? `<div class="declrow" style="margin-top:clamp(14px,calc(1.2*var(--u)),calc(22px*var(--k)))"><button type="button" class="btn ghost sm" data-act="ask">Mám otázku</button></div>`
+        : ''}
       </div>`;
 }
 
@@ -2889,6 +2908,25 @@ document.addEventListener('click', async e => {
   if (b.dataset.slot) { S.booking.slot = b.dataset.slot; rerenderPanel(); return; }
   if (b.id === 'bookBtn') { await submitBooking(b); return; }
   if (b.id === 'intakeBtn') { await submitIntake(b); return; }
+  /* Zkratka k lékaři. Text pod tím slibuje, že konzultaci jde přeskočit, ale
+     do 26. 11. 2026 to nikde nešlo udělat. Screening se nejdřív dolží, ať má
+     rezervace co dohledat, pak se přejde na rezervační stránku rovnou
+     na vyšetření. Kdyby uložení selhalo, odkaz platí i bez ID. */
+  if (b.dataset.act === 'bezkonzultace') {
+    const puvodni = b.innerHTML;
+    b.disabled = true; b.textContent = 'Připravuji…';
+    (async () => {
+      let id = '';
+      try { id = await ensureSubmitted(); } catch (e) { /* bez ID se dá pokračovat */ }
+      const base = String(CFG.bookingUrl || '').trim();
+      if (!base) { b.disabled = false; b.innerHTML = puvodni; return; }
+      const u = new URL(base);
+      u.searchParams.set('kind', 'exam');
+      if (id) u.searchParams.set('id', id);
+      window.location.href = u.toString();
+    })();
+    return;
+  }
   if (b.dataset.act === 'showterm') { S.booking.skipData = true; rerenderPanel(); return; }
   if (b.id === 'protoBtn') {
     const err = m => { const el = $('#protoErr'); if (el) el.textContent = m; };
