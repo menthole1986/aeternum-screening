@@ -1116,9 +1116,11 @@ const Q = {
   goal: {
     marcel: 'Tohle je pro volbu preparátu ta nejdůležitější otázka. Ne každý potřebuje ten nejsilnější lék.',
     label: 'Co je Vaším cílem?',
-    hint: 'Můžete vybrat i víc možností.',
-    opts: ['Zbavit se neustálých chutí a myšlenek na jídlo', 'Zhubnout pár kil', 'Výrazně zhubnout'],
-    rows: true, multi: true
+    hint: 'Chutě můžete zaškrtnout i spolu s tím, kolik chcete zhubnout.',
+    opts: ['Zbavit se neustálých chutí a myšlenek na jídlo', 'Zhubnout 5 až 10 kilo', 'Výrazně zhubnout, 10 kilo a víc'],
+    /* Chutě jdou dohromady s jednou z vah, ale obě váhy najednou ne:
+       kdo chce shodit pět kilo, nechce zároveň shodit dvacet. */
+    rows: true, multi: true, jenJedna: [1, 2]
   },
   glp1: {
     marcel: 'Zajímá mě, jestli už za sebou nějakou zkušenost máte. Podle toho připravíme doporučení a plán terapie.',
@@ -1501,6 +1503,15 @@ const DRUGS = {
 /* Cíl je od 26. 11. 2026 pole, protože jich klient může zaškrtnout víc. Porovnávat
    ho rovnou by ticho potichu přestalo sedet a doporučení by spadlo do větví podle
    procent, aniž by si toho kdo všiml. */
+/* Cíl „výrazně zhubnout“ se 26. 11. 2026 přejmenoval na „Výrazně zhubnout,
+   10 kilo a víc“. Starší screeningy mají v datech původní text, proto se
+   porovnává začátek, ne celý řetězec. */
+function cilVyrazne(d) {
+  const g = d && d.goal;
+  const pole = Array.isArray(g) ? g : [String(g || '')];
+  return pole.some(x => String(x).indexOf('Výrazně zhubnout') === 0);
+}
+
 function maCil(d, text) {
   const g = d && d.goal;
   return Array.isArray(g) ? g.indexOf(text) >= 0 : g === text;
@@ -1559,7 +1570,7 @@ function recommend(d) {
   } else if (bmi < 25) {
     key = 'wegovy';
     why = 'Vaše BMI je v pásmu normální váhy, takže nejsilnější preparát není namístě. Semaglutid utlumí chutě a udrží úbytek pozvolný a bezpečný.';
-  } else if (maCil(d, 'Výrazně zhubnout')) {
+  } else if (cilVyrazne(d)) {
     key = 'mounjaro';
     why = 'Pro výrazný úbytek je v této třídě nejúčinnější, ve studiích vedl k průměrnému poklesu okolo 20 % hmotnosti.';
   } else if (maCil(d, 'Zbavit se neustálých chutí a myšlenek na jídlo') && lossPct < 15) {
@@ -1576,7 +1587,7 @@ function recommend(d) {
 
   const other = key === 'wegovy' ? 'mounjaro' : 'wegovy';
   if (!alt && bmi >= 27 && key === 'wegovy') alt = 'Kdyby úbytek nebyl dostatečný, duální agonista GLP‑1/GIP je připravený jako další krok.';
-  if (!alt && key === 'mounjaro' && !maCil(d, 'Výrazně zhubnout')) alt = 'Pokud byste chtěl/a začít mírněji, je agonista GLP‑1 plnohodnotnou alternativou.';
+  if (!alt && key === 'mounjaro' && !cilVyrazne(d)) alt = 'Pokud byste chtěl/a začít mírněji, je agonista GLP‑1 plnohodnotnou alternativou.';
 
   return { key, drug: DRUGS[key], why, alt, altDrug: DRUGS[other], offLabel: bmi < 27 };
 }
@@ -2082,7 +2093,17 @@ function pickMulti(id, i) {
   const val = qOpts(Q[id])[i];
   const pole = Array.isArray(S.a[id]) ? S.a[id].slice() : [];
   const kde = pole.indexOf(val);
-  if (kde >= 0) pole.splice(kde, 1); else pole.push(val);
+  if (kde >= 0) pole.splice(kde, 1);
+  else {
+    /* Možnosti ve skupině `jenJedna` se navzájem vylučují: nová volba
+       tu předchozí odznačí. Ostatní se přidávají normálně. */
+    const skup = Q[id].jenJedna || [];
+    if (skup.indexOf(i) >= 0) {
+      const vsechny = qOpts(Q[id]);
+      skup.forEach(j => { const k = pole.indexOf(vsechny[j]); if (k >= 0) pole.splice(k, 1); });
+    }
+    pole.push(val);
+  }
   S.a[id] = pole; save();
   document.querySelectorAll(`[data-multi="${id}"]`).forEach(c =>
     c.setAttribute('aria-pressed', pole.indexOf(qOpts(Q[id])[+c.dataset.i]) >= 0));
