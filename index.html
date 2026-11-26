@@ -1570,7 +1570,12 @@ function recommend(d) {
   } else if (bmi < 25) {
     key = 'wegovy';
     why = 'Vaše BMI je v pásmu normální váhy, takže nejsilnější preparát není namístě. Semaglutid utlumí chutě a udrží úbytek pozvolný a bezpečný.';
-  } else if (cilVyrazne(d)) {
+  /* Zaškrtnutý cíl už nepřebíjí spočtený úbytek. Kdo chce dolů o osm procent
+     a zaškrtne „10 kilo a víc“, nemá dostávat nejsilnější přípravek kvůli
+     zaškrtávátku. Pod dvanácti procenty rozhoduje číslo, mezi dvanácti
+     a patnácti procenty rozhodne zaškrtnutý cíl, nad patnáct vychází tirzepatid
+     i bez něj (semaglutid dělá ve studiích kolem 15 %, tirzepatid kolem 21 %). */
+  } else if (cilVyrazne(d) && lossPct >= 12) {
     key = 'mounjaro';
     why = 'Pro výrazný úbytek je v této třídě nejúčinnější, ve studiích vedl k průměrnému poklesu okolo 20 % hmotnosti.';
   } else if (maCil(d, 'Zbavit se neustálých chutí a myšlenek na jídlo') && lossPct < 15) {
