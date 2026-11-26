@@ -336,6 +336,8 @@ input:autofill{background:transparent;color:var(--ink)}
 .pill.crit{color:var(--crit);border:1.5px solid rgba(238,122,109,.55)}
 .pill.sm{height:calc(32px*var(--k));font-size:11px;padding:0 12px;letter-spacing:.18em}
 .summary{margin-top:clamp(22px,calc(2.3*var(--u)),calc(44px*var(--k)))}
+/* Důvod zastavení stojí tám, kde dřív stála výstraha se štítkem. */
+.duvod{margin-top:clamp(22px,calc(2.1*var(--u)),calc(40px*var(--k)));color:var(--ink)}
 .alerts{display:flex;flex-direction:column;gap:14px;margin-top:clamp(20px,calc(1.9*var(--u)),calc(36px*var(--k)));max-width:44em}
 .alert{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:baseline;font-size:clamp(14px,calc(.95*var(--u)),calc(18px*var(--k)));line-height:1.55;color:var(--ink)}
 .more{display:inline-flex;align-items:center;gap:14px;margin-top:clamp(26px,calc(3*var(--u)),calc(56px*var(--k)));text-decoration:none}
@@ -786,32 +788,58 @@ h3.grad,.h3grad{display:block;width:fit-content;align-self:flex-start;background
   .notice span,.selfpay,.bul div,.bens div{text-wrap:pretty}
 }
 
-/* ── telefon: zastavovací obrazovka na jeden displej ────────────────
-   První obrazovka výsledku se má přečíst bez rolování, ať má kdo iPhone SE nebo
-   Pro Max. Pevné velikosti to neumí: na nízkém displeji přetečou, na vysokém
-   nechají prázdno. Proto se písmo i mezery řídí menším z rozměrů okna:
-   `min(x vw, y svh)`. `svh` je výška s vysunutou lištou prohlížeče, takže
-   se nic neschová pod adresní řádek. */
+/* ── telefon: výsledek má být vzdušný ───────────────────────────
+   Výsledková část se má rolovat a dýchat, na jednu obrazovku se vejít nemusí
+   (Marcel 26. 11. 2026). Na jeden displej patří jenom otázky screeningu.
+   Platí jen na telefonu, desktop se nemění. */
 @media (max-width:760px){
-  .rsec.first.stop{display:flex;align-items:center;
-    padding-top:clamp(6px,1.4svh,18px);padding-bottom:clamp(6px,1.4svh,18px)}
-  .rsec.first .split{width:100%}
-  .rsec.first .eyebrow{font-size:min(3vw,1.5svh);letter-spacing:.24em}
-  .rsec.first .h-l{font-size:min(8vw,4svh);line-height:1.08;
-    margin-top:clamp(3px,.8svh,10px)}
-  .rsec.first .index-row{margin-top:clamp(6px,1.4svh,16px);gap:clamp(10px,3vw,18px);
-    justify-content:center;flex-wrap:nowrap}
-  .rsec.first .index-num{font-size:min(21vw,10.2svh)}
-  .rsec.first .index-side{gap:clamp(5px,.9svh,10px);align-items:flex-start;text-align:left}
-  .rsec.first .index-side .small-caps{font-size:min(2.7vw,1.35svh)}
-  .rsec.first .pill{height:min(7.4vw,3.7svh);font-size:min(3vw,1.5svh);padding:0 min(3.2vw,1.6svh)}
-  .rsec.first .duvod{margin-top:clamp(8px,1.6svh,18px);color:var(--ink)}
-  .rsec.first .lead{font-size:min(3.9vw,1.85svh);line-height:1.45}
-  .rsec.first .summary{margin-top:clamp(6px,1.2svh,14px)}
-  .rsec.first .send-status{margin-top:clamp(6px,1.2svh,14px);font-size:min(3.5vw,1.7svh)}
-  .rsec.first .mcol.keep{margin-top:clamp(8px,1.6svh,18px);gap:clamp(5px,.9svh,9px)}
-  .rsec.first .mcol.keep .mini .av{width:min(11vw,5.4svh);height:min(11vw,5.4svh)}
-  .rsec.first .mline{font-size:min(3.4vw,1.65svh);line-height:1.45}
+  .rsec{padding-top:58px;padding-bottom:58px}
+  .rsec.first{padding-top:26px}
+  .split{gap:38px}
+  /* skóre: číslo nahoře, popis pod ním, obojí na střed a s prostorem kolem */
+  .ctr .index-row{flex-direction:column;align-items:center;gap:18px;margin-top:30px}
+  .ctr .index-side{align-items:center;text-align:center;gap:14px}
+  .index-num{font-size:108px}
+  /* odstavce pod sebou mají mít mezeru, ne řádkování */
+  .ctr .summary{margin-top:28px}
+  .ctr .duvod{margin-top:28px}
+  .send-status{margin-top:22px}
+  /* tečka stavívala u levého okraje, zatímco text držel střed. Na telefonu
+     jde celý řádek do bloku, tečka před text. */
+  .ctr .send-status{display:block;text-align:center}
+  .ctr .send-status .dot{display:inline-block;margin:0 8px 2px 0;vertical-align:middle}
+  .more{margin-top:38px}
+  .mcol.keep{margin-top:40px}
+  .alerts{margin-top:26px}
+}
+
+/* ── telefon: otázka se má vejít na jeden displej ─────────────────
+   Marcel 26. 11. 2026: na jednu obrazovku patří otázky screeningu, výsledek
+   se může rolovat. Na vysokém telefonu se všechno vešlo, na nízkém (iPhone SE,
+   malý Android) přetékala otázka na kraje a kontaktní krok. Hodnoty jsou
+   proto psané jako `min(původní px, y svh)`: od výšky 844 px platí přesně
+   to, co dřív, a na nižším displeji se úmerně zmenší. Týká se jen `.screen`,
+   tedy úvodu, otázek a kontaktu. Výsledek (`.rsec`) zůstává vzdušný. */
+@media (max-width:760px){
+  .screen .qtext{font-size:min(23px,2.72svh)}
+  .screen .qtext.long{font-size:min(21px,2.49svh)}
+  .screen .qhint{font-size:min(14px,1.66svh);line-height:1.5;margin-top:min(14px,1.66svh)}
+  .screen .mhead .av{width:min(56px,6.6svh);height:min(56px,6.6svh)}
+  .screen .mhead{gap:min(10px,1.2svh)}
+  .screen .mhead .tx p{font-size:min(14.5px,1.72svh);line-height:1.5}
+  .screen .mhead .tx b{margin-bottom:min(8px,.95svh)}
+  .screen .qcount.mob{margin-top:min(20px,2.37svh)}
+  .screen .qcount.mob + .qtext{margin-top:min(16px,1.9svh)}
+  .screen .rowopt{min-height:min(56px,6.6svh)}
+  .screen .opt{height:min(58px,6.87svh)}
+  .screen .opts{margin-top:min(26px,3.08svh)}
+  .screen .rows{margin-top:min(22px,2.6svh)}
+  .screen .sliders{gap:min(26px,3.08svh);margin-top:min(26px,3.08svh)}
+  .screen .srow .sval{font-size:min(44px,5.2svh)}
+  .screen .ufrow{margin-top:min(18px,2.13svh)}
+  .screen .uf input{font-size:min(17px,2.01svh)}
+  .screen .cbox{font-size:min(13px,1.54svh);line-height:1.5}
+  .screen .cbox + .cbox{margin-top:min(14px,1.66svh)}
 }
 
 /* slova s pomlčkou (e-mail, GLP-1) se nelámou na konci řádku */
