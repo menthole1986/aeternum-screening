@@ -2707,7 +2707,7 @@ function bookingHTML() {
     </div>
     ${type === 'advisor' ? advisorHTML() : type ? slotsHTML() : `<p class="fine" style="margin-top:16px">Vyberte si podobu konzultace a ukážu Vám, jak dál.</p>`}
     <div class="decline">
-      <div class="declrow"><button type="button" class="btn ghost sm" data-act="bezkonzultace">Pokračovat bez vstupní konzultace</button></div>
+      <div class="declrow"><button type="button" class="btn lime sm" data-act="bezkonzultace">Pokračovat bez vstupní konzultace</button></div>
       <p class="fine" style="margin-top:clamp(10px,calc(.9*var(--u)),calc(16px*var(--k)))">Vstupní konzultaci můžete přeskočit a objednat se rovnou na vstupní screening a lékařskou konzultaci, kde se na vše důležité ještě doptáme. Budete rovnou přesměrováni na platbu vstupního screeningu a výběr termínu lékařského vyšetření.</p>
       ${CFG.askEnabled
         ? `<div class="declrow" style="margin-top:clamp(14px,calc(1.2*var(--u)),calc(22px*var(--k)))"><button type="button" class="btn ghost sm" data-act="ask">Mám otázku</button></div>`
