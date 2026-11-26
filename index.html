@@ -651,7 +651,10 @@ h3.grad,.h3grad{display:block;width:fit-content;align-self:flex-start;background
   .ctr .index-row{justify-content:center}
   .ctr .index-side{align-items:center}
   .ctr .send-status{justify-content:center;width:fit-content;max-width:100%;margin-left:auto;margin-right:auto}
+  /* „text-align“ sám nadpisek nevycentruje: .eyebrow je inline-block,
+     takže se centroval text uvnitř štítku, ne štítek v panelu. */
   .panel > h3,.panel > .eyebrow{text-align:center}
+  .panel > .eyebrow{display:block}
   .panel > h3.grad{margin-left:auto;margin-right:auto}
   .panel > .price{justify-content:center}
   .panel > .price-note{text-align:center}
@@ -721,6 +724,27 @@ h3.grad,.h3grad{display:block;width:fit-content;align-self:flex-start;background
   /* živé BMI pod posuvníky je výsledek, ne formulář — patří na střed */
   .qlive{justify-content:center}
   .qlive .lv{align-items:center;text-align:center}
+
+  /* počítadlo se lámalo na dva řádky: „Otázka 8 /“ a pod tím „11“ */
+  .qcount .small-caps{white-space:nowrap;flex:none}
+
+  /* krátká nápověda pod otázkou drží střed, dlouhý výklad zůstává zleva */
+  .qhint{text-align:center}
+  .qhint.long{text-align:left}
+
+  /* posuvník: popisek i číslo jsou výsledek, na který se klient dívá,
+     ne formulář, který vyplňuje. Krajní hodnoty zůstávají u konců dráhy. */
+  .srow .slab,.srow .sval{text-align:center}
+
+  /* jedno pole na otázku: popisek i zapsaná hodnota drží střed pod
+     vycentrovanou otázkou. Řádky se zaškrtávacím políčkem zůstávají zleva. */
+  .uf label{text-align:center}
+  .uf input{text-align:center}
+  /* dlouhý dotazník pro laboratoř je výjimka: sedm políček pod sebou
+     se vyplňuje, ne čte, a vycentrované popisky by se hůř procházely. */
+  .bform .uf label,.bform .uf input{text-align:left}
+  /* rozbalovač „celé znění souhlasu“ je nadpis, ne text ke čtení */
+  .legal summary{text-align:center}
 
   /* víc vzduchu mezi nadpisem sekce a tím, co pod ním stojí */
   .eyebrow{letter-spacing:.26em}
@@ -1668,7 +1692,10 @@ function questionHTML(id) {
   const q = Q[id];
   const label = qLabel(q);
   let h = `<p class="qtext${label.length > 68 ? ' long' : ''}" id="qtext">${esc(label)}</p>`;
-  if (q.hint) h += `<p class="qhint">${esc(q.hint)}</p>`;
+  /* Krátká nápověda drží na telefonu střed, dlouhý výklad zůstává zleva:
+     vycentrovaný odstavec na osm řádků se čte huř. Hranice je víť znaků, než
+     se ve dvou řádcích na telefonu vejde. */
+  if (q.hint) h += `<p class="qhint${q.hint.length > 120 ? ' long' : ''}">${esc(q.hint)}</p>`;
   if (q.type === 'num') {
     const fields = typeof q.fields === 'function' ? q.fields(S.a) : q.fields;
     h += isMobile() ? slidersHTML(fields) : fieldsHTML(fields);
@@ -2182,8 +2209,8 @@ function renderResult() {
     <div class="ctr"><span class="eyebrow">V případě, že si nejste jisti</span><h2 class="h-l">Vstupní<br><span class="light">konzultace</span></h2>
       <div class="bul"><div>Seznámení s terapií redukce hmotnosti</div><div>Zodpovězení nejčastějších dotazů</div><div>Měření InBody</div><div>Příprava podkladů a dokumentace pro lékařské vyšetření</div><div>Žádanka na odběr krve</div></div>
       <p class="fine" style="margin-top:clamp(14px,calc(1.1*var(--u)),calc(22px*var(--k)))">Vstupní konzultaci můžete přeskočit a objednat se rovnou na vstupní screening a lékařskou konzultaci, kde se na vše důležité ještě doptáme.</p>
-      <span class="eyebrow" style="margin-top:clamp(38px,calc(3.2*var(--u)),calc(58px*var(--k)))">Druhý krok</span>
-          <p class="notice" style="margin-top:clamp(10px,calc(0.8*var(--u)),calc(14px*var(--k)))"><span>⚠️</span><span>Pro posouzení vhodnosti terapie je nutné vstupní vyšetření krve, jehož výsledky bude mít lékař k dispozici, až se s Vámi setká osobně nebo online. Cena za odběr i vyšetření je ${fmt(CFG.examPrice)} Kč. Když si vezmete konzultaci, hradí se až po ní. Když ji přeskočíte, platí se rovnou při objednání k lékaři.</span></p>
+      <span class="eyebrow" style="margin-top:clamp(38px,calc(3.2*var(--u)),calc(58px*var(--k)))">Co Vás čeká pak</span>
+          <p class="notice" style="margin-top:clamp(10px,calc(0.8*var(--u)),calc(14px*var(--k)))"><span>⚠️</span><span>Pro posouzení vhodnosti terapie je nutné vstupní vyšetření krve, jehož výsledky bude mít lékař k dispozici, až se s Vámi setká osobně nebo online. Cena za odběr i vyšetření je ${fmt(CFG.examPrice)} Kč. Když si vezmete vstupní konzultaci, hradí se tato částka až po ní. Když ji přeskočíte, platí se rovnou při objednání k lékaři.</span></p>
           <p class="reassure" style="margin-top:12px"><b>Ze screeningu nemusíte mít žádné obavy.</b> Ověřujeme jím, že je pro Vás terapie bezpečná a v jaké dávce začít. Dotazník, který jste právě vyplnil(a), už to podstatné vyloučil; krevní testy a lékař to jen potvrdí a nastaví.</p></div>
     <div class="panel" id="panel">${bookingHTML()}</div>
   </div></section>
