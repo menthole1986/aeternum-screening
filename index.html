@@ -2549,6 +2549,11 @@ function varInfoHTML(R) {
 function selectVariant(i) {
   if (!VAR_LIST[i]) return;
   VAR_PICK = i;
+  /* Volba programu se do 26. 11. 2026 nikam neukládala, jen překreslila kartu.
+     Kdo přeskočil konzultaci, neměl program zapsaný nikde a návrh smlouvy mu
+     vyšel na doporučenou variantu. Teď ji nese rezervace i zkratka k lékaři. */
+  S.booking.plan = VAR_LIST[i].key || '';
+  save();
   document.querySelectorAll('.var[data-var]').forEach((el, n) => {
     el.classList.toggle('sel', n === i);
     el.setAttribute('aria-pressed', String(n === i));
@@ -2923,6 +2928,7 @@ document.addEventListener('click', async e => {
       const u = new URL(base);
       u.searchParams.set('kind', 'exam');
       if (id) u.searchParams.set('id', id);
+      if (S.booking.plan) u.searchParams.set('v', S.booking.plan);
       window.location.href = u.toString();
     })();
     return;
@@ -3060,7 +3066,7 @@ async function submitBooking(btn) {
     let hold;
     if (CFG.apiUrl) {
       hold = await api('hold', {
-        id, kind: ai ? 'advisor' : 'consult',
+        id, kind: ai ? 'advisor' : 'consult', variant: S.booking.plan || '',
         slot: ai ? '' : S.booking.slot, type: S.booking.type,
         name: S.a.firstName, email: S.a.email, phone: S.a.phone.trim(),
         street: S.a.street.trim(), city: S.a.city.trim(), zip: (S.a.zip || '').replace(/\s/g, ''),
