@@ -786,6 +786,34 @@ h3.grad,.h3grad{display:block;width:fit-content;align-self:flex-start;background
   .notice span,.selfpay,.bul div,.bens div{text-wrap:pretty}
 }
 
+/* ── telefon: zastavovací obrazovka na jeden displej ────────────────
+   První obrazovka výsledku se má přečíst bez rolování, ať má kdo iPhone SE nebo
+   Pro Max. Pevné velikosti to neumí: na nízkém displeji přetečou, na vysokém
+   nechají prázdno. Proto se písmo i mezery řídí menším z rozměrů okna:
+   `min(x vw, y svh)`. `svh` je výška s vysunutou lištou prohlížeče, takže
+   se nic neschová pod adresní řádek. */
+@media (max-width:760px){
+  .rsec.first.stop{display:flex;align-items:center;
+    padding-top:clamp(6px,1.4svh,18px);padding-bottom:clamp(6px,1.4svh,18px)}
+  .rsec.first .split{width:100%}
+  .rsec.first .eyebrow{font-size:min(3vw,1.5svh);letter-spacing:.24em}
+  .rsec.first .h-l{font-size:min(8vw,4svh);line-height:1.08;
+    margin-top:clamp(3px,.8svh,10px)}
+  .rsec.first .index-row{margin-top:clamp(6px,1.4svh,16px);gap:clamp(10px,3vw,18px);
+    justify-content:center;flex-wrap:nowrap}
+  .rsec.first .index-num{font-size:min(21vw,10.2svh)}
+  .rsec.first .index-side{gap:clamp(5px,.9svh,10px);align-items:flex-start;text-align:left}
+  .rsec.first .index-side .small-caps{font-size:min(2.7vw,1.35svh)}
+  .rsec.first .pill{height:min(7.4vw,3.7svh);font-size:min(3vw,1.5svh);padding:0 min(3.2vw,1.6svh)}
+  .rsec.first .duvod{margin-top:clamp(8px,1.6svh,18px);color:var(--ink)}
+  .rsec.first .lead{font-size:min(3.9vw,1.85svh);line-height:1.45}
+  .rsec.first .summary{margin-top:clamp(6px,1.2svh,14px)}
+  .rsec.first .send-status{margin-top:clamp(6px,1.2svh,14px);font-size:min(3.5vw,1.7svh)}
+  .rsec.first .mcol.keep{margin-top:clamp(8px,1.6svh,18px);gap:clamp(5px,.9svh,9px)}
+  .rsec.first .mcol.keep .mini .av{width:min(11vw,5.4svh);height:min(11vw,5.4svh)}
+  .rsec.first .mline{font-size:min(3.4vw,1.65svh);line-height:1.45}
+}
+
 /* slova s pomlčkou (e-mail, GLP-1) se nelámou na konci řádku */
 .nb{white-space:nowrap}
 .lead,.qtext,.mhead,.fine,.summary,.tile span,.panel p{word-break:keep-all;overflow-wrap:break-word}
@@ -856,6 +884,9 @@ html,body{background:var(--ground);color:var(--ink)}
 /* barevné záře byly kreslené na tmavé pozadí, na světlém dělají špínu */
 .glow{opacity:.1;filter:blur(70px)}
 .index-num{background:linear-gradient(120deg,#8B5CC7,#2F86CC);-webkit-background-clip:text;background-clip:text}
+/* kritická nula na světlém pozadí: původní lázový přechod byl kreslený
+   na tmavé a na světlém se ztrácel */
+.index-num.crit{background-image:linear-gradient(120deg,#D9574A,#B0332A)}
 
 /* termíny */
 .dayarrow:hover{border-color:rgba(20,20,20,.5)}
@@ -2167,10 +2198,17 @@ function renderResult() {
   const head = name ? `${esc(name)}, tady je<br>Váš výsledek` : 'Tady je<br>Váš výsledek';
 
   if (R.contra) {
-    return `<section class="rsec first"><div class="split">
+    /* Zastavovací obrazovka. Nese stejné skóre jako kladný výsledek, jen
+       nulové a červeně: klient vidí číslo na stejném místě jako ostatní.
+       Štítek „Upozornění“ u důvodu padl, protože to už říká pilulka
+       vedle nuly a na telefonu z něj byl úzký sloupec textu. */
+    return `<section class="rsec first stop"><div class="split">
       <div class="ctr"><span class="eyebrow">Výsledek screeningu</span><h1 class="h-l">${head}</h1>
-        <div class="alerts"><div class="alert"><span class="pill sm crit">Upozornění</span>
-          <span>Na základě Vašich odpovědí Vám GLP‑1 program nedoporučujeme, a to z důvodu <b>${esc(R.contra)}</b>.</span></div></div>
+        <div class="index-row"><div class="index-num crit">0<small>/10</small></div>
+          <div class="index-side"><span class="small-caps" style="color:var(--ink)">Skóre vhodnosti</span>
+            <span class="pill crit">Nevhodná</span>
+            <span class="small-caps">Rozhodla bezpečnostní otázka</span></div></div>
+        <p class="lead duvod">Na základě Vašich odpovědí Vám GLP‑1 program nedoporučujeme, a to z důvodu <b>${esc(R.contra)}</b>.</p>
         <p class="lead summary">Doporučujeme konzultaci s Vaším ošetřujícím lékařem, který posoudí Vaše možnosti individuálně. Souhrn Vám posíláme na e-mail.</p>
         ${sendStatusHTML()}
         ${protocolHTML(R)}
