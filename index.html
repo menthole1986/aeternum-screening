@@ -592,10 +592,16 @@ h3.grad,.h3grad{display:block;width:fit-content;align-self:flex-start;background
   .rowopt{min-height:52px;font-size:16px;gap:14px}
   .panel{padding:22px 18px;border-radius:22px}
   .seg2 button{height:50px;font-size:14px}
-  .seg3{gap:8px}
-  .seg3 button{min-height:70px;padding:10px 6px}
-  .seg3 button b{font-size:12px}
-  .seg3 button i{font-size:11px}
+  /* Na telefonu jdou volby pod sebe. Ve třech sloupcích měla každá sotva sto
+     bodů, popisek se lámal na dva řádky a tlačítko bylo malé na prst. Pod sebou
+     se vejde jméno i cena na jeden řádek a plocha na klepnutí je celá šířka. */
+  .seg3,.seg3.dva{grid-template-columns:1fr;gap:10px}
+  .seg3 button{min-height:56px;flex-direction:row;align-items:center;justify-content:space-between;
+    gap:10px;padding:12px 18px;text-align:left}
+  .seg3 button b{font-size:14px}
+  .seg3 button i{font-size:13px}
+  .seg3 .soon{font-size:9px;margin-left:auto;order:2}
+  .seg3 button i{order:3}
 }
 
 /* ── doladění pro telefon ── */
