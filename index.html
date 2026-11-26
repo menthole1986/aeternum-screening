@@ -2702,6 +2702,7 @@ function bookingHTML() {
   const type = B.type;
   return `<h3 class="grad" style="margin-top:0">Vstupní konzultace</h3>
     ${priceHTML(type)}
+    ${!type ? `<p class="fine" style="margin-bottom:clamp(12px,calc(1*var(--u)),calc(18px*var(--k)))">Vyberte si podobu konzultace a ukážu Vám, jak dál.</p>` : ''}
     <div class="seg3${(CFG.advisorEnabled || CFG.advisorSoon) ? '' : ' dva'}" role="group" aria-label="Podoba konzultace">
       ${(CFG.advisorEnabled || CFG.advisorSoon) ? `<button type="button" data-btype="advisor"
         aria-pressed="${type === 'advisor'}"${CFG.advisorEnabled ? '' : ' title="Zatím jen k nahlédnutí, objednat ho ještě nejde"'}>
@@ -2710,7 +2711,7 @@ function bookingHTML() {
       <button type="button" data-btype="online" aria-pressed="${type === 'online'}"><b>Konzultant online</b><i>${fmt(CFG.price)} Kč</i></button>
       <button type="button" data-btype="osobne" aria-pressed="${type === 'osobne'}"><b>Konzultant v Praze</b><i>${fmt(CFG.price)} Kč</i></button>
     </div>
-    ${type === 'advisor' ? advisorHTML() : type ? slotsHTML() : `<p class="fine" style="margin-top:16px">Vyberte si podobu konzultace a ukážu Vám, jak dál.</p>`}
+    ${type === 'advisor' ? advisorHTML() : type ? slotsHTML() : ''}
     <div class="decline">
       <div class="declrow"><button type="button" class="btn lime sm" data-act="bezkonzultace">Pokračovat bez vstupní konzultace</button></div>
       <p class="fine" style="margin-top:clamp(10px,calc(.9*var(--u)),calc(16px*var(--k)))">Vstupní konzultaci můžete přeskočit a objednat se rovnou na vstupní screening a lékařskou konzultaci, kde se na vše důležité ještě doptáme. Budete rovnou přesměrováni na platbu vstupního screeningu a výběr termínu lékařského vyšetření.</p>
