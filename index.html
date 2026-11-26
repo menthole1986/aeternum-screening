@@ -457,7 +457,9 @@ input:autofill{background:transparent;color:var(--ink)}
 .seg3 button[disabled]:hover{border-color:rgba(255,255,255,.22)}
 .seg3 .soon{font-size:9px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--warn)}
 .twin{margin-top:clamp(16px,calc(1.3*var(--u)),calc(24px*var(--k)))}
-.twin p{font-size:clamp(13px,calc(.9*var(--u)),calc(17px*var(--k)));color:var(--muted);line-height:1.62;margin:0 0 10px}
+/* O pixel míň než dřív: text v kartě je dlouhý a při původní velikosti
+   přetěžoval zbytek stránky. Marcelovo zadání 26. 11. 2026. */
+.twin p{font-size:clamp(12px,calc(.85*var(--u)),calc(16px*var(--k)));color:var(--muted);line-height:1.62;margin:0 0 10px}
 .twin p b{color:var(--ink);font-weight:600}
 .seg2 button{height:clamp(52px,calc(3.2*var(--u)),calc(62px*var(--k)));border-radius:16px;border:1.5px solid rgba(255,255,255,.22);background:transparent;font-size:clamp(13px,calc(.92*var(--u)),calc(17px*var(--k)));font-weight:600;cursor:pointer;color:var(--muted);display:flex;align-items:center;justify-content:center;gap:8px}
 .seg2 button[aria-pressed="true"]{background:var(--grad);border-color:transparent;color:#fff}
@@ -551,6 +553,8 @@ h3.grad,.h3grad{display:block;width:fit-content;align-self:flex-start;background
 .send-status .dot{width:8px;height:8px;border-radius:50%;background:var(--dim);flex:none;margin-top:.55em}
 .send-status.sending .dot{background:#4FA3E0;animation:breathe 1.2s ease-in-out infinite}
 .send-status.sent .dot{background:var(--good)}
+/* Naplánovaný e-mail není chyba ani hotovo: modrá tečka jako u posílání. */
+.send-status.planned .dot{background:#4FA3E0}
 .send-status.failed .dot{background:var(--crit)}
 .send-status.noconsent .dot{background:var(--warn)}
 .send-status .again{margin-left:12px;padding:0}
@@ -2167,8 +2171,8 @@ function renderResult() {
 
   <section class="rsec"><div class="split">
     <div class="ctr"><span class="eyebrow">Váš program</span><h2 class="h-l radek">Jak povedeme Vaši péči</h2>
-      <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))">Péči vedeme na dálku: konzultace i vstupní lékařské vyšetření online a lék na e-recept si vyzvednete v kterékoli lékárně.</p>
-      <p class="lead mensi" style="margin-top:clamp(12px,calc(1*var(--u)),calc(18px*var(--k)))">Chceme Vás ale upozornit na jednu důležitou věc: <b>minimálně jednou za celou terapii Vás potřebujeme vidět osobně.</b> A tady máte na výběr: buď přijedete rovnou na vstupní lékařské vyšetření, nebo si ho uděláte online a přijedete osobně až na kontrolní vyšetření na konci třetího měsíce po zahájení terapie.</p>
+      <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))">Program péče lze vést i na dálku, tzn. že vstupní konzultace i lékařské vyšetření lze provést online a lék na e-recept si vyzvednete v kterékoli lékárně.</p>
+      <p class="lead mensi" style="margin-top:clamp(12px,calc(1*var(--u)),calc(18px*var(--k)))">Pod jednou podmínkou: <b>minimálně jednou za celou terapii Vás potřebujeme vidět osobně.</b> A tady máte na výběr: buď přijedete osobně rovnou na vstupní lékařské vyšetření a zbytek terapie pak probíhá vzdáleně, nebo si zvolíte vzdálené vstupní vyšetření a osobně se setkáme na kontrolním vyšetření po třech měsících od zahájení terapie.</p>
       <p class="lead mensi" style="margin-top:clamp(14px,calc(1.2*var(--u)),calc(22px*var(--k)))">Aktuálně máme ordinaci pro osobní návštěvy jenom v Praze, ale v novém roce přibude ještě možnost vyšetření v Brně nebo v Olomouci.</p>
       </div>
     <div class="ctr plans"><p class="selfpay">Aeternum Clinic je <b>privátní klinika bez smlouvy se zdravotními pojišťovnami</b>: vstupní screening, program i léčivo si hradíte sami, v režimu samoplátce.</p><p class="fine" style="margin:0 0 clamp(4px,calc(.4*var(--u)),calc(8px*var(--k)))">Vyberte si z následujících programů péče.</p>${variantsHTML(R)}</div>
@@ -2415,21 +2419,21 @@ function chartSVG(startW, endW, months, height) {
     const kg = bmiVal * m2;
     if (kg >= startW || kg <= minY) return '';
     const y = toY(kg);
-    return `<line x1="${pad.l}" y1="${y}" x2="${W - pad.r}" y2="${y}" stroke="${color}" stroke-width="1" stroke-dasharray="6,5" opacity=".75"/>
+    return `<line x1="${pad.l}" y1="${y}" x2="${W - pad.r}" y2="${y}" stroke="${color}" stroke-width="1.6" stroke-dasharray="7,5" opacity=".95"/>
       <text x="${W - pad.r + 10}" y="${y + 4}" text-anchor="start" fill="${color}" font-size="11" font-weight="700" font-family="Montserrat,sans-serif">${label}</text>`;
   };
 
   return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Předpokládaný průběh hmotnosti">
     ${guide(30, '#F2B45A', 'BMI 30')}
     ${guide(25, '#5ED3A0', 'BMI 25')}
-    <line x1="${pad.l}" y1="${toY(startW)}" x2="${W - pad.r}" y2="${toY(startW)}" stroke="rgba(255,255,255,.09)" stroke-dasharray="4,4"/>
-    <line x1="${pad.l}" y1="${toY(endW)}" x2="${W - pad.r}" y2="${toY(endW)}" stroke="rgba(79,163,224,.28)" stroke-dasharray="4,4"/>
+    <line x1="${pad.l}" y1="${toY(startW)}" x2="${W - pad.r}" y2="${toY(startW)}" stroke="rgba(20,20,20,.16)" stroke-dasharray="4,4"/>
+    <line x1="${pad.l}" y1="${toY(endW)}" x2="${W - pad.r}" y2="${toY(endW)}" stroke="rgba(79,163,224,.5)" stroke-width="1.4" stroke-dasharray="4,4"/>
     <path d="${area}" fill="url(#chartG)"/>
-    <path d="${d}" fill="none" stroke="url(#chartL)" stroke-width="3" stroke-linecap="round"/>
+    <path d="${d}" fill="none" stroke="url(#chartL)" stroke-width="3.4" stroke-linecap="round"/>
     <circle cx="${toX(0)}" cy="${toY(startW)}" r="5" fill="#B391E0"/>
     <circle cx="${toX(months)}" cy="${toY(endW)}" r="6" fill="#4FA3E0"/>
     <circle cx="${toX(months)}" cy="${toY(endW)}" r="12" fill="#4FA3E0" opacity="0.22"/>
-    <text x="${pad.l - 8}" y="${toY(startW) + 5}" text-anchor="end" fill="rgba(244,244,246,.5)" font-size="14" font-family="Montserrat,sans-serif">${Math.round(startW)} kg</text>
+    <text x="${pad.l - 8}" y="${toY(startW) + 5}" text-anchor="end" fill="rgba(20,20,20,.55)" font-size="14" font-family="Montserrat,sans-serif">${Math.round(startW)} kg</text>
     <text x="${W - pad.r + 10}" y="${toY(endW) + 5}" text-anchor="start" fill="#8FC1EC" font-size="14" font-weight="600" font-family="Montserrat,sans-serif">${Math.round(endW)} kg</text>
   </svg>`;
 }
@@ -2523,7 +2527,7 @@ function bookingHTML() {
     <div class="seg3${(CFG.advisorEnabled || CFG.advisorSoon) ? '' : ' dva'}" role="group" aria-label="Podoba konzultace">
       ${(CFG.advisorEnabled || CFG.advisorSoon) ? `<button type="button" data-btype="advisor"
         aria-pressed="${type === 'advisor'}"${CFG.advisorEnabled ? '' : ' title="Zatím jen k nahlédnutí, objednat ho ještě nejde"'}>
-        <b>AI konzultant</b><i>${fmt(CFG.advisorPrice)} Kč</i>
+        <b>${esc(CFG.advisorName)}</b><i>${fmt(CFG.advisorPrice)} Kč</i>
         ${CFG.advisorEnabled ? '' : '<span class="soon">připravujeme</span>'}</button>` : ''}
       <button type="button" data-btype="online" aria-pressed="${type === 'online'}"><b>Konzultant online</b><i>${fmt(CFG.price)} Kč</i></button>
       <button type="button" data-btype="osobne" aria-pressed="${type === 'osobne'}"><b>Konzultant v Praze</b><i>${fmt(CFG.price)} Kč</i></button>
@@ -2553,11 +2557,11 @@ function priceHTML(type) {
    dá ji server až po zaplacení. */
 function advisorHTML() {
   return `<div class="twin">
-    <p><b>Nenechte se zmást.</b> ${esc(CFG.advisorName)} je vysoce inteligentní digitální dvojče našeho reálného konzultanta, které si sám vyškolil podle svých vlastních zkušeností a konzultací s klienty.</p>
-    <p>Není to leták ani chatbot s obecnými odpověďmi. Konzultace je <b>individuální</b>: pracuje s Vašimi skutečnými čísly z tohohle screeningu, tedy s váhou, BMI, cílovou hmotností i s Vašimi odpověďmi o zdravotním stavu, a na jejich základě Vám připraví konkrétní návrh programu péče i s cenou. Proto je placená.</p>
-    <p>Živého konzultanta přitom <b>plnohodnotně nahrazuje</b>. Projdete to samé a na stejné úrovni a můžete se ptát na všechno, na co byste se zeptali naživo: jak terapie probíhá, na ceny, na vedlejší účinky i na cokoliv dalšího. Rozdíl je jenom v tom, že nečekáte na volný termín. O vhodnosti terapie ale vždycky rozhoduje lékař.</p>
-    <p>Počítejte asi s půl hodinou, a když se budete hodně ptát, klidně i s hodinou, je to celá vstupní konzultace, ne pár odpovědí. Spustí se hned po zaplacení a platí ${CFG.advisorHours} hodin, takže když zrovna spěcháte, nevadí: během té doby se k ní můžete vrátit a projít si ji znovu.</p>
-    <p><b>Konzultace nekončí povídáním.</b> Na jejím konci Vás čeká to samé co po konzultaci s živým koordinátorem: objednáme Vás k <b>lékařskému vyšetření</b> a pošleme Vám <b>žádanku na odběr krve</b>. K tomu dostanete klientskou dokumentaci: <b>informovaný souhlas s léčbou</b> a <b>návrh smlouvy o zdravotní péči</b>, sestavenou podle toho, na čem se spolu během konzultace domluvíte.</p>
+    <p><b>Nenechte se zmást. Žádné obecné odpovědi.</b> ${esc(CFG.advisorName)} je vysoce inteligentní digitální dvojče našeho reálného konzultanta, které si sám vyškolil podle svých vlastních zkušeností a konzultací s klienty.</p>
+    <p>Konzultace trvá zhruba 30 minut a je <b>individuální</b>: pracuje s Vašimi skutečnými čísly z tohohle screeningu a na jejich základě Vám připraví konkrétní návrh programu péče i s cenou. I proto je zpoplatněná. Spustí se hned po zaplacení a platí ${CFG.advisorHours} hodin, takže když zrovna spěcháte, nevadí: během té doby se k ní můžete vrátit a projít si ji znovu.</p>
+    <p>Živého konzultanta přitom <b>plnohodnotně nahrazuje</b>. Projdete to samé a na stejné úrovni a můžete se ptát na všechno, na co byste se eventuálně zeptali naživo. Je připravený téměř na všechno.</p>
+    <p>Rozdíl je jenom v tom, že nečekáte na volný termín. O vhodnosti terapie ale vždycky rozhoduje lékař.</p>
+    <p><b>Konzultace nekončí povídáním.</b> Na jejím konci Vás čeká to samé co po konzultaci s živým koordinátorem. Objedná Vás k <b>lékařskému vyšetření</b> a pošleme Vám <b>žádanku na odběr krve</b>. K tomu od něj dostanete klientskou dokumentaci, sestavenou podle toho, na čem se spolu během konzultace domluvíte.</p>
   </div>${CFG.advisorEnabled ? bookFormHTML() : advisorSoonHTML()}`;
 }
 
@@ -2827,8 +2831,8 @@ const BOOK_ERRORS = {
   sheet_missing: 'Rezervační systém se právě připravuje. Zavolejte nám prosím na ',
   calendar_missing: 'Rezervační systém se právě připravuje. Zavolejte nám prosím na ',
   rate_limited: 'Příliš mnoho pokusů. Zkuste to prosím za chvíli.',
-  need_screening: 'Konzultace s AI konzultantem navazuje na vyplněný screening. Dokončete ho prosím nejdřív.',
-  advisor_off: 'AI konzultanta právě dolaďujeme. Vyberte si prosím konzultanta, online nebo osobně v Praze.'
+  need_screening: 'Konzultace s Marcelem AI navazuje na vyplněný screening. Dokončete ho prosím nejdřív.',
+  advisor_off: 'Marcela AI právě dolaďujeme. Vyberte si prosím konzultanta, online nebo osobně v Praze.'
 };
 function bookError(x) {
   const code = x && x.code;
@@ -2978,6 +2982,7 @@ function sendStatusHTML() {
   const again = st === 'failed' ? `<button type="button" class="linkbtn again" data-act="resend">Zkusit znovu</button>` : '';
   const text = st === 'sending' ? `Posílám Váš výsledek na ${email}…`
     : st === 'sent' ? `Výsledek jsme poslali na ${email}.`
+    : st === 'planned' ? `Výsledek máte uložený a během chvilky ho pošleme i na ${email}.`
     : st === 'saved' ? `Výsledek je uložený, ale e-mail se nepodařilo odeslat. Ozveme se Vám.`
     : `Výsledek se nepodařilo odeslat. Zkuste to prosím znovu, nebo nám zavolejte na ${tel(CFG.phone)}.`;
   return `<p class="send-status ${st}" id="sendStatus" role="status"><span class="dot"></span><span>${text}${again}</span></p>`;
@@ -3022,7 +3027,9 @@ function ensureSubmitted(force) {
   if (submitPromise) return submitPromise;
   setSend('sending');
   submitPromise = api('submitScreening', { screening: payload() }, 60000)
-    .then(j => { S.recordId = j.id; setSend(j.emailed ? 'sent' : 'saved'); return j.id; })
+    /* Tři stavy, ne dva: odesláno, naplánováno a selhalo. Zdržený e-mail se do
+       26. 11. 2026 tvářil jako selhání, protože stránka znala jen `emailed`. */
+    .then(j => { S.recordId = j.id; setSend(j.emailed ? 'sent' : j.scheduled ? 'planned' : 'saved'); return j.id; })
     .catch(e => { setSend('failed'); submitPromise = null; throw e; });
   return submitPromise;
 }
