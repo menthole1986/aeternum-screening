@@ -890,7 +890,7 @@ const CFG = {
   /* Vstupní screening a lékařské vyšetření. Vlastní číslo, ne protocolPrice —
      to je cena Lifestyle Protocolu, jiného produktu pro jiné lidi. Zrcadlí
      CONFIG.ENTRY_SCREENING_PRICE v aeternum_screening_apps_script.gs. */
-  examPrice: 3970,
+  examPrice: 4970,
   /* Nabídka je odložená, dokud nestojí platební cesta (Synlab, InBody, kdo
      protokol píše). Kód je hotový — přepnout na true a zapnout na serveru
      vlastnost FEATURE_PROTOCOL = 1. */
@@ -942,8 +942,8 @@ const Q = {
   region: {
     marcel: 'Hned na začátku jedna otázka mimo zdraví. Podle toho, kde žijete, se liší podoba péče i programy, které Vám na konci ukážu.',
     label: 'Kde žijete?',
-    hint: 'V Praze a okolí si můžete vybrat: chodit k nám na kliniku osobně, nebo vést péči na dálku. Odjinud vedeme péči online — konzultace i vstupní vyšetření na dálku a lék na e-recept si vyzvednete v lékárně. Minimálně jednou za celou terapii Vás ale potřebujeme vidět osobně: buď přijedete na vstupní lékařské vyšetření, nebo na kontrolní vyšetření na konci třetího měsíce.',
-    opts: ['Praha nebo okolí do 20 km', 'Jinde v České republice'], rows: true
+    hint: 'V Praze a okolí si můžete vybrat: chodit k nám na kliniku osobně, nebo vést péči na dálku. Odjinud vedeme péči online: konzultace i vstupní vyšetření na dálku a lék na e-recept si vyzvednete v lékárně. Minimálně jednou za celou terapii Vás ale potřebujeme vidět osobně: buď přijedete na vstupní lékařské vyšetření, nebo na kontrolní vyšetření na konci třetího měsíce.',
+    opts: ['Praha nebo okolí', 'Jinde v České republice'], rows: true
   },
   age: {
     marcel: 'Věk potřebuji kvůli bezpečnosti terapie a odhadu, jak rychle budete hubnout.',
@@ -962,7 +962,7 @@ const Q = {
     marcel: d => {
       const bmi = calcBMI(d.height, d.weight);
       return bmi
-        ? `Vaše BMI je ${dec(bmi)} — ${bmiCategory(bmi)}. Kam se chcete dostat? Cíl si klidně nastavte ambiciózně, na konzultaci ho doladíme.`
+        ? `Vaše BMI je ${dec(bmi)}, ${bmiCategory(bmi)}. Kam se chcete dostat? Cíl si klidně nastavte ambiciózně, na konzultaci ho doladíme.`
         : 'Kam se chcete dostat? Cíl si klidně nastavte ambiciózně, na konzultaci ho doladíme.';
     },
     label: 'Jaká je Vaše cílová váha?', type: 'num',
@@ -1001,7 +1001,7 @@ const Q = {
     cond: d => d.glp1 === 'Zkoušel/a jsem v minulosti' || d.glp1 === 'Aktuálně užívám'
   },
   pank: {
-    marcel: 'Teď několik otázek na bezpečnost. Jsou krátké, ale důležité — rozhodují o tom, jestli je terapie vůbec možná.',
+    marcel: 'Teď několik otázek na bezpečnost. Jsou krátké, ale důležité, rozhodují o tom, jestli je terapie vůbec možná.',
     label: 'Léčil/a jste se někdy se zánětem slinivky břišní (pankreatitida)?', opts: ['Ne', 'Ano']
   },
   /* Zánět slinivky v anamnéze není absolutní kontraindikace. SPC Mounjara má
@@ -1013,13 +1013,13 @@ const Q = {
      s doběhlou atakou před deseti lety skončil stejně jako chronik.
      Změnu konzultoval Marcel s MUDr. Májovským. */
   pankPricina: {
-    marcel: 'Děkuju. Zánět slinivky sám o sobě terapii nevylučuje — záleží na tom, co ho způsobilo.',
+    marcel: 'Děkuju. Zánět slinivky sám o sobě terapii nevylučuje, záleží na tom, co ho způsobilo.',
     label: 'Co ho podle lékařů způsobilo?',
     opts: ['Žlučové kameny', 'Dietní chyba nebo alkohol', 'Po vyšetření ERCP', 'Vysoké triglyceridy', 'Příčina se nezjistila', 'Jde o chronický zánět slinivky', 'Vznikl při léčbě lékem na hubnutí'],
     rows: true, cond: d => d.pank === 'Ano'
   },
   pankZlucnik: {
-    marcel: 'A ještě k těm kamenům — po odebrání žlučníku příčina obvykle pomine.',
+    marcel: 'A ještě k těm kamenům: po odebrání žlučníku příčina obvykle pomine.',
     label: 'Máte ještě žlučník?', opts: ['Byl mi odebrán', 'Mám ho'], rows: true,
     cond: d => d.pank === 'Ano' && d.pankPricina === 'Žlučové kameny'
   },
@@ -1065,7 +1065,7 @@ const Q = {
   },
   /* Dvě otázky, které terapii vylučují úplně. Ptáme se na ně tady, ne až
      u objednávky vyšetření: klienta, kterého stejně odmítneme, nemáme nechat
-     zaplatit 3 970 za screening, aby se to dozvěděl od lékaře. */
+     zaplatit screening, aby se to dozvěděl od lékaře. */
   onko: {
     marcel: 'Ještě dvě otázky, u kterých musím mít jistotu.',
     label: 'Léčíte se nebo jste se léčil/a s onkologickým onemocněním?',
@@ -1124,10 +1124,10 @@ const Q = {
 
 /* ---------- sekce a kroky ---------- */
 const SEC = {
-  basics:    { lbl: 'Základ',       eyebrow: 'Krok 01 — Základ',       ids: ['gender', 'region', 'age', 'hw', 'target'] },
-  goal:      { lbl: 'Cíl',          eyebrow: 'Krok 02 — Cíl',          ids: ['goal', 'glp1', 'glp1drug', 'glp1sat'] },
-  safety:    { lbl: 'Bezpečnost',   eyebrow: 'Krok 03 — Bezpečnost',   ids: ['pank', 'pankPricina', 'pankZlucnik', 'pankKdy', 'pankTed', 'men2', 'diab', 'zluc', 'led', 'ppp', 'pppType', 'pppStav', 'onko', 'tehot', 'leky', 'alergie', 'stit', 'kard'] },
-  lifestyle: { lbl: 'Životní styl', eyebrow: 'Krok 04 — Životní styl', ids: ['pohyb', 'pohybTyp', 'spanek', 'odpocaty', 'odkud'] }
+  basics:    { lbl: 'Základ',       eyebrow: 'Krok 01 · Základ',       ids: ['gender', 'region', 'age', 'hw', 'target'] },
+  goal:      { lbl: 'Cíl',          eyebrow: 'Krok 02 · Cíl',          ids: ['goal', 'glp1', 'glp1drug', 'glp1sat'] },
+  safety:    { lbl: 'Bezpečnost',   eyebrow: 'Krok 03 · Bezpečnost',   ids: ['pank', 'pankPricina', 'pankZlucnik', 'pankKdy', 'pankTed', 'men2', 'diab', 'zluc', 'led', 'ppp', 'pppType', 'pppStav', 'onko', 'tehot', 'leky', 'alergie', 'stit', 'kard'] },
+  lifestyle: { lbl: 'Životní styl', eyebrow: 'Krok 04 · Životní styl', ids: ['pohyb', 'pohybTyp', 'spanek', 'odpocaty', 'odkud'] }
 };
 const SECS = ['basics', 'goal', 'safety', 'lifestyle'];
 const STRIP_NAME = { basics: 'ZÁKLAD', goal: 'CÍL', safety: 'BEZPEČNOST', lifestyle: 'ŽIVOTNÍ STYL', result: 'DOPORUČENÍ' };
@@ -1184,7 +1184,7 @@ function progressHTML(sec) {
   return `<div class="top-actions"><div class="prog"><span class="lbl"><b>${SEC[sec].lbl.toUpperCase()}</b> · ${pad2(i + 1)} / ${pad2(SECS.length)}</span>${segsHTML(SECS.length, i)}</div></div>`;
 }
 function stripHTML(cur) {
-  return `<div class="strip ${cur ? 'qs' : 'all'}" aria-hidden="true">${STRIP_ORDER.map((k, i) => (i ? '<span>—</span>' : '') + (k === cur ? `<b>${STRIP_NAME[k]}</b>` : `<span>${STRIP_NAME[k]}</span>`)).join('')}</div>`;
+  return `<div class="strip ${cur ? 'qs' : 'all'}" aria-hidden="true">${STRIP_ORDER.map((k, i) => (i ? '<span>·</span>' : '') + (k === cur ? `<b>${STRIP_NAME[k]}</b>` : `<span>${STRIP_NAME[k]}</span>`)).join('')}</div>`;
 }
 const BACK = `<button type="button" class="round" data-act="back" aria-label="Zpět">${icon('i-back')}</button>`;
 function navHTML(showNext, extra = '') {
@@ -1275,7 +1275,7 @@ function cautionText(d) {
       || d.pankTed === 'Občas mívám potíže';
     out.push('V anamnéze máte zánět slinivky' + (detail ? ' (' + detail + ')' : '') + '. ' +
       (opatrne
-        ? 'Terapii to nevylučuje, ale rozhoduje o ní lékař na vstupním vyšetření — zaměří se na slinivku a může terapii nedoporučit.'
+        ? 'Terapii to nevylučuje, ale rozhoduje o ní lékař na vstupním vyšetření, zaměří se na slinivku a může terapii nedoporučit.'
         : 'Není to překážka, která by terapii vylučovala, ale posoudí ji lékař na vstupním vyšetření.'));
   }
   if (d.ppp === 'Ano' && d.pppType !== 'Záchvatovité přejídání') {
@@ -1414,10 +1414,10 @@ function recommend(d) {
     alt = bmi >= 30 ? 'Při Vašem BMI by duální agonista GLP-1/GIP přinesl rychlejší úbytek. Pokud budete chtít i výraznější zhubnutí, probereme ho na konzultaci.' : null;
   } else if (d.goal === 'Výrazně zhubnout') {
     key = 'mounjaro';
-    why = 'Pro výrazný úbytek je v této třídě nejúčinnější — ve studiích vedl k průměrnému poklesu okolo 20 % hmotnosti.';
+    why = 'Pro výrazný úbytek je v této třídě nejúčinnější, ve studiích vedl k průměrnému poklesu okolo 20 % hmotnosti.';
   } else if (lossPct < 15) {
     key = 'wegovy';
-    why = 'Váš cíl je v dosahu mírnější terapie. Semaglutid vede ve studiích k průměrnému úbytku kolem 15 % hmotnosti, takže na Váš cíl bohatě stačí — a je šetrnější k trávení.';
+    why = 'Váš cíl je v dosahu mírnější terapie. Semaglutid vede ve studiích k průměrnému úbytku kolem 15 % hmotnosti, takže na Váš cíl bohatě stačí, a je šetrnější k trávení.';
   } else {
     key = 'mounjaro';
     why = `Chcete se dostat o ${Math.round(lossPct)} % níž. Na takový cíl je tirzepatid vhodnější, protože dosahuje vyššího průměrného úbytku.`;
@@ -1437,7 +1437,7 @@ function compute() {
   const contra = hardContra(d);
   // Při kontraindikaci nemá skóre vhodnosti co říkat — ať v tabulce ani v notifikaci
   // nesvítí 9/10 u klienta, kterému program nedoporučujeme.
-  const sc = contra ? { score: 0, label: 'Nevhodná — kontraindikace', cls: 'crit' } : calcScore(d);
+  const sc = contra ? { score: 0, label: 'Nevhodná, kontraindikace', cls: 'crit' } : calcScore(d);
   const rec = contra ? null : recommend(d);
   // Co terapii nebrání, ale lékař o tom má vědět.
   const caution = contra ? '' : cautionText(d);
@@ -1462,7 +1462,7 @@ function protocolHTML(R) {
   return `<div class="callback">
     <p class="small-caps">Mohlo by Vám pomoct něco jiného</p>
     <h3 class="grad" style="margin-top:10px">Aeternum Lifestyle Protocol</h3>
-    <p class="lead" style="margin-top:10px">Není to léčba a není to na předpis. Je to plán, který Vám postaví výživový specialista, trenér a odborník na longevity — na základě komplexních krevních testů, měření InBody a vstupní konzultace.</p>
+    <p class="lead" style="margin-top:10px">Není to léčba a není to na předpis. Je to plán, který Vám postaví výživový specialista, trenér a odborník na longevity, a to na základě komplexních krevních testů, měření InBody a vstupní konzultace.</p>
     <div style="margin-top:14px">${b.map(x => `<div class="ben hl">${icon('i-check')}<span>${esc(x)}</span></div>`).join('')}</div>
     <div class="price" style="margin-top:16px"><b>${fmt(CFG.protocolPrice)} Kč</b><span class="small-caps">jednorázově</span></div>
     <button type="button" class="btn ghost" id="protoBtn" style="margin-top:clamp(14px,calc(1.2*var(--u)),calc(22px*var(--k)))">Mám zájem, ozvěte se mi</button>
@@ -1515,7 +1515,7 @@ function render() {
           ${cboxHTML('c-news', S.a.marketing === true, 'Chci vědět o slevách, novinkách ze světa kliniky a GLP-1. Nejvýš jednou měsíčně, odhlásit se dá jedním kliknutím.', 'marketing')}
           <details class="legal"><summary>Celé znění souhlasu</summary>
             <p>Souhlasím se zpracováním svých osobních údajů, včetně údajů o zdravotním stavu, které jsem ve screeningu uvedl/a, společností My Design Creatives s.r.o., IČO 07162235, se sídlem Chlumčanského 497/5, 180 00 Praha 8, provozující Aeternum Clinic, za účelem vyhodnocení screeningu a jeho zaslání na můj e-mail. Souhlas mohu kdykoli odvolat na info@aeternumclinic.cz.</p>
-            <p>Zaškrtnutím druhého políčka souhlasím, aby mi tatáž společnost posílala na uvedený e-mail obchodní sdělení — slevy a novinky ze světa kliniky a GLP-1, nejvýš jednou měsíčně. Tento souhlas mohu kdykoli odvolat odkazem v každém e-mailu nebo na info@aeternumclinic.cz.</p></details>
+            <p>Zaškrtnutím druhého políčka souhlasím, aby mi tatáž společnost posílala na uvedený e-mail obchodní sdělení, tedy slevy a novinky ze světa kliniky a GLP-1, nejvýš jednou měsíčně. Tento souhlas mohu kdykoli odvolat odkazem v každém e-mailu nebo na info@aeternumclinic.cz.</p></details>
         </div></div></div>`;
     F = navHTML(true);
   } else if (st.key === 'generating') {
@@ -1746,7 +1746,7 @@ function intakeHTML() {
     <p class="fine" style="margin-top:14px">Děkujeme, toto okno už můžete zavřít.</p></div>`;
 
   return `<span class="eyebrow plain">Poslední krok</span><h3 class="grad">Vstupní dotazník</h3>
-    <p class="lead" style="margin-top:12px">Termín máte potvrzený. Vyplňte prosím ještě tenhle dotazník — laboratoř z něj vystaví žádanku a lékař podle něj připraví Váš protokol. Zabere to pár minut.</p>
+    <p class="lead" style="margin-top:12px">Termín máte potvrzený. Vyplňte prosím ještě tenhle dotazník. Laboratoř z něj vystaví žádanku a lékař podle něj připraví Váš protokol. Zabere to pár minut.</p>
     <div class="bform" style="margin-top:18px">
       <div class="ufrow one">${ufHTML('name', 'Jméno a příjmení podle průkazu', { autocomplete: 'name', placeholder: 'Jana Nováková' })}</div>
       <div class="ufrow one">${ufHTML('birthDate', 'Datum narození', { type: 'date' })}</div>
@@ -1766,7 +1766,7 @@ function intakeHTML() {
       <div class="ufrow one">${ufHTML('gyn', 'Gynekologické či hormonální potíže', { placeholder: 'PMOS (PCOS), inzulinová rezistence…' })}</div>
       <div class="ufrow one">${ufHTML('pastAttempts', 'Dřívější pokusy o hubnutí a výsledek', { placeholder: 'Co jste zkoušel(a) a jak to dopadlo' })}</div>
       <div class="ufrow one">${ufHTML('pastDrugs', 'Užíval(a) jste léky na hubnutí?', { placeholder: 'Ne / název léku' })}</div>
-      <div class="ufrow one">${ufHTML('diet', 'Typický jídelníček — snídaně, oběd, večeře, svačiny, sladké', { placeholder: 'Klidně upřímně a stručně' })}</div>
+      <div class="ufrow one">${ufHTML('diet', 'Typický jídelníček: snídaně, oběd, večeře, svačiny, sladké', { placeholder: 'Klidně upřímně a stručně' })}</div>
       <div class="ufrow one">${ufHTML('water', 'Kolik čisté vody denně', { placeholder: '1,5 l' })}</div>
       <div class="ufrow one">${ufHTML('alcohol', 'Vztah k alkoholu', { placeholder: 'Nepiji / příležitostně' })}</div>
       <div class="ufrow one">${ufHTML('smoking', 'Kouření či nikotin', { placeholder: 'Nekouřím' })}</div>
@@ -1796,7 +1796,7 @@ async function submitIntake(btn) {
   if (!(a.gyn || '').toString().trim()) return err('Vyplňte prosím: Gynekologické či hormonální potíže');
   if (!(a.pastAttempts || '').toString().trim()) return err('Vyplňte prosím: Dřívější pokusy o hubnutí a výsledek');
   if (!(a.pastDrugs || '').toString().trim()) return err('Vyplňte prosím: Užíval(a) jste léky na hubnutí?');
-  if (!(a.diet || '').toString().trim()) return err('Vyplňte prosím: Typický jídelníček — snídaně, oběd, večeře, svačiny, sladké');
+  if (!(a.diet || '').toString().trim()) return err('Vyplňte prosím: Typický jídelníček: snídaně, oběd, večeře, svačiny, sladké');
   if (!(a.water || '').toString().trim()) return err('Vyplňte prosím: Kolik čisté vody denně');
   if (!(a.alcohol || '').toString().trim()) return err('Vyplňte prosím: Vztah k alkoholu');
   if (!(a.smoking || '').toString().trim()) return err('Vyplňte prosím: Kouření či nikotin');
@@ -2033,7 +2033,7 @@ function paidOnlyHTML() {
         <p class="lead" style="margin-top:14px">Chvilku strpení, hned to bude. Jakmile platbu potvrdíme, pošleme Vám e-mailem odkaz ke konzultaci.</p></div>`;
   return `<section class="rsec first"><div class="split">
     <div class="ctr"><span class="eyebrow">Vstupní konzultace</span><h1 class="h-l">Máme<br>Vaši platbu</h1>
-      <p class="lead summary">Výsledky screeningu tady nevidíte proto, že jste ho vyplňoval(a) v jiném prohlížeči nebo se mezitím smazala data. Nic se neděje — máme je uložené a lékař je bude mít u sebe.</p></div>
+      <p class="lead summary">Výsledky screeningu tady nevidíte proto, že jste ho vyplňoval(a) v jiném prohlížeči nebo se mezitím smazala data. Nic se neděje, máme je uložené a lékař je bude mít u sebe.</p></div>
     <div>${body}</div></div></section>`;
 }
 
@@ -2082,14 +2082,14 @@ function renderResult() {
   <section class="rsec" id="detail"><div class="split">
     <div class="ctr"><span class="eyebrow">Vaše čísla</span><h2 class="h-l">Odkud<br>startujeme</h2>
       <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))">Odhad vychází z průměrného tempa úbytku v klinických studiích. Skutečný průběh doladíme na kontrolách.</p>
-      <p class="lead mensi" style="margin-top:clamp(12px,calc(1*var(--u)),calc(18px*var(--k)))">Doporučená délka počítá s dvěma měsíci navíc oproti výpočtu — jsou rezerva na individuální odezvu a na udržovací fázi, která chrání před jo-jo efektem. Není to závazek: program lze kdykoli ukončit i prodloužit, bez poplatku.</p></div>
+      <p class="lead mensi" style="margin-top:clamp(12px,calc(1*var(--u)),calc(18px*var(--k)))">Doporučená délka počítá s dvěma měsíci navíc oproti výpočtu, jsou rezerva na individuální odezvu a na udržovací fázi, která chrání před jo-jo efektem. Není to závazek: program lze kdykoli ukončit i prodloužit, bez poplatku.</p></div>
     <div>
       <div class="vals">
         <div class="val"><small>BMI</small><b>${dec(R.bmi)}</b><span style="color:var(--muted)">${esc(bmiCategory(R.bmi))}</span></div>
         <div class="val"><small>Doporučená délka</small><b>${recMonths(R)}<em>měsíců</em></b></div>
         <div class="val"><small>Cíl redukce</small><b>−${R.lose}<em>kg</em></b></div>
       </div>
-      <div class="chart"><div class="cl">Předpokládaný průběh hmotnosti — cílovou váhu čekáme kolem ${R.months}. měsíce, zbytek doporučené délky je udržovací fáze</div>${chartSVG(R.weight, R.target, R.months, num(S.a.height))}
+      <div class="chart"><div class="cl">Předpokládaný průběh hmotnosti, cílovou váhu čekáme kolem ${R.months}. měsíce, zbytek doporučené délky je udržovací fáze</div>${chartSVG(R.weight, R.target, R.months, num(S.a.height))}
         <div class="cf"><span>Dnes</span><span>${Math.round(R.months / 2)} měs.</span><span>${R.months} měs.</span></div></div>
     </div>
   </div></section>
@@ -2111,9 +2111,9 @@ function renderResult() {
     <div class="ctr"><span class="eyebrow">Váš program</span><h2 class="h-l radek">Jak povedeme Vaši péči</h2>
       <p class="lead" style="margin-top:clamp(16px,calc(1.4*var(--u)),calc(26px*var(--k)))">Péči vedeme na dálku: konzultace i vstupní lékařské vyšetření online a lék na e-recept si vyzvednete v kterékoli lékárně.</p>
       <p class="lead mensi" style="margin-top:clamp(12px,calc(1*var(--u)),calc(18px*var(--k)))">Chceme Vás ale upozornit na jednu důležitou věc: <b>minimálně jednou za celou terapii Vás potřebujeme vidět osobně.</b> A tady máte na výběr: buď přijedete rovnou na vstupní lékařské vyšetření, nebo si ho uděláte online a přijedete osobně až na kontrolní vyšetření na konci třetího měsíce po zahájení terapie.</p>
-      <p class="lead mensi" style="margin-top:clamp(14px,calc(1.2*var(--u)),calc(22px*var(--k)))">Aktuálně máme ordinaci pro osobní návštěvy jenom v Praze, ale v novém roce přibude ještě možnost vyšetření v Brně, v Olomouci nebo ve Zlíně.</p>
+      <p class="lead mensi" style="margin-top:clamp(14px,calc(1.2*var(--u)),calc(22px*var(--k)))">Aktuálně máme ordinaci pro osobní návštěvy jenom v Praze, ale v novém roce přibude ještě možnost vyšetření v Brně nebo v Olomouci.</p>
       </div>
-    <div class="ctr plans"><p class="selfpay">Aeternum Clinic je <b>privátní klinika bez smlouvy se zdravotními pojišťovnami</b> — vstupní screening, program i léčivo si hradíte sami, v režimu samoplátce.</p><p class="fine" style="margin:0 0 clamp(4px,calc(.4*var(--u)),calc(8px*var(--k)))">Vyberte si z následujících programů péče.</p>${variantsHTML(R)}</div>
+    <div class="ctr plans"><p class="selfpay">Aeternum Clinic je <b>privátní klinika bez smlouvy se zdravotními pojišťovnami</b>: vstupní screening, program i léčivo si hradíte sami, v režimu samoplátce.</p><p class="fine" style="margin:0 0 clamp(4px,calc(.4*var(--u)),calc(8px*var(--k)))">Vyberte si z následujících programů péče.</p>${variantsHTML(R)}</div>
   </div></section>
 
   <section class="rsec" id="cta"><div class="split">
@@ -2154,6 +2154,7 @@ const PLANS = {
       [1, 'Aeternum Lifestyle Protocol'],
       [1, 'Tréninkový plán od fitness trenéra'],
       [1, 'Jídelníček a doporučení doplňků stravy'],
+      [1, 'Průvodce terapií od našeho lékaře, výživového specialisty a trenéra'],
       [1, 'Flexibilní program bez vázanosti'],
       [0, 'Léčivo není součástí ceny programu*']
     ],
@@ -2163,6 +2164,7 @@ const PLANS = {
       ['📊', 'Pravidelné krevní testy a screening', 'V ceně programu, bez doplatku. Sledujeme, jak tělo na terapii reaguje.'],
       ['📘', 'Aeternum Lifestyle Protocol', 'Tréninkový plán od trenéra, jídelníček a suplementace od nutričního terapeuta.'],
       ['🤝', 'Podpora koordinátora', 'Koordinátor péče a program manager po celou dobu programu.'],
+      ['📗', 'Průvodce terapií', 'Naše vlastní brožura nad rámec příbalové informace: akutní potíže, cestování, společenský život, plánované operační zákroky a finální fáze terapie.'],
       ['🔀', 'Flexibilní program', 'Bez vázanosti a storno poplatku. Kdykoli lze zkrátit i prodloužit.']
     ]
   },
@@ -2180,7 +2182,7 @@ const PLANS = {
       [1, 'Konzultace s psychoterapeutem (na vyžádání)'],
       [0, 'Léčivo není součástí ceny programu*']
     ],
-    desc: 'Prémiová péče pro náročné — pravidelné kontroly a profesionální vedení na dálku po celé ČR.',
+    desc: 'Prémiová péče pro náročné. Pravidelné kontroly a profesionální vedení na dálku po celé ČR.',
     tiles: [
       ['👨‍⚕️', 'Lékař každý měsíc', 'Kontrola 20 minut, úprava dávkování a e-recept na další období.'],
       ['🥗', 'Výživový specialista každý měsíc', 'Konzultace 30 minut, jídelníček na míru a přesný plán suplementace.'],
@@ -2198,23 +2200,25 @@ const PLANS = {
      Ukazuje se všem: říká o sobě, že je pro Prahu a okolí, a kdo si pro léčivo
      dojede, vybere si sám. */
   praha: {
-    key: 'praha', name: 'All-inclusive', emoji: '💉', price: null, drugIncluded: true,
+    key: 'praha', name: 'Meds-inclusive', emoji: '💉', price: null, drugIncluded: true,
     kde: 'Praha a okolí',
     feats: [
       [1, 'Léčivo je součástí ceny programu'],
-      [1, 'Individuální program'],
+      [1, 'Objednáme ho a připravíme v lékárně'],
       [1, 'Osobní a online konzultace'],
-      [1, 'Kontrola u lékaře nejméně jednou měsíčně'],
+      [1, 'Kontrola u lékaře každé tři měsíce (30 minut)'],
       [1, 'Kontrolní krevní testy v ceně programu'],
-      [1, 'Aeternum Lifestyle Protocol'],
+      [1, 'Podpora odborného koordinátora'],
+      [1, 'Průvodce terapií od našeho lékaře, výživového specialisty a trenéra'],
+      [1, 'Aeternum Lifestyle Protocol na vyžádání'],
       [1, 'Flexibilní program bez vázanosti']
     ],
-    desc: 'Individuální péče pro klienty, kteří chtějí full servis a léčivo v ceně programu. Objednáme ho za Vás a v lékárně BENU v Chlumčanského ulici na Vás čeká, dokud si ho osobně nevyzvednete.',
+    desc: 'Program s léčivem v ceně pro klienty z Prahy a okolí. Péči má stejnou jako Standard, navíc za Vás léčivo objednáme a připravíme v lékárně BENU, kde na Vás čeká, dokud si ho osobně nevyzvednete.',
     tiles: [
-      ['💉', 'Léčivo v ceně programu', 'Objednáme ho s předstihem a čeká na Vás v lékárně BENU, Chlumčanského 497/5, Praha 8. V lékárně už nic neplatíte. V ceně je léčivo v síle 2,5 až 5 mg. Když lékař dávku zvedne, změní se i cena programu — u Mounjara začíná od 7,5 mg na 15 970 Kč měsíčně. Celá tabulka je v ceníku a vždycky Vám to řekneme, než se dávka zvedne.'],
-      ['👨‍⚕️', 'Lékař nejméně jednou měsíčně', 'Osobně na klinice v Praze, nebo online — a další kontroly podle toho, jak je potřeba.'],
+      ['💉', 'Léčivo v ceně programu', 'Objednáme ho s předstihem a čeká na Vás v lékárně BENU, Chlumčanského 497/5, Praha 8, v přízemí budovy Bulovka Medical and Business Centre, kde sídlí i Aeternum Clinic. V lékárně už nic neplatíte. V ceně je léčivo v síle 2,5 až 5 mg. Když lékař dávku zvedne, změní se i cena programu: u Mounjara začíná od 7,5 mg na 15 970 Kč měsíčně. Celá tabulka je v ceníku a vždycky Vám to řekneme, než se dávka zvedne.'],
+      ['👨‍⚕️', 'Lékař každé tři měsíce', 'Třicet minut, osobně na klinice v Praze nebo online. Když všechno probíhá dobře, dá se kontrola po domluvě posunout.'],
       ['📊', 'Pravidelné krevní testy', 'V ceně programu, bez doplatku. Sledujeme, jak tělo na terapii reaguje.'],
-      ['📘', 'Aeternum Lifestyle Protocol', 'Individuální nutriční, suplementační, tréninkový a regenerační plán.'],
+      ['📘', 'Aeternum Lifestyle Protocol', 'Jídelníček, suplementace a tréninkový plán. V ceně programu, připravíme ho, když si o něj řeknete.'],
       ['🔀', 'Flexibilní program', 'Bez vázanosti a storno poplatku. Kdykoli lze zkrátit i prodloužit.']
     ]
   }
@@ -2304,7 +2308,7 @@ function varInfoHTML(R) {
   if (v.drugIncluded) {
     return `<p class="vi-main">Léčivo je <b>v ceně programu</b>. V lékárně už neplatíte nic.</p>`;
   }
-  return `<p class="vi-main"><b>*</b> Léčivo si hradíte sami, v režimu samoplátce — my vydáme e-recept. Dávku určuje lékař a během terapie se může měnit. Na aktuální ceny se můžete podívat například <a href="${PRICELIST_URL}" target="_blank" rel="noopener">zde</a>.</p>`;
+  return `<p class="vi-main"><b>*</b> Léčivo si hradíte sami, v režimu samoplátce, my vydáme e-recept. Dávku určuje lékař a během terapie se může měnit. Na aktuální ceny se můžete podívat například <a href="${PRICELIST_URL}" target="_blank" rel="noopener">zde</a>.</p>`;
 }
 
 function selectVariant(i) {
@@ -2418,7 +2422,7 @@ function bookingHTML() {
   if (B.paid && B.type === 'advisor') {
     return `<div class="success"><div class="tick">${icon('i-check')}</div><span class="eyebrow">Zaplaceno</span>
       <h3>Konzultace je připravená</h3>
-      <p class="lead" style="margin-top:14px">${esc(CFG.advisorName)} na Vás čeká. Nemusíte hned — odkaz platí ${CFG.advisorHours} hodin a během nich se ke konzultaci můžete vracet.</p>
+      <p class="lead" style="margin-top:14px">${esc(CFG.advisorName)} na Vás čeká. Nemusíte hned, odkaz platí ${CFG.advisorHours} hodin a během nich se ke konzultaci můžete vracet.</p>
       ${B.advisorUrl ? `<a class="btn pri" href="${esc(B.advisorUrl)}" style="margin-top:clamp(18px,calc(1.5*var(--u)),calc(28px*var(--k)))">Spustit konzultaci</a>`
         : `<p class="lead" style="margin-top:12px">Odkaz Vám posíláme e-mailem na <b style="color:var(--ink)">${esc(S.a.email)}</b>.</p>`}
       <p class="fine" style="margin-top:14px">Odkaz i doklad o platbě máme poslané na ${esc(S.a.email)}. Částku Vám odečteme z první platby za program.</p></div>`;
@@ -2428,7 +2432,7 @@ function bookingHTML() {
     const d = new Date(B.slot);
     return `<div class="success"><div class="tick">${icon('i-check')}</div><span class="eyebrow">Potvrzeno</span>
       <h3>Termín je Váš</h3>
-      <p class="lead" style="margin-top:14px">${esc(DOW[d.getDay()])} ${d.getDate()}. ${esc(MON[d.getMonth()])}, ${pad2(d.getHours())}:${pad2(d.getMinutes())} — ${B.type === 'online' ? 'online' : 'osobně v Praze'}.</p>
+      <p class="lead" style="margin-top:14px">${esc(DOW[d.getDay()])} ${d.getDate()}. ${esc(MON[d.getMonth()])}, ${pad2(d.getHours())}:${pad2(d.getMinutes())}, ${B.type === 'online' ? 'online' : 'osobně v Praze'}.</p>
       <p class="lead" style="margin-top:12px">Potvrzení a pozvánku do kalendáře jsme poslali na <b style="color:var(--ink)">${esc(S.a.email)}</b>. Den před konzultací Vám přijde SMS připomínka.</p>
       ${B.manageUrl ? `<a class="btn ghost" href="${esc(B.manageUrl)}" style="margin-top:clamp(18px,calc(1.5*var(--u)),calc(28px*var(--k)))">Přesunout nebo zrušit termín</a>` : ''}
       <p class="fine" style="margin-top:14px">Termín si můžete přesunout nebo zrušit sami a zdarma, až do ${B.minHours || 8} hodin před začátkem. Později už to nejde a uhrazená částka propadá.</p></div>`;
@@ -2460,7 +2464,7 @@ function bookingHTML() {
     ${priceHTML(type)}
     <div class="seg3${(CFG.advisorEnabled || CFG.advisorSoon) ? '' : ' dva'}" role="group" aria-label="Podoba konzultace">
       ${(CFG.advisorEnabled || CFG.advisorSoon) ? `<button type="button" data-btype="advisor"
-        aria-pressed="${type === 'advisor'}"${CFG.advisorEnabled ? '' : ' title="Zatím jen k nahlédnutí — objednat ho ještě nejde"'}>
+        aria-pressed="${type === 'advisor'}"${CFG.advisorEnabled ? '' : ' title="Zatím jen k nahlédnutí, objednat ho ještě nejde"'}>
         <b>AI konzultant</b><i>${fmt(CFG.advisorPrice)} Kč</i>
         ${CFG.advisorEnabled ? '' : '<span class="soon">připravujeme</span>'}</button>` : ''}
       <button type="button" data-btype="online" aria-pressed="${type === 'online'}"><b>Konzultant online</b><i>${fmt(CFG.price)} Kč</i></button>
@@ -2492,10 +2496,10 @@ function priceHTML(type) {
 function advisorHTML() {
   return `<div class="twin">
     <p><b>Nenechte se zmást.</b> ${esc(CFG.advisorName)} je vysoce inteligentní digitální dvojče našeho reálného konzultanta, které si sám vyškolil podle svých vlastních zkušeností a konzultací s klienty.</p>
-    <p>Není to leták ani chatbot s obecnými odpověďmi. Konzultace je <b>individuální</b>: pracuje s Vašimi skutečnými čísly z tohohle screeningu — s váhou, BMI, cílovou hmotností i s Vašimi odpověďmi o zdravotním stavu — a na jejich základě Vám připraví konkrétní návrh programu péče i s cenou. Proto je placená.</p>
-    <p>Živého konzultanta přitom <b>plnohodnotně nahrazuje</b>. Projdete to samé a na stejné úrovni a můžete se ptát na všechno, na co byste se zeptali naživo — jak terapie probíhá, na ceny, na vedlejší účinky i na cokoliv dalšího. Rozdíl je jenom v tom, že nečekáte na volný termín. O vhodnosti terapie ale vždycky rozhoduje lékař.</p>
-    <p>Konzultace se spustí hned po zaplacení a platí ${CFG.advisorHours} hodin. Když zrovna spěcháte, nevadí. Během té doby se k ní můžete vrátit a projít si ji znovu.</p>
-    <p><b>Konzultace nekončí povídáním.</b> Na jejím konci Vás čeká to samé co po konzultaci s živým koordinátorem: objednáme Vás k <b>lékařskému vyšetření</b> a pošleme Vám <b>žádanku na odběr krve</b>. K tomu dostanete klientskou dokumentaci — <b>informovaný souhlas s léčbou</b> a <b>návrh smlouvy o zdravotní péči</b> — sestavenou podle toho, na čem se spolu během konzultace domluvíte.</p>
+    <p>Není to leták ani chatbot s obecnými odpověďmi. Konzultace je <b>individuální</b>: pracuje s Vašimi skutečnými čísly z tohohle screeningu, tedy s váhou, BMI, cílovou hmotností i s Vašimi odpověďmi o zdravotním stavu, a na jejich základě Vám připraví konkrétní návrh programu péče i s cenou. Proto je placená.</p>
+    <p>Živého konzultanta přitom <b>plnohodnotně nahrazuje</b>. Projdete to samé a na stejné úrovni a můžete se ptát na všechno, na co byste se zeptali naživo: jak terapie probíhá, na ceny, na vedlejší účinky i na cokoliv dalšího. Rozdíl je jenom v tom, že nečekáte na volný termín. O vhodnosti terapie ale vždycky rozhoduje lékař.</p>
+    <p>Počítejte asi s půl hodinou, a když se budete hodně ptát, klidně i s hodinou, je to celá vstupní konzultace, ne pár odpovědí. Spustí se hned po zaplacení a platí ${CFG.advisorHours} hodin, takže když zrovna spěcháte, nevadí: během té doby se k ní můžete vrátit a projít si ji znovu.</p>
+    <p><b>Konzultace nekončí povídáním.</b> Na jejím konci Vás čeká to samé co po konzultaci s živým koordinátorem: objednáme Vás k <b>lékařskému vyšetření</b> a pošleme Vám <b>žádanku na odběr krve</b>. K tomu dostanete klientskou dokumentaci: <b>informovaný souhlas s léčbou</b> a <b>návrh smlouvy o zdravotní péči</b>, sestavenou podle toho, na čem se spolu během konzultace domluvíte.</p>
   </div>${CFG.advisorEnabled ? bookFormHTML() : advisorSoonHTML()}`;
 }
 
@@ -2504,7 +2508,7 @@ function advisorHTML() {
    tlačítko s cedulí „připravujeme" o tom neřekne nic. Objednat ho nejde:
    místo formuláře se ukáže tahle cedule, takže se nikde nespustí platba. */
 function advisorSoonHTML() {
-  return `<p class="emptyslots"><b>${esc(CFG.advisorName)} se ještě dolaďuje</b>, objednat si ho zatím nejde —
+  return `<p class="emptyslots"><b>${esc(CFG.advisorName)} se ještě dolaďuje</b>, objednat si ho zatím nejde,
     chtěli jsme ale, abyste dopředu věděli, co Vás u něj čeká. Než ho spustíme, provede Vás vstupní
     konzultací živý koordinátor péče; stačí si výš vybrat online nebo osobně v Praze.</p>`;
 }
@@ -2597,8 +2601,8 @@ function paymentHTML() {
       <dt>Částka</dt><dd>${fmt(h.amount || (ai ? CFG.advisorPrice : CFG.price))} Kč</dd>
     </dl>
     <div class="hold"><span class="dot"></span><span>${ai
-      ? `Po zaplacení prosím nezavírejte toto okno — odkaz ke konzultaci se otevře rovnou tady a zároveň Vám přijde e-mailem. Platí ${CFG.advisorHours} hodin, takže nic nespěchá.`
-      : `Po zaplacení prosím nezavírejte toto okno — čeká na Vás ještě krátký vstupní dotazník. Termín Vám držíme ${holdText(h)}.`}</span></div>
+      ? `Po zaplacení prosím nezavírejte toto okno. Odkaz ke konzultaci se otevře rovnou tady a zároveň Vám přijde e-mailem. Platí ${CFG.advisorHours} hodin, takže nic nespěchá.`
+      : `Po zaplacení prosím nezavírejte toto okno. Čeká na Vás ještě krátký vstupní dotazník. Termín Vám držíme ${holdText(h)}.`}</span></div>
     <div class="paychoice">
       <p class="small-caps" style="margin-bottom:12px">Vyberte způsob platby</p>
       ${ai ? '' : `<p class="fine">Termín si můžete přesunout nebo zrušit sami a zdarma, až do ${(h.minHours || 8)} hodin před začátkem. Později už to nejde a uhrazená částka propadá.</p>`}
@@ -2766,7 +2770,7 @@ const BOOK_ERRORS = {
   calendar_missing: 'Rezervační systém se právě připravuje. Zavolejte nám prosím na ',
   rate_limited: 'Příliš mnoho pokusů. Zkuste to prosím za chvíli.',
   need_screening: 'Konzultace s AI konzultantem navazuje na vyplněný screening. Dokončete ho prosím nejdřív.',
-  advisor_off: 'AI konzultanta právě dolaďujeme. Vyberte si prosím konzultanta — online nebo osobně v Praze.'
+  advisor_off: 'AI konzultanta právě dolaďujeme. Vyberte si prosím konzultanta, online nebo osobně v Praze.'
 };
 function bookError(x) {
   const code = x && x.code;
