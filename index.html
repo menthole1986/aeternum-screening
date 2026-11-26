@@ -155,6 +155,7 @@ body.fixed{overflow:hidden;height:100dvh}
   body.fixed .rows{margin-top:10px}
   body.fixed .rowopt{min-height:42px;font-size:15px}
   body.fixed .uf.big input{font-size:26px}
+  body.fixed .uf.big.text input{font-size:18px}
   body.fixed .ufrow{margin-top:14px;gap:16px}
   body.fixed .sliders{margin-top:14px;gap:14px}
   body.fixed .consents{margin-top:14px;gap:10px}
@@ -235,6 +236,10 @@ body.fixed main{min-height:0;overflow:hidden}
 .rowopt[aria-pressed="true"] .lbl{background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
 .rowopt[aria-pressed="true"] .mark{border-color:transparent;background:var(--grad)}
 .rowopt[aria-pressed="true"] .mark::after{content:"";width:34%;height:34%;border-radius:50%;background:#fff}
+/* U otázky s vícenásobnou odpovědí čtvereček místo kolečka. Kolečko říká „vyber jedno“
+   a klient by na druhou možnost ani nesáhl. */
+.rowopt[data-multi] .mark{border-radius:7px}
+.rowopt[data-multi][aria-pressed="true"] .mark::after{width:44%;height:26%;border-radius:0;background:transparent;border-left:2.5px solid #fff;border-bottom:2.5px solid #fff;transform:rotate(-45deg) translate(6%,-22%)}
 
 /* číselná pole (desktop) */
 .ufrow{display:grid;gap:clamp(22px,calc(2.5*var(--u)),calc(48px*var(--k)));grid-template-columns:repeat(var(--cols,2),minmax(0,1fr));margin-top:clamp(26px,calc(2.6*var(--u)),calc(50px*var(--k)))}
@@ -258,6 +263,11 @@ input:autofill{background:transparent;color:var(--ink)}
 
 .uf input[type="email"],.uf input[type="tel"]{font-size:clamp(17px,calc(1.35*var(--u)),calc(26px*var(--k)))}
 .uf.big input{font-size:clamp(34px,calc(4.4*var(--u)),calc(84px*var(--k)));font-weight:300;letter-spacing:-.02em;line-height:1;font-variant-numeric:tabular-nums}
+/* Volny text není číslo. `.uf.big` je nastavené pro váhu a výšku, kde velká číslice
+   vypadá dobře a vždycky se vejde. U věty jako „Euthyrox, hořčík, vitamín D“ se při
+   té velikosti nevejde ani nápověda a klient nevidí, co píše. Menší písmo, normální
+   řez a žádné tabulkové číslice. Marcel na to upozornil 26. 11. 2026. */
+.uf.big.text input{font-size:clamp(20px,calc(1.7*var(--u)),calc(32px*var(--k)));font-weight:400;letter-spacing:0;line-height:1.25;font-variant-numeric:normal;text-overflow:ellipsis}
 .uf input::-webkit-outer-spin-button,.uf input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .uf input[type="number"]{-moz-appearance:textfield}
 
@@ -978,11 +988,16 @@ const Q = {
       return [{ key: 'targetWeight', label: 'Cílová váha', unit: 'kg', min: Math.max(45, Math.round(w - 80)), max: Math.max(46, Math.round(w - 1)), def: Math.round(w * 0.85) }];
     }
   },
+  /* Jediná otázka s vícenásobnou odpovědí. Marcel 26. 11. 2026: jedna volba je málo,
+     lidi chtějí klid od jídla i zhubnout zároveň a nutit je vybrat jedno je umělé.
+     Na doporučení preparátu to nic nerozbije: rozhoduje nejsilnější ze zvolených cílů,
+     takže kdo zaškrtne i „výrazně zhubnout“, dostane silnější preparát. */
   goal: {
     marcel: 'Tohle je pro volbu preparátu ta nejdůležitější otázka. Ne každý potřebuje ten nejsilnější lék.',
-    label: 'Co je Vaším hlavním cílem?',
+    label: 'Co je Vaším cílem?',
+    hint: 'Můžete vybrat i víc možností.',
     opts: ['Zbavit se neustálých chutí a myšlenek na jídlo', 'Zhubnout pár kil', 'Výrazně zhubnout'],
-    rows: true
+    rows: true, multi: true
   },
   glp1: {
     marcel: 'Zajímá mě, jestli už za sebou nějakou zkušenost máte. Podle toho připravíme doporučení a plán terapie.',
@@ -990,7 +1005,7 @@ const Q = {
        Ukazovala se všem, kdo screening otevřou, i lidem, kteří o žádném
        takovém léku neslyšeli — a to je u léků na předpis reklama na volně
        přístupné stránce. Vysvětlení se vešlo do závorky v otázce. */
-    label: 'Máte zkušenost s GLP-1 léky (injekce na hubnutí)?',
+    label: 'Máte zkušenost s GLP‑1 léky (injekce na hubnutí)?',
     opts: ['Nemám zkušenosti', 'Vím o nich, nezkoušel/a jsem', 'Zkoušel/a jsem v minulosti', 'Aktuálně užívám'],
     rows: true
   },
@@ -1261,7 +1276,7 @@ function pankStopka(d) {
   if (d.pankPricina === 'Jde o chronický zánět slinivky') return 'chronického zánětu slinivky břišní';
   /* Zánět, který vznikl při léčbě GLP-1, je podle SPC jediný případ, kdy se
      lék už nikdy nesmí nasadit znovu. */
-  if (d.pankPricina === 'Vznikl při léčbě lékem na hubnutí') return 'zánětu slinivky, který vznikl při léčbě přípravkem ze skupiny GLP-1';
+  if (d.pankPricina === 'Vznikl při léčbě lékem na hubnutí') return 'zánětu slinivky, který vznikl při léčbě přípravkem ze skupiny GLP‑1';
   if (d.pankTed === 'Léčím se s tím i teď') return 'probíhající léčby zánětu slinivky břišní';
   return null;
 }
@@ -1359,9 +1374,17 @@ function calcScore(d) {
    Pozor: v `name` musí zůstat účinná látka, podle ní si server spáruje
    balení (drugKey_ hledá „semaglutid" a „tirzepatid"). */
 const DRUGS = {
-  wegovy:   { name: 'Agonista GLP-1', inn: 'semaglutid' },
-  mounjaro: { name: 'Duální agonista GLP-1/GIP', inn: 'tirzepatid' }
+  wegovy:   { name: 'Agonista GLP‑1', inn: 'semaglutid' },
+  mounjaro: { name: 'Duální agonista GLP‑1/GIP', inn: 'tirzepatid' }
 };
+/* Cíl je od 26. 11. 2026 pole, protože jich klient může zaškrtnout víc. Porovnávat
+   ho rovnou by ticho potichu přestalo sedet a doporučení by spadlo do větví podle
+   procent, aniž by si toho kdo všiml. */
+function maCil(d, text) {
+  const g = d && d.goal;
+  return Array.isArray(g) ? g.indexOf(text) >= 0 : g === text;
+}
+
 function recommend(d) {
   const bmi = num(d.bmi) || 0;
   const w = num(d.weight) || 0, tw = num(clinicalTarget(d)) || 0;
@@ -1388,7 +1411,7 @@ function recommend(d) {
   if (bmi >= 23 && bmi <= 27) {
     return {
       key: 'wegovy', drug: DRUGS.wegovy, altDrug: DRUGS.mounjaro, alt: null,
-      why: 'Duální agonista GLP-1/GIP je z téhle třídy nejsilnější a míří hlavně na klienty s BMI nad 30, kde jde o velký úbytek. U Vás jde spíš o kosmetickou redukci a klid od jídla, a na to je agonista GLP-1 vhodnější: je mírnější, dávkuje se jemněji a drží tempo úbytku tak, aby šel dolů tuk a ne svaly.',
+      why: 'Duální agonista GLP‑1/GIP je z téhle třídy nejsilnější a míří hlavně na klienty s BMI nad 30, kde jde o velký úbytek. U Vás jde spíš o kosmetickou redukci a klid od jídla, a na to je agonista GLP‑1 vhodnější: je mírnější, dávkuje se jemněji a drží tempo úbytku tak, aby šel dolů tuk a ne svaly.',
       offLabel: bmi < 27
     };
   }
@@ -1396,17 +1419,17 @@ function recommend(d) {
   if (hadSema && sat === 'Dobrý efekt') {
     key = 'wegovy';
     why = 'Semaglutid u Vás už zabíral, takže není důvod ho měnit. Navážeme na to, co fungovalo, a doladíme dávkování.';
-    alt = 'Pokud se úbytek zastaví na plató, je duální agonista GLP-1/GIP logickým dalším krokem.';
+    alt = 'Pokud se úbytek zastaví na plató, je duální agonista GLP‑1/GIP logickým dalším krokem.';
   } else if (hadSema && sat === 'Slabý efekt') {
     key = 'mounjaro';
-    why = 'Semaglutid u Vás nepřinesl očekávaný efekt. Tirzepatid působí přes dva receptory (GIP i GLP-1) a v přímém srovnání dosahuje výrazně vyššího úbytku.';
+    why = 'Semaglutid u Vás nepřinesl očekávaný efekt. Tirzepatid působí přes dva receptory (GIP i GLP‑1) a v přímém srovnání dosahuje výrazně vyššího úbytku.';
   } else if (hadTirz && sat === 'Špatně jsem ho snášel/a') {
     key = 'wegovy';
     why = 'Tirzepatid jste snášel/a špatně. Semaglutid bývá pro trávení šetrnější a s pomalým navyšováním dávky se obvykle zvládne dobře.';
   } else if (hadSema && sat === 'Špatně jsem ho snášel/a') {
     key = 'wegovy';
     why = 'Nesnášenlivost bývá nejčastěji z příliš rychlého navyšování dávky. Začneme od nejnižší dávky a budeme postupovat pomaleji.';
-    alt = 'Pokud potíže přetrvají, na kontrole zvážíme přechod na duálního agonistu GLP-1/GIP.';
+    alt = 'Pokud potíže přetrvají, na kontrole zvážíme přechod na duálního agonistu GLP‑1/GIP.';
   } else if (dysgly) {
     key = 'mounjaro';
     why = d.diab === 'PMOS (PCOS)'
@@ -1415,13 +1438,13 @@ function recommend(d) {
   } else if (bmi < 25) {
     key = 'wegovy';
     why = 'Vaše BMI je v pásmu normální váhy, takže nejsilnější preparát není namístě. Semaglutid utlumí chutě a udrží úbytek pozvolný a bezpečný.';
-  } else if (d.goal === 'Zbavit se neustálých chutí a myšlenek na jídlo' && lossPct < 15) {
-    key = 'wegovy';
-    why = 'Vaším cílem je klid od jídla. Na „food noise“ semaglutid bohatě stačí a nemá smysl jít po nejsilnějším preparátu.';
-    alt = bmi >= 30 ? 'Při Vašem BMI by duální agonista GLP-1/GIP přinesl rychlejší úbytek. Pokud budete chtít i výraznější zhubnutí, probereme ho na konzultaci.' : null;
-  } else if (d.goal === 'Výrazně zhubnout') {
+  } else if (maCil(d, 'Výrazně zhubnout')) {
     key = 'mounjaro';
     why = 'Pro výrazný úbytek je v této třídě nejúčinnější, ve studiích vedl k průměrnému poklesu okolo 20 % hmotnosti.';
+  } else if (maCil(d, 'Zbavit se neustálých chutí a myšlenek na jídlo') && lossPct < 15) {
+    key = 'wegovy';
+    why = 'Vaším cílem je klid od jídla. Na „food noise“ semaglutid bohatě stačí a nemá smysl jít po nejsilnějším preparátu.';
+    alt = bmi >= 30 ? 'Při Vašem BMI by duální agonista GLP‑1/GIP přinesl rychlejší úbytek. Pokud budete chtít i výraznější zhubnutí, probereme ho na konzultaci.' : null;
   } else if (lossPct < 15) {
     key = 'wegovy';
     why = 'Váš cíl je v dosahu mírnější terapie. Semaglutid vede ve studiích k průměrnému úbytku kolem 15 % hmotnosti, takže na Váš cíl bohatě stačí, a je šetrnější k trávení.';
@@ -1431,8 +1454,8 @@ function recommend(d) {
   }
 
   const other = key === 'wegovy' ? 'mounjaro' : 'wegovy';
-  if (!alt && bmi >= 27 && key === 'wegovy') alt = 'Kdyby úbytek nebyl dostatečný, duální agonista GLP-1/GIP je připravený jako další krok.';
-  if (!alt && key === 'mounjaro' && d.goal !== 'Výrazně zhubnout') alt = 'Pokud byste chtěl/a začít mírněji, je agonista GLP-1 plnohodnotnou alternativou.';
+  if (!alt && bmi >= 27 && key === 'wegovy') alt = 'Kdyby úbytek nebyl dostatečný, duální agonista GLP‑1/GIP je připravený jako další krok.';
+  if (!alt && key === 'mounjaro' && !maCil(d, 'Výrazně zhubnout')) alt = 'Pokud byste chtěl/a začít mírněji, je agonista GLP‑1 plnohodnotnou alternativou.';
 
   return { key, drug: DRUGS[key], why, alt, altDrug: DRUGS[other], offLabel: bmi < 27 };
 }
@@ -1492,7 +1515,7 @@ function render() {
     T = LOGO(true) + `<div class="top-actions"><a class="linkbtn" href="${CFG.site}">Zpátky na web ›</a></div>`;
     M = `<div class="intro ctr">
       <div><span class="eyebrow">Průvodce</span>
-        <h1 class="h-hero" style="margin-top:clamp(10px,calc(1*var(--u)),calc(18px*var(--k)))"><span class="fitline">Redukce hmotnosti s GLP-1/GIP</span><span class="light fitline">Vstupní screening</span></h1>
+        <h1 class="h-hero" style="margin-top:clamp(10px,calc(1*var(--u)),calc(18px*var(--k)))"><span class="fitline">Redukce hmotnosti s GLP‑1/GIP</span><span class="light fitline">Vstupní screening</span></h1>
         <p class="body-wide intro-lead" style="margin-top:clamp(18px,calc(1.5*var(--u)),calc(28px*var(--k)))">V průběhu 5 minut zjistíme, zda je pro Vás léčba moderními léky na redukci hmotnosti vhodná, a jaký terapeutický program nejlépe odpovídá Vašim potřebám.</p>
         <i class="bar" style="margin-top:clamp(26px,calc(2.6*var(--u)),calc(50px*var(--k)))"></i>
         <button type="button" class="btn lime" style="margin-top:clamp(30px,calc(4.2*var(--u)),calc(80px*var(--k)))" data-act="next">Spustit test</button></div></div>`;
@@ -1519,10 +1542,10 @@ function render() {
         </div>
         <div class="consents">
           ${cboxHTML('c-gdpr', S.a.gdpr, 'Souhlasím se zpracováním osobních údajů, včetně údajů o zdravotním stavu, za účelem vyhodnocení screeningu a jeho zaslání na můj e-mail. Více v <a href="' + CFG.gdprUrl + '" target="_blank" rel="noopener" style="color:var(--ink)">zásadách zpracování osobních údajů</a>.', 'gdpr')}
-          ${cboxHTML('c-news', S.a.marketing === true, 'Chci vědět o slevách, novinkách ze světa kliniky a GLP-1. Nejvýš jednou měsíčně, odhlásit se dá jedním kliknutím.', 'marketing')}
+          ${cboxHTML('c-news', S.a.marketing === true, 'Chci vědět o slevách, novinkách ze světa kliniky a GLP‑1. Nejvýš jednou měsíčně, odhlásit se dá jedním kliknutím.', 'marketing')}
           <details class="legal"><summary>Celé znění souhlasu</summary>
             <p>Souhlasím se zpracováním svých osobních údajů, včetně údajů o zdravotním stavu, které jsem ve screeningu uvedl/a, společností My Design Creatives s.r.o., IČO 07162235, se sídlem Chlumčanského 497/5, 180 00 Praha 8, provozující Aeternum Clinic, za účelem vyhodnocení screeningu a jeho zaslání na můj e-mail. Souhlas mohu kdykoli odvolat na info@aeternumclinic.cz.</p>
-            <p>Zaškrtnutím druhého políčka souhlasím, aby mi tatáž společnost posílala na uvedený e-mail obchodní sdělení, tedy slevy a novinky ze světa kliniky a GLP-1, nejvýš jednou měsíčně. Tento souhlas mohu kdykoli odvolat odkazem v každém e-mailu nebo na info@aeternumclinic.cz.</p></details>
+            <p>Zaškrtnutím druhého políčka souhlasím, aby mi tatáž společnost posílala na uvedený e-mail obchodní sdělení, tedy slevy a novinky ze světa kliniky a GLP‑1, nejvýš jednou měsíčně. Tento souhlas mohu kdykoli odvolat odkazem v každém e-mailu nebo na info@aeternumclinic.cz.</p></details>
         </div></div></div>`;
     F = navHTML(true);
   } else if (st.key === 'generating') {
@@ -1650,7 +1673,7 @@ function questionHTML(id) {
   }
   if (q.type === 'text') {
     const v = S.a[id] != null ? S.a[id] : '';
-    h += `<div class="ufrow one"><div class="uf big" id="w-${id}">
+    h += `<div class="ufrow one"><div class="uf big text" id="w-${id}">
       <input id="f-${id}" type="text" data-txt="${id}" autocomplete="off"
         placeholder="${esc(q.placeholder || '')}" value="${esc(v)}"></div></div>`;
     return h;
@@ -1658,10 +1681,12 @@ function questionHTML(id) {
   const v = S.a[id];
   const opts = qOpts(q);
   const rows = q.rows || opts.some(o => o.length > 14);
+  /* U vícenásobné otázky drží odpověď pole, u ostatních řetězec. */
+  const vybrano = o => q.multi ? (Array.isArray(v) && v.indexOf(o) >= 0) : v === o;
   if (rows) {
-    h += `<div class="rows" role="group" aria-labelledby="qtext">${opts.map((o, i) => `<button type="button" class="rowopt" data-single="${id}" data-i="${i}" aria-pressed="${v === o}"><span class="mark"></span><span class="lbl">${esc(o)}</span></button>`).join('')}</div>`;
+    h += `<div class="rows" role="group" aria-labelledby="qtext">${opts.map((o, i) => `<button type="button" class="rowopt" data-${q.multi ? 'multi' : 'single'}="${id}" data-i="${i}" aria-pressed="${vybrano(o)}"><span class="mark"></span><span class="lbl">${esc(o)}</span></button>`).join('')}</div>`;
   } else {
-    h += `<div class="opts" role="group" aria-labelledby="qtext">${opts.map((o, i) => `<button type="button" class="opt" data-single="${id}" data-i="${i}" aria-pressed="${v === o}">${esc(o)}</button>`).join('')}</div>`;
+    h += `<div class="opts" role="group" aria-labelledby="qtext">${opts.map((o, i) => `<button type="button" class="opt" data-${q.multi ? 'multi' : 'single'}="${id}" data-i="${i}" aria-pressed="${vybrano(o)}">${esc(o)}</button>`).join('')}</div>`;
   }
   return h;
 }
@@ -1878,6 +1903,10 @@ function validate(st) {
       if (!String(S.a[st.id] || '').trim()) return { msg: `Vyplňte prosím: ${qLabel(q)}`, focus: st.id };
       return null;
     }
+    if (q.multi) {
+      if (!Array.isArray(S.a[st.id]) || !S.a[st.id].length) return { msg: 'Vyberte prosím aspoň jednu možnost.' };
+      return null;
+    }
     if (S.a[st.id] == null) return { msg: 'Vyberte prosím odpověď.' };
   }
   if (st.key === 'contact') {
@@ -1920,7 +1949,29 @@ document.addEventListener('click', e => {
     return;
   }
   if (b.dataset.single != null) return pickSingle(b.dataset.single, +b.dataset.i);
+  if (b.dataset.multi != null) return pickMulti(b.dataset.multi, +b.dataset.i);
 });
+/* Vícenásobná odpověď. Na rozdíl od `pickSingle` se nikam neposouvá sama:
+   klient může chtít zaškrtnout druhou možnost a automatický posun by mu to vzal.
+   Dál se tedy jde tlačítkem. */
+function pickMulti(id, i) {
+  const val = qOpts(Q[id])[i];
+  const pole = Array.isArray(S.a[id]) ? S.a[id].slice() : [];
+  const kde = pole.indexOf(val);
+  if (kde >= 0) pole.splice(kde, 1); else pole.push(val);
+  S.a[id] = pole; save();
+  document.querySelectorAll(`[data-multi="${id}"]`).forEach(c =>
+    c.setAttribute('aria-pressed', pole.indexOf(qOpts(Q[id])[+c.dataset.i]) >= 0));
+  const err = $('#err'); if (err) err.textContent = '';
+  clearTimeout(autoT);
+  /* Tlačítko Pokračovat se u voleb ukazuje až po odpovědi. Bez téhle části by
+     se u vícenásobné otázky neobjevilo vůbec, protože se sem nic nepřekresluje,
+     a klient by zaškrtl, co chtěl, a neml by se jak posunout. Překreslí se jen
+     tehdy, když se jeho přítomnost opravdu mění, ne při každém klepnutí. */
+  const maTlacitko = !!document.querySelector('[data-act="next"]');
+  if (maTlacitko !== pole.length > 0) render();
+}
+
 function pickSingle(id, i) {
   const val = qOpts(Q[id])[i];
   S.a[id] = val; save();
@@ -2054,7 +2105,7 @@ function renderResult() {
     return `<section class="rsec first"><div class="split">
       <div class="ctr"><span class="eyebrow">Výsledek screeningu</span><h1 class="h-l">${head}</h1>
         <div class="alerts"><div class="alert"><span class="pill sm crit">Upozornění</span>
-          <span>Na základě Vašich odpovědí Vám GLP-1 program nedoporučujeme, a to z důvodu <b>${esc(R.contra)}</b>.</span></div></div>
+          <span>Na základě Vašich odpovědí Vám GLP‑1 program nedoporučujeme, a to z důvodu <b>${esc(R.contra)}</b>.</span></div></div>
         <p class="lead summary">Doporučujeme konzultaci s Vaším ošetřujícím lékařem, který posoudí Vaše možnosti individuálně. Souhrn Vám posíláme na e-mail.</p>
         ${sendStatusHTML()}
         ${protocolHTML(R)}
@@ -2069,7 +2120,7 @@ function renderResult() {
   return `
   <section class="rsec first"><div class="split" style="align-items:center">
     <div class="ctr">
-      <span class="eyebrow">Aeternum GLP-1 Screening</span>
+      <span class="eyebrow">Aeternum GLP‑1 Screening</span>
       <h1 class="h-l">${head}</h1>
       <div class="index-row"><div class="index-num ${R.score.cls}">${R.score.score}<small>/10</small></div>
         <div class="index-side"><span class="small-caps" style="color:var(--ink)">Skóre vhodnosti</span>
@@ -2336,7 +2387,7 @@ function planTilesHTML() {
   return v.tiles.map(([e, t, d]) => `<div class="tile"><div class="emoji">${e}</div><b>${esc(t)}</b><span>${esc(d)}</span></div>`).join('');
 }
 
-const DISCLAIMER = `<div class="disclaimer">Aeternum GLP-1 Screening je orientační vyhodnocení na základě Vašich odpovědí, není lékařským vyšetřením ani diagnózou a nenahrazuje konzultaci s lékařem, který jediný rozhoduje o vhodnosti léčby a o předpisu léčivých přípravků vázaných na lékařský předpis.<br>Aeternum Clinic, My Design Creatives s.r.o., IČO 07162235, Chlumčanského 497/5, 180 00 Praha 8 · info@aeternumclinic.cz · <a href="${CFG.gdprUrl}" target="_blank" rel="noopener" style="color:var(--dim)">Zásady zpracování osobních údajů</a></div>`;
+const DISCLAIMER = `<div class="disclaimer">Aeternum GLP‑1 Screening je orientační vyhodnocení na základě Vašich odpovědí, není lékařským vyšetřením ani diagnózou a nenahrazuje konzultaci s lékařem, který jediný rozhoduje o vhodnosti léčby a o předpisu léčivých přípravků vázaných na lékařský předpis.<br>Aeternum Clinic, My Design Creatives s.r.o., IČO 07162235, Chlumčanského 497/5, 180 00 Praha 8 · info@aeternumclinic.cz · <a href="${CFG.gdprUrl}" target="_blank" rel="noopener" style="color:var(--dim)">Zásady zpracování osobních údajů</a></div>`;
 
 function chartSVG(startW, endW, months, height) {
   const W = 620, H = 200, pad = { t: 22, r: 64, b: 26, l: 56 };
@@ -2943,7 +2994,9 @@ function payload() {
     consents: { gdpr: !!S.a.gdpr, marketing: !!S.a.marketing, booking: !!S.a.bookConsent, version: '2026-09-v1' },
     gender: S.a.gender, region: S.a.region || '', age: num(S.a.age), height: num(S.a.height), weight: num(S.a.weight),
     targetWeight: num(S.a.targetWeight), bmi: R.bmi, bmiCategory: bmiCategory(R.bmi),
-    goal: S.a.goal, glp1: S.a.glp1, glp1drug: S.a.glp1drug || '', glp1sat: S.a.glp1sat || '',
+    /* Do tabulky jde jeden řetězec, ať sloupec „Cíl“ zůstane čitelný a aby ho
+       Marcel AI i lékař četli stejně jako dřív. */
+    goal: Array.isArray(S.a.goal) ? S.a.goal.join(', ') : S.a.goal, glp1: S.a.glp1, glp1drug: S.a.glp1drug || '', glp1sat: S.a.glp1sat || '',
     answers: { pank: S.a.pank, pankPricina: S.a.pankPricina || '', pankZlucnik: S.a.pankZlucnik || '', pankKdy: S.a.pankKdy || '', pankTed: S.a.pankTed || '', men2: S.a.men2, diab: S.a.diab, zluc: S.a.zluc, led: S.a.led, ppp: S.a.ppp, pppType: S.a.pppType || '', pppStav: S.a.pppStav || '', onko: S.a.onko || '', tehot: S.a.tehot || '', leky: S.a.leky || '', alergie: S.a.alergie || '',
       pohybTyp: S.a.pohybTyp || '', odpocaty: S.a.odpocaty || '', odkud: S.a.odkud || '', stit: S.a.stit, kard: S.a.kard, pohyb: S.a.pohyb, spanek: S.a.spanek },
     score: R.score.score, scoreLabel: R.score.label, contraindication: R.contra || '', doctorNote: R.caution || '',
