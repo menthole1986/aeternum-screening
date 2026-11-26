@@ -1026,7 +1026,7 @@ const CFG = {
   site: 'https://www.aeternumclinic.cz',
   gdprUrl: 'https://www.aeternumclinic.cz/terms-conditions',
   holdMinutes: 120,                             // jak dlouho držíme termín bez platby
-  leadDays: 14,                                 // jak daleko dopředu lze rezervovat
+  leadDays: 28,                                 // jak daleko dopředu lze rezervovat, musí sedět s CONFIG.LEAD_DAYS
   minHours: 24,                                 // nejbližší možný termín
   slotStepMin: 60,                              // 30 min konzultace + pauza
   hours: {                                      // záložní hodiny pro demo režim, ostré řídí kalendář
@@ -2768,7 +2768,9 @@ function slotsHTML() {
       <div class="skel-times">${[0,1,2,3,4,5].map(() => '<div class="skel"></div>').join('')}</div>
       <p class="skel-note"><span class="sp dark"></span><span>Hledám volné termíny v kalendáři…</span></p>`;
   }
-  if (!slotCache.length) return `<p class="emptyslots">V nejbližších ${CFG.leadDays} dnech už nemám volno. Zavolejte nám prosím na ${esc(tel(CFG.phone))}, termín najdeme.</p>`;
+  /* Vyprodané termíny nejsou slepá ulička: kliniku lze zavolat a termín
+     se dohodne po telefonu. */
+  if (!slotCache.length) return `<p class="emptyslots"><b style="color:var(--ink)">Volné termíny jsou právě vyčerpané.</b> Zavolejte nám na ${esc(tel(CFG.phone))} nebo napište na <a href="mailto:${esc(CFG.email)}" style="color:var(--ink)">${esc(CFG.email)}</a> a termín Vám najdeme a rezervujeme po telefonu.</p>`;
   const days = [...new Set(slotCache.map(s => s.slice(0, 10)))];
   const sel = S.booking.day && days.includes(S.booking.day) ? S.booking.day : days[0];
   S.booking.day = sel;
